@@ -1,6 +1,6 @@
 # Token Grabber
 
-I don't find a name for it
+Didn't find a better name for it.
 
 --------------------------
 
