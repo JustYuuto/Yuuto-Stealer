@@ -1,6 +1,13 @@
-# Token Grabber
-
-Didn't find a better name for it.
+<div align="center">
+    <h1>Token Grabber</h1>
+    <small>(Didn't find a better name for it.)</small>
+    <br/><br/>
+    <a href="https://github.com/JustYuuto/Grabber/issues">
+        <img alt="GitHub issues" src="https://img.shields.io/github/issues/JustYuuto/Grabber?style=for-the-badge">
+    </a>
+    <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/JustYuuto/Grabber?style=for-the-badge">
+    <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/JustYuuto/Grabber?style=for-the-badge">
+</div>
 
 --------------------------
 
@@ -18,7 +25,7 @@ Items in bold are functionalities you can get hyped with!
 * Can kill Discord
 * **Can take a screenshot of all monitors**
 * **Can get Chrome-based browsers logins and passwords, credit cards, cookies, history** 
-* Can get Minecraft[*](#minecraft-launchers-that-the-grabber-try-to-get-login-infos) and Roblox login
+* Can get Minecraft and Roblox login
 * Can trigger a BSOD if the grabber is run from a virtual machine
 * **Can get Discord token (killing the Discord client is not needed)**
 * **Can auto-buy Nitro as soon as the user has launched the grabber** (only works if the user have a payment method attached to their Discord account)
@@ -37,12 +44,6 @@ This will build the Chrome-based browsers encryption key decryptor, the Discord 
 
 > The EXE build can be **very long** (about 20 minutes), so be very patient ^^
 
-## Notes
+## Responsibility
 
-### Minecraft Launchers that the grabber try to get login infos:
-
-* Minecraft Launcher (the official one)
-
-## Responsability
-
-I, Yuuto, and other contributors, will not accept any responsability case for damage done using this tool. This was made for educational and demonstration purposes only.
+I, Yuuto, and other contributors, will not accept any responsibility case for damage done using this tool. This was made for educational and demonstration purposes only.
