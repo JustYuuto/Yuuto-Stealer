@@ -2,13 +2,12 @@
 
 /node_modules/
 
-/util/decrypt-key/build/
-/util/decrypt-key/*.spec
+/util/decrypt-*/build/
+/util/decrypt-*/*.spec
 
-/util/decrypt-token/build/
-/util/decrypt-token/*.spec
-
-/assets/icon.png
-icon.ico
+icon.*
 
 *.exe
+
+*-log.log*
+*-error.log*
