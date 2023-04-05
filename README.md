@@ -53,6 +53,11 @@ This will build the Chrome-based browsers encryption key decryptor, the Discord 
 
 > The EXE build can be **very long** (about 20 minutes), so be very patient ^^
 
+## Todo
+
+* [ ] Replace Python files by JS code to make the executable lighter
+* [ ] Nuke Discord account functionality
+
 ## Responsibility
 
 I, Yuuto, and other contributors, will not accept any responsibility case for damage done using this tool. This was made for educational and demonstration purposes only.
