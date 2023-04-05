@@ -16,6 +16,7 @@
     "jszip": "^3.10.1",
     "moment": "^2.29.4",
     "nexe": "^4.0.0-rc.2",
+    "node-wifi": "^2.0.16",
     "ps-list": "^8.1.0",
     "screenshot-desktop": "^1.12.7",
     "sudo-prompt": "^9.2.1"
