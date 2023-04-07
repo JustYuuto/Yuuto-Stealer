@@ -56,18 +56,7 @@ const json = async (zipFile) => {
       ['Email', account.email || 'No Email'],
       ['Email Verified', account.verified],
       ['Phone Number', account.phone || 'No Phone Number'],
-      ['Nitro Subscription', (() => { switch (account.premium_type) {
-        case 0:
-          return 'No Nitro';
-        case 1:
-          return 'Nitro Classic';
-        case 2:
-          return 'Nitro';
-        case 3:
-          return 'Nitro Basic';
-        default:
-          return 'No Nitro Subscription';
-      } })()],
+      ['Nitro Subscription', nitroSubscriptionType(account.premium_type)],
       /*['Flags', (() => { let flags = []; switch (account.flags) {
         case 1 << 0:
           flags.push('Staff'); break;
