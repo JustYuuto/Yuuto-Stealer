@@ -53,8 +53,7 @@ This will build the Chrome-based browsers encryption key decryptor, the Discord 
 
 ## Todo
 
-* [ ] Replace Python files by JS code to make the executable lighter
-* [ ] Nuke Discord account functionality
+See [TODO.md](TODO.md) file.
 
 ## Responsibility
 
