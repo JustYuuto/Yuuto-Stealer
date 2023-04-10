@@ -130,6 +130,11 @@
   dependencies:
     "@types/node" "*"
 
+abbrev@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-2.0.0.tgz#cf59829b8b4f03f89dda2771cb7f3653828c89bf"
+  integrity sha512-6/mh1E2u2YgEsCHdY0Yx5oW+61gZU+1vXaoiHHrpKeuRNNgFvS+/jrwHiQhB5apAf5oB7UB7E19ol2R2LKH8hQ==
+
 acorn-jsx@^5.3.2:
   version "5.3.2"
   resolved "https://registry.npmjs.org/acorn-jsx/-/acorn-jsx-5.3.2.tgz"
@@ -1441,6 +1446,13 @@ nexe@^4.0.0-rc.2:
     resolve-dependencies "^6.0.8"
     rimraf "^3.0.2"
 
+node-webcam@^0.8.1:
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/node-webcam/-/node-webcam-0.8.1.tgz#6e45393ac68d860bc02d04c570e293aa95a37577"
+  integrity sha512-xtI9oF7T6NIpJhou4BfLF224IDPPmH45tNhhixUImgYmD+pJAf9Wuj4LMbyMaIHmePbuj24lUFOCQ/oV7Z/IvQ==
+  dependencies:
+    nopt "*"
+
 node-wifi@^2.0.16:
   version "2.0.16"
   resolved "https://registry.yarnpkg.com/node-wifi/-/node-wifi-2.0.16.tgz#1078a41ad2ab3937e7f0534a9ab7a7d554e675b3"
@@ -1448,6 +1460,13 @@ node-wifi@^2.0.16:
   dependencies:
     command-line-args "^5.2.0"
     command-line-usage "^6.1.1"
+
+nopt@*:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/nopt/-/nopt-7.1.0.tgz#91f6a3366182176e72ecab93a09c19b63b485f28"
+  integrity sha512-ZFPLe9Iu0tnx7oWhFxAo4s7QTn8+NNDDxYNaKLjE7Dp0tbakQ3M1QhQzsnzXHQBTUO3K9BmwaxnyO8Ayn2I95Q==
+  dependencies:
+    abbrev "^2.0.0"
 
 normalize-url@2.0.1:
   version "2.0.1"
