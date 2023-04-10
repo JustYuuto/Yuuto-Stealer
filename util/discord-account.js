@@ -111,3 +111,7 @@ module.exports.accountFlags = (flags) => {
   }
   return flagsArr.join(', ');
 };
+
+module.exports.avatarURL = (id, avatar) => {
+  return `https://cdn.discordapp.com/avatars/${id}/${avatar}.${avatar.startsWith('a_') ? 'gif' : 'png'}`
+}

