@@ -1,7 +1,6 @@
 <div align="center">
     <h1>Grabber</h1>
-    <small>(Didn't find a better name for it.)</small>
-    <br/><br/>
+    <br/>
     <a href="https://github.com/JustYuuto/Grabber/issues">
         <img alt="GitHub issues" src="https://img.shields.io/github/issues/JustYuuto/Grabber?style=for-the-badge">
     </a>
@@ -16,9 +15,7 @@
 
 ## Functionalities
 
-Some of these functionalities are customisable in the [`config.js`](config.js) file.
-
-Items in bold are functionalities you can get hyped with!
+Some of these functionalities are customisable in the [`config.js`](config.js) file. You can find more details at https://github.com/JustYuuto/Grabber/wiki/Functionalities. Items in bold are functionalities you can get hyped with!
 
 * Made for Windows, but can work on macOS and Linux with Wine
 * Can add itself to startup programs
