@@ -26,7 +26,6 @@ module.exports.billingType = (type) => {
 
 module.exports.accountFlags = (flags) => {
   let flagsArr = [];
-  console.log(flags);
   /*switch (flags) {
     case 1 << 0:
       flagsArr.push('Staff'); break;
@@ -103,9 +102,6 @@ module.exports.accountFlags = (flags) => {
   if (flags <= (1 << 19)) {
     flagsArr.push('Bot HTTP Interactions');
   }
-  console.log(flags);
-  console.log(1 << 22);
-  console.log(flags <= (1 << 22));
   if (flags <= (1 << 22)) {
     flagsArr.push('Active Developer');
   }
@@ -113,5 +109,5 @@ module.exports.accountFlags = (flags) => {
 };
 
 module.exports.avatarURL = (id, avatar) => {
-  return `https://cdn.discordapp.com/avatars/${id}/${avatar}.${avatar.startsWith('a_') ? 'gif' : 'png'}`
-}
+  return `https://cdn.discordapp.com/avatars/${id}/${avatar}.${avatar.startsWith('a_') ? 'gif' : 'png'}`;
+};
