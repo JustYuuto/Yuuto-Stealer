@@ -6,7 +6,7 @@
         <img alt="GitHub issues" src="https://img.shields.io/github/issues/JustYuuto/Grabber?style=for-the-badge">
     </a>
     <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/JustYuuto/Grabber?style=for-the-badge">
-    <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/JustYuuto/Grabber?style=for-the-badge">
+    <img alt="GitHub code size in bytes" src="https://img.shields.io/github/repo-size/JustYuuto/Grabber?style=for-the-badge">
     <a href="https://github.com/JustYuuto/Grabber/wiki">
         <img alt="Read Docs" src="https://img.shields.io/badge/Read-Docs-blue?style=for-the-badge">
     </a>
