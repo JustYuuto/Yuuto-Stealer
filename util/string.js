@@ -1,6 +1,7 @@
 module.exports.removeSpaces = (s) => s.replaceAll(/\t/g, '');
 module.exports.removeLineReturns = (s) => s.replaceAll(/[\n\r]/g, '');
 module.exports.addDoubleQuotes = (s) => `"${s}"`;
+module.exports.codeBlock = (s) => `\`\`\`${s}\`\`\``;
 
 module.exports.generateString = (length = 16) => {
   // https://stackoverflow.com/a/1349426/13088041
