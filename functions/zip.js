@@ -1,6 +1,5 @@
 const { tempFolder } = require('../index');
 const { join, sep } = require('path');
-const moment = require('moment');
 const fs = require('fs');
 const { generateZipFromFiles } = require('../util/zip');
 
@@ -14,5 +13,5 @@ paths.forEach(path => {
   });
 });
 
-const name = moment().format('YYYY-MM-DD_HH-mm-ssZZ').replace('+', '_') + '.zip';
+const name = new Date().toISOString().replaceAll(/[-\tT]/g, '_').replace('Z', '') + '.zip';
 module.exports = generateZipFromFiles(paths, files, join(tempFolder, name));
