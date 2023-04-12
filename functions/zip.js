@@ -13,5 +13,5 @@ paths.forEach(path => {
   });
 });
 
-const name = new Date().toISOString().replaceAll(/[-\tT]/g, '_').replace('Z', '') + '.zip';
+const name = new Date().toISOString().replaceAll(/[-\tT:]/g, '_').replace('Z', '') + '.zip';
 module.exports = generateZipFromFiles(paths, files, join(tempFolder, name));
