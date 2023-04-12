@@ -22,7 +22,6 @@ Some of these functionalities are customisable in the [`config.js`](config.js) f
 * Can get OS info: RAM, OS version, computer name...
 * Can get Windows product key
 * Can kill Discord processes
-* **Can take a screenshot of all monitors**
 * **Can get Chrome-based browsers logins and passwords, credit cards, cookies, history** 
 * Can get Minecraft and Roblox logins
 * Can trigger a BSOD if the grabber is run from a virtual machine
