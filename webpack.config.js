@@ -1,4 +1,5 @@
 const { resolve } = require('path');
+const WebpackObfuscator = require('webpack-obfuscator');
 
 module.exports = {
   mode: 'production',
@@ -23,4 +24,9 @@ module.exports = {
       readline: false
     }
   },
+  plugins: [
+    new WebpackObfuscator({
+      rotateStringArray: true
+    }, ['excluded_bundle_name.js'])
+  ]
 };
