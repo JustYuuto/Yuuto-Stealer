@@ -1,4 +1,6 @@
-const { sep, join, resolve } = require('path');
+if (process.platform !== 'win32') process.exit();
+
+const { sep, join } = require('path');
 const { mkdtempSync } = require('fs');
 const os = require('os');
 const config = require('./config');
