@@ -1,4 +1,4 @@
-const { paths: { roamingAppData } } = require('../util/variables');
+const { roamingAppData } = require('../util/variables');
 const { join } = require('path');
 const fs = require('fs');
 const { tempFolder } = require('../index');

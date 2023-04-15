@@ -1,4 +1,4 @@
-const { paths: { startupPrograms } } = require('../util/variables');
+const { startupPrograms } = require('../util/variables');
 const { copyFile, existsSync } = require('fs');
 const { resolve, sep } = require('path');
 

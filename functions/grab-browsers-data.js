@@ -5,7 +5,7 @@ const { execSync, exec } = require('child_process');
 const { tempFolder } = require('../index');
 const { addDoubleQuotes } = require('../util/string');
 const { sleep, runningFromExecutable } = require('../util/general');
-const { paths: { localAppData } } = require('../util/variables');
+const { localAppData } = require('../util/variables');
 
 const browsers = [
   ['',       ['Vivaldi']],
