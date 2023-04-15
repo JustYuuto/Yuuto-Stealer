@@ -26,6 +26,8 @@ Some of these functionalities are customisable in the [`config.js`](config.js) f
 * Can get Minecraft and Roblox logins
 * Can trigger a BSOD if the grabber is run from a virtual machine
 * **Can get Discord token** (killing the Discord client is not needed)
+* Can nuke/destroy Discord accounts:
+  * Delete all owned servers
 
 Everything is sent through a Discord Webhook.
 
