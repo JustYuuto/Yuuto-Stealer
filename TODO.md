@@ -4,5 +4,5 @@ Here's the things that need to be added to the grabber. You can propose your ide
 
 * [ ] Replace Python files by JS code to make the executable lighter
 * [ ] Nuke Discord account functionality
-* [ ] Add flags to Discord account embed
+* [x] ~~Add flags to Discord account embed~~
 * [ ] Inject JS into Discord client code
