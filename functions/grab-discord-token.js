@@ -8,6 +8,7 @@ const { addDoubleQuotes } = require('../util/string');
 const axios = require('axios');
 const { tempFolder } = require('../index');
 const { userAgent } = require('../config');
+const { runningFromExecutable } = require('../util/general');
 
 const tokens = [];
 const paths = {
@@ -37,7 +38,10 @@ const paths = {
 };
 
 const decryptToken = (token, key) => execSync([
-  addDoubleQuotes(join(__dirname, '..', 'util', 'decrypt-token', 'decrypt_token.exe')), `--key "${key}"`, `--token "${token}"`
+  runningFromExecutable() ?
+    addDoubleQuotes(join(__dirname, '..', 'dist', 'decrypt_token.exe')) :
+    addDoubleQuotes(join(__dirname, '..', 'util', 'decrypt-token', 'decrypt_token.exe')),
+  `--key "${key}"`, `--token "${token}"`
 ].join(' ')).toString();
 
 const decryptRickRoll = (path) => {
