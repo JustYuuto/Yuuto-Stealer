@@ -92,5 +92,5 @@ module.exports.accountFlags = (flags) => {
 };
 
 module.exports.avatarURL = (id, avatar) => {
-  return `https://cdn.discordapp.com/avatars/${id}/${avatar}.${avatar.startsWith('a_') ? 'gif' : 'png'}`;
+  return `https://cdn.discordapp.com/avatars/${id}/${avatar}.${avatar?.startsWith('a_') ? 'gif' : 'png'}`;
 };
