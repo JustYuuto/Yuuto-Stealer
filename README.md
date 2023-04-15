@@ -31,6 +31,12 @@ Some of these functionalities are customisable in the [`config.js`](config.js) f
 
 Everything is sent through a Discord Webhook.
 
+## Screenshots
+
+![Webhook](screenshots/webhook.png)
+
+Webhook
+
 ## Using it
 
 ### Requirements
