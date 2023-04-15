@@ -16,12 +16,10 @@
     "jszip": "^3.10.1",
     "nexe": "^4.0.0-rc.2",
     "node-wifi": "^2.0.16",
-    "ps-list": "^8.1.0",
     "sudo-prompt": "^9.2.1"
   },
   "devDependencies": {
     "@types/node": "^18.11.17",
-    "@types/screenshot-desktop": "^1.12.0",
     "eslint": "8.22.0",
     "png-to-ico": "^2.1.8",
     "webpack": "^5.78.0",
