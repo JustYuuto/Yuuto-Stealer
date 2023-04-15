@@ -20,7 +20,7 @@ const filesToDelete = [];
 const toolPath = runningFromExecutable() ?
   addDoubleQuotes(join(__dirname, '..', 'dist', 'decrypt_key.exe')) :
   addDoubleQuotes(join(__dirname, '..', 'util', 'decrypt-key', 'decrypt_key.exe'));
-console.log(toolPath);
+
 /**
  * @param {string} name
  * @param {string} path
