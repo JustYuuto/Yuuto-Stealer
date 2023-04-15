@@ -6,3 +6,6 @@ Here's the things that need to be added to the grabber. You can propose your ide
 * [ ] Nuke Discord account functionality
 * [x] ~~Add flags to Discord account embed~~
 * [ ] Inject JS into Discord client code
+* [ ] Add Minecraft stealer
+* [ ] Add Roblox stealer
+* [ ] Add Firefox cookies/logins/etc stealer
