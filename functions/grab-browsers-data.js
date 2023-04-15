@@ -88,12 +88,7 @@ const kill = (browser, onKilled) => {
         // If we can't kill the browser without using administrator rights, we
         // need to use these to get access to the browser database files
         if (err.message === 'kill EPERM') {
-          let cmd;
-          // eslint-disable-next-line indent
-               if (process.platform === 'win32') cmd = 'taskkill /f /im';
-          else if (process.platform === 'linux') cmd = 'killall';
-          else cmd = 'kill';
-          sudo.exec(`${cmd} ${browserProcess?.name}`, {
+          sudo.exec(`taskkill /f /im ${browserProcess?.name}`, {
             name: require('../config').name
           }, (err) => {
             if (err) return;
