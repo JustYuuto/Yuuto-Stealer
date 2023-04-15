@@ -11,3 +11,5 @@ icon.*
 
 *-log.log*
 *-error.log*
+
+/dist/
