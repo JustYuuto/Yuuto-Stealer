@@ -78,7 +78,7 @@ module.exports.accountFlags = (flags) => {
     },
     Active_Developer: {
       value: 1 << 22, // 4194304
-      emoji: 'Active Developer',
+      emoji: 'Active_Developer:1096823985490116729',
       rare: false
     }
   };
