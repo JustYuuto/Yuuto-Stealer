@@ -151,5 +151,3 @@ const run = () => new Promise((resolve) => {
     }
   });
 });
-
-module.exports = run();
