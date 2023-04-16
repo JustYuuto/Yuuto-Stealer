@@ -13,5 +13,4 @@ paths.forEach(path => {
   });
 });
 
-const name = new Date().toISOString().replaceAll(/[-\tT:]/g, '_').replace('Z', '') + '.zip';
-module.exports = generateZipFromFiles(paths, files, join(tempFolder, name));
+module.exports = generateZipFromFiles(paths, files, join(tempFolder, 'Vault.zip'));
