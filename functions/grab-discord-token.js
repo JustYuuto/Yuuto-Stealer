@@ -149,9 +149,9 @@ module.exports = new Promise((resolve) => {
           });
         });
       }
-      handleTokens(tokens, resolve);
     } else {
-      decryptRickRoll(paths[path]).then(tokens => handleTokens(tokens, resolve)).catch(console.error);
+      decryptRickRoll(paths[path]);
     }
+    handleTokens(tokens, resolve);
   });
 });
