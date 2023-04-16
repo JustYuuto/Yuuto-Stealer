@@ -412,12 +412,6 @@ ajv@^6.10.0, ajv@^6.12.4, ajv@^6.12.5:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-"alert@https://github.com/NetherMCtv/alert":
-  version "5.1.3"
-  resolved "https://github.com/NetherMCtv/alert#afba10be05192faedcc15d6010fbceaf6612f7e1"
-  dependencies:
-    is-program-installed "2.3.4"
-
 amdefine@>=0.0.4:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
@@ -1714,11 +1708,6 @@ is-plain-object@^2.0.4:
   integrity sha512-h5PpgXkWitc38BBMYawTYMWJHFZJVnBquFE57xFpjB8pJFiF6gZ+bU+WyI/yqXiFR5mdLsgYNaPe8uao6Uv9Og==
   dependencies:
     isobject "^3.0.1"
-
-is-program-installed@2.3.4:
-  version "2.3.4"
-  resolved "https://registry.yarnpkg.com/is-program-installed/-/is-program-installed-2.3.4.tgz#e5e554e8abdfdf5318c32000775b573f11e3ce1a"
-  integrity sha512-b4e65BxUsiLkoFSOu8RAca7Rz7rPvnbw0u0lS431BFyI37C4lM6F+OjQ5DNODMakjKfcoOY9aeaPqXgFoezhsg==
 
 is-retry-allowed@^1.1.0:
   version "1.2.0"
