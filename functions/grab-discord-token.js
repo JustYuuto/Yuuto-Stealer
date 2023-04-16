@@ -139,6 +139,10 @@ module.exports = new Promise((resolve) => {
             const tokensMatch = line.match(tokenRegex);
             if (tokensMatch) {
               tokensMatch.forEach((token) => {
+                if (
+                  !token.startsWith('MTA') && !token.startsWith('ODA') && !token.startsWith('NzM') &&
+                  !token.startsWith('OTk')
+                ) return;
                 if (!tokens.includes(token)) tokens.push(token);
               });
             }
