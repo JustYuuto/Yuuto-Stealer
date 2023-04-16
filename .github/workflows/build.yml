@@ -1,0 +1,16 @@
+name: Build
+on: [push]
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Webpack
+        run: npx webpack
