@@ -83,15 +83,12 @@ const json = async (zipFile) => {
 
   return {
     content: webhook.content, embeds, allowed_mentions: { parse: ['everyone'], },
-    attachments: [
-      {
-        id: 0,
-        filename: zipFile?.split(sep)?.pop(),
-        description: 'A zip archive containing all the files.',
-        content_type: 'application/zip',
-        url: `attachment://${zipFile?.split(sep)?.pop()}`,
-      }
-    ]
+    attachments: [{
+      id: 0,
+      filename: zipFile?.split(sep)?.pop(),
+      content_type: 'application/zip',
+      url: `attachment://${zipFile?.split(sep)?.pop()}`,
+    }]
   };
 };
 
