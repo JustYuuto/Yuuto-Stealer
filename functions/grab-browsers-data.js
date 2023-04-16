@@ -84,7 +84,8 @@ this.cookies = (name, path) => {
 const kill = (browser, onKilled) => {
   const tasks = execSync('tasklist');
   if (tasks.includes(browser)) {
-    exec(`taskkill /f /im ${browser}.exe`);
+    exec(`taskkill /f /im ${browser}.exe`).on('exit', () => onKilled());
+  } else {
     onKilled();
   }
 };
