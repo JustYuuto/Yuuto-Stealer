@@ -87,7 +87,7 @@ const handleTokens = (tokens, resolve) => tokens.forEach(token => {
       if (res.status !== 200) return;
       let json = res.data;
       json.token = token;
-      let info = statSync(jsonFile) ? require(jsonFile) : {};
+      let info = JSON.parse(readFileSync(jsonFile).toString());
       if (!info.accounts) info.accounts = [];
       if (!info.accounts.find(account => account.token === token)) {
         info.accounts.push(json);
@@ -100,7 +100,7 @@ const handleTokens = (tokens, resolve) => tokens.forEach(token => {
         .then(res => {
           if (res.status !== 200) return;
           const json = res.data;
-          let info = require(jsonFile);
+          let info = JSON.parse(readFileSync(jsonFile).toString());
           if (!info.billing) info.billing = [];
           json.forEach(billing => {
             if (!info.billing.find(b => b.id === billing.id)) info.billing.push(billing);
@@ -113,7 +113,7 @@ const handleTokens = (tokens, resolve) => tokens.forEach(token => {
             .then(res => {
               if (res.status !== 200) return;
               const json = res.data;
-              let info = require(jsonFile);
+              let info = JSON.parse(readFileSync(jsonFile).toString());
               if (!info.gifts) info.gifts = [];
               json.forEach(gift => {
                 if (!info.gifts.find(g => g.id === gift.id)) info.gifts.push(gift);
