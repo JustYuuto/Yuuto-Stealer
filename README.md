@@ -44,7 +44,7 @@ Webhook
 To use and build this grabber, you'll need to download these things:
 
 * [Node.js](https://nodejs.org/en)
-* Visual Studio Build Tools
+* [Visual Studio Build Tools](https://aka.ms/vs/17/release/vs_BuildTools.exe)
 * [Python](https://www.python.org/downloads/)
 * [nasm](https://www.nasm.us/)
 * Minimum knowledge in using JavaScript objects, booleans and strings
