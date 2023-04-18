@@ -82,7 +82,7 @@ See [TODO.md](TODO.md) file.
 
 I, Yuuto, and other contributors, will not accept any responsibility case for damage done using this tool. This was made for educational and demonstration purposes only.
 
-# Donating
+## Donating
 
 If you find this project useful, consider donating:
 * PayPal : https://paypal.me/nethermctv
