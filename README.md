@@ -81,3 +81,9 @@ See [TODO.md](TODO.md) file.
 ## Responsibility
 
 I, Yuuto, and other contributors, will not accept any responsibility case for damage done using this tool. This was made for educational and demonstration purposes only.
+
+# Donating
+
+If you find this project useful, consider donating:
+* PayPal : https://paypal.me/nethermctv
+* Ethereum Address : 0xf27851244c96d70b363c7641b99a2ee8ca818ba5
