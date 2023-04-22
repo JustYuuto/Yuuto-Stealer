@@ -3,7 +3,7 @@
   "scripts": {
     "dev": "node index.js",
     "build": "yarn build:dkp && yarn build:dtp && yarn build:ico && yarn build:exe",
-    "build:exe": "node build.js",
+    "build:exe": "webpack && node build.js",
     "build:dkp": "cd util/decrypt-key && pyinstaller --onefile --distpath . decrypt_key.py",
     "build:dtp": "cd util/decrypt-token && pyinstaller --onefile --distpath . decrypt_token.py",
     "build:ico": "png-to-ico assets/icon.png > icon.ico"
