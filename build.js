@@ -1,4 +1,9 @@
 const { compile } = require('nexe');
+const { copyFileSync } = require('fs');
+const { join } = require('path');
+
+copyFileSync(join(__dirname, 'util', 'decrypt-key', 'decrypt_key.exe'), join(__dirname, 'dist', 'decrypt_key.exe'));
+copyFileSync(join(__dirname, 'util', 'decrypt-token', 'decrypt_token.exe'), join(__dirname, 'dist', 'decrypt_token.exe'));
 
 compile({
   input: './dist/index.bundle.js',
