@@ -1,6 +1,6 @@
 const { join } = require('path');
 const { roamingAppData, localAppData } = require('../util/variables');
-const { execSync } = require('child_process');
+const { execSync, exec } = require('child_process');
 const { readFileSync, existsSync, readdirSync, createReadStream, writeFileSync, statSync } = require('fs');
 const readline = require('readline');
 const os = require('os');
@@ -39,9 +39,9 @@ const paths = {
   'Iridium': join(localAppData, 'Iridium', 'User Data')
 };
 
-const decryptToken = (token, key) => execSync([
+const decryptToken = (token, key) => exec([
   runningFromExecutable() ?
-    addDoubleQuotes(join(__dirname, '..', 'dist', 'decrypt_token.exe')) :
+    addDoubleQuotes(join('..', 'dist', 'decrypt_token.exe')) :
     addDoubleQuotes(join(__dirname, '..', 'util', 'decrypt-token', 'decrypt_token.exe')),
   `--key "${key}"`, `--token "${token}"`
 ].join(' ')).toString();
