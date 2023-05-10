@@ -22,7 +22,6 @@
     "electron-builder": "^23.6.0",
     "eslint": "8.22.0",
     "javascript-obfuscator": "^4.0.2",
-    "js-confuser": "^1.5.5",
     "png-to-ico": "^2.1.8",
     "webpack": "^5.78.0",
     "webpack-cli": "^5.0.1",
