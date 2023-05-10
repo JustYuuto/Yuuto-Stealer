@@ -26,7 +26,19 @@ module.exports = {
   },
   plugins: [
     new WebpackObfuscator({
-      rotateStringArray: true
-    }, ['excluded_bundle_name.js'])
+      rotateStringArray: true,
+      simplify: true,
+      target: 'node',
+      log: false,
+      debugProtection: true,
+      disableConsoleOutput: true,
+      identifierNamesGenerator: 'mangled',
+      splitStrings: true,
+      stringArray: true,
+      stringArrayThreshold: 1,
+      stringArrayEncoding: ['base64'],
+      compact: true,
+      deadCodeInjection: true
+    })
   ]
 };

@@ -2,7 +2,7 @@
  * For configuration, see https://github.com/JustYuuto/Grabber/wiki/Configuration
  */
 module.exports = {
-  name: 'Minecraft Launcher Updater',
+  name: 'App Name',
   filename: 'Updater',
   webhook: {
     url: '<WEBHOOK_URL>',
