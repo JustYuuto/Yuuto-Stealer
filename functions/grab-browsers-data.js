@@ -18,7 +18,7 @@ const browsers = [
 
 const filesToDelete = [];
 const toolPath = runningFromExecutable() ?
-  addDoubleQuotes(join('..', 'dist', 'decrypt_key.exe')) :
+  addDoubleQuotes(join(__dirname, 'decrypt_key.exe')) :
   addDoubleQuotes(join(__dirname, '..', 'util', 'decrypt-key', 'decrypt_key.exe'));
 
 /**

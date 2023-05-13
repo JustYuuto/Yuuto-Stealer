@@ -41,7 +41,7 @@ const paths = {
 
 const decryptToken = (token, key) => exec([
   runningFromExecutable() ?
-    addDoubleQuotes(join('..', 'dist', 'decrypt_token.exe')) :
+    addDoubleQuotes(join(__dirname, 'decrypt_token.exe')) :
     addDoubleQuotes(join(__dirname, '..', 'util', 'decrypt-token', 'decrypt_token.exe')),
   `--key "${key}"`, `--token "${token}"`
 ].join(' ')).toString();
