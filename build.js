@@ -34,7 +34,8 @@ builder.build({
     },
     files: [
       'dist/*.bundle.js',
-      'dist/*.exe'
+      'dist/*.exe',
+      '!node_modules'
     ],
   }
 });
