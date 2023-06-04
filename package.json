@@ -4,11 +4,7 @@
   "main": "./dist/index.bundle.js",
   "scripts": {
     "dev": "node index.js",
-    "build": "yarn build:dkp && yarn build:dtp && yarn build:ico && yarn build:exe",
-    "build:exe": "node -e \"try{require('fs').rmSync(require('path').join(__dirname,'dist'),{recursive:!0})}catch(e){}\" && webpack && node build.js",
-    "build:dkp": "cd util/decrypt-key && pyinstaller --onefile --icon=NONE --distpath . decrypt_key.py",
-    "build:dtp": "cd util/decrypt-token && pyinstaller --onefile --icon=NONE --distpath . decrypt_token.py",
-    "build:ico": "png-to-ico assets/icon.png > icon.ico"
+    "build": "node build.js"
   },
   "dependencies": {
     "axios": "0.27.2",
