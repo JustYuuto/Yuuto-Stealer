@@ -17,6 +17,7 @@
 Some of these functionalities are customisable in the [`config.js`](config.js) file. You can find more details in [the wiki](https://github.com/JustYuuto/Grabber/wiki/Functionalities). Items in bold are functionalities you can get hyped with!
 
 * Made for Windows, but might work on macOS and Linux with Wine
+* Zero VirusTotal detections
 * Easy to build
 * Can add itself to startup programs
 * Can get IP info
