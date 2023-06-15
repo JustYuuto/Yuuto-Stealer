@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "./dist/index.bundle.js",
   "scripts": {
-    "dev": "node index.js",
+    "dev": "electron index.js",
     "build": "node build.js"
   },
   "dependencies": {
