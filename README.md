@@ -64,8 +64,6 @@ node build.js
 ```
 
 **What is going on after running the command**:
-* Build Chrome-based browsers key decryptors
-* Build Discord token decryptor
 * Build the icon into a ``.ico`` file
 * Build the executable which will:
   * Run webpack for minification and obfuscation
