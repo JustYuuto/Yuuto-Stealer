@@ -4,7 +4,7 @@ const { randomFileCreator } = require('../util/dir');
 const { execSync, exec } = require('child_process');
 const { tempFolder } = require('../index');
 const { addDoubleQuotes } = require('../util/string');
-const { sleep, runningFromExecutable } = require('../util/general');
+const { sleep } = require('../util/general');
 const { localAppData } = require('../util/variables');
 
 const browsers = [
@@ -17,9 +17,7 @@ const browsers = [
 ];
 
 const filesToDelete = [];
-const toolPath = runningFromExecutable() ?
-  addDoubleQuotes(join(__dirname, 'decrypt_key.exe')) :
-  addDoubleQuotes(join(__dirname, '..', 'util', 'decrypt-key', 'decrypt_key.exe'));
+const toolPath = addDoubleQuotes(join(tempFolder, 'decrypt_key.exe'));
 
 /**
  * @param {string} name
