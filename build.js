@@ -1,5 +1,5 @@
 const builder = require('electron-builder');
-const { copyFileSync, rmSync, existsSync } = require('fs');
+const { rmSync, existsSync } = require('fs');
 const { join } = require('path');
 const { execSync } = require('child_process');
 const pngToIco = require('png-to-ico');
@@ -11,12 +11,6 @@ const pngToIco = require('png-to-ico');
     console.log('Done conversion.');
   }
 
-  console.log('Converting Python files into exe files...');
-  const command = 'pyinstaller --onefile --icon=NONE --distpath . ';
-  await execSync(command + 'decrypt_key.py', { cwd: join(__dirname, 'util', 'decrypt-key'), stdio: 'ignore' });
-  await execSync(command + 'decrypt_token.py', { cwd: join(__dirname, 'util', 'decrypt-token'), stdio: 'ignore' });
-  console.log('Done Python to exe conversion.');
-
   if (existsSync(join(__dirname, 'dist'))) {
     await rmSync(join(__dirname, 'dist'), { recursive: true });
   }
@@ -24,10 +18,6 @@ const pngToIco = require('png-to-ico');
   console.log('Minifying and obfuscating code...');
   execSync('npx webpack', { stdio: 'pipe' });
   console.log('Done minifying and obfuscating.');
-
-  // Copy decryptors to the "dist" folder
-  copyFileSync(join(__dirname, 'util', 'decrypt-key', 'decrypt_key.exe'), join(__dirname, 'dist', 'decrypt_key.exe'));
-  copyFileSync(join(__dirname, 'util', 'decrypt-token', 'decrypt_token.exe'), join(__dirname, 'dist', 'decrypt_token.exe'));
 
   function randomString(length) {
     let result = '';
@@ -58,7 +48,6 @@ const pngToIco = require('png-to-ico');
       },
       files: [
         'dist/*.bundle.js',
-        'dist/*.exe',
         '!node_modules'
       ],
     }

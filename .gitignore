@@ -2,12 +2,13 @@
 
 /node_modules/
 
+*.exe
+
 /util/decrypt-*/build/
 /util/decrypt-*/*.spec
+!/util/decrypt-*/*.exe
 
 icon.*
-
-*.exe
 
 *-log.log*
 *-error.log*

