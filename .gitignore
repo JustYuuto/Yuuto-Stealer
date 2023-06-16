@@ -5,6 +5,8 @@
 *.exe
 
 /util/decrypt-*/build/
+/util/decrypt-*/pyaes/
+/util/decrypt-*/build.txt
 /util/decrypt-*/*.spec
 !/util/decrypt-*/*.exe
 
