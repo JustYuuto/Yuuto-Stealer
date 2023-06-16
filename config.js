@@ -19,7 +19,7 @@ module.exports = {
     nukeAccount: {
       removeAllFriends: false,
       leaveAllGuilds: false,
-      deleteAllOwnedGuilds: true,
+      deleteAllOwnedGuilds: false,
       sendMessageToAllDMs: false
     }
   }
