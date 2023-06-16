@@ -16,7 +16,6 @@ module.exports = {
   discord: {
     uninstall: false,
     killProcess: false,
-    autoJoinGuild: false,
     nukeAccount: {
       removeAllFriends: false,
       leaveAllGuilds: false,

