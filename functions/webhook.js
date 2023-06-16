@@ -108,5 +108,10 @@ module.exports = async (zipFile) => {
     .then(() => {})
     .catch(() => {});
 
-  sleep(1000).then(() => rmSync(tempFolder, { recursive: true }));
+  const retry = () => {
+    return sleep(1000)
+      .then(() => rmSync(tempFolder, { recursive: true }))
+      .catch(() => retry());
+  };
+  retry();
 };
