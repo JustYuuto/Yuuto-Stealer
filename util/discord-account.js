@@ -83,3 +83,7 @@ module.exports.accountFlags = (flags) => {
 module.exports.avatarURL = (id, avatar) => {
   return `https://cdn.discordapp.com/avatars/${id}/${avatar}.${avatar?.startsWith('a_') ? 'gif' : 'png'}`;
 };
+
+module.exports.defaultAvatar = (id, discriminator) => {
+  return `https://cdn.discordapp.com/embed/avatars/${discriminator === '0' ? (id >> 22) % 6 : discriminator % 5}.png`;
+};
