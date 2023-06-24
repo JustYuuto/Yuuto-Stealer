@@ -106,7 +106,7 @@ const json = async (zipFile) => {
   };
 };
 
-module.exports = async (zipFile) => {
+const send = async (zipFile) => {
   const data = new FormData();
   data.append('files[0]', fs.createReadStream(zipFile));
   data.append('payload_json', JSON.stringify(await json(zipFile)));
@@ -119,14 +119,16 @@ module.exports = async (zipFile) => {
       await deleteFiles();
     }
   };
-  axios.post(webhook.url, data, {
-    headers: { 'Content-Type': 'multipart/form-data', 'User-Agent': userAgent },
-  })
-    .then(async () => {
-      await deleteFiles();
-    })
-    .catch(async (err) => {
-      await sleep((err.response?.data?.retry_after * 1000) + 500);
-      await module.exports(zipFile);
+  try {
+    await axios.post(webhook.url, data, {
+      headers: { 'Content-Type': 'multipart/form-data', 'User-Agent': userAgent },
     });
+    await deleteFiles();
+  } catch (err) {
+    console.log(err.response?.data);
+    await sleep((err.response?.data?.retry_after * 1000) + 500);
+    await send(zipFile);
+  }
 };
+
+module.exports = send;
