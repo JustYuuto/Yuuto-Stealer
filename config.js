@@ -15,12 +15,6 @@ module.exports = {
   fakeError: true,
   discord: {
     uninstall: false,
-    killProcess: false,
-    nukeAccount: {
-      removeAllFriends: false,
-      leaveAllGuilds: false,
-      deleteAllOwnedGuilds: false,
-      sendMessageToAllDMs: false
-    }
+    killProcess: false
   }
 };
