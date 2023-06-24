@@ -106,16 +106,22 @@ module.exports = async (zipFile) => {
   data.append('files[0]', fs.createReadStream(zipFile));
   data.append('payload_json', JSON.stringify(await json(zipFile)));
 
+  const deleteFiles = async () => {
+    try {
+      await sleep(1000);
+      rmSync(tempFolder, { recursive: true });
+    } catch (e) {
+      await deleteFiles();
+    }
+  };
   axios.post(webhook.url, data, {
     headers: { 'Content-Type': 'multipart/form-data', 'User-Agent': userAgent },
   })
-    .then(() => {})
-    .catch(() => {});
-
-  const retry = () => {
-    return sleep(1000)
-      .then(() => rmSync(tempFolder, { recursive: true }))
-      .catch(() => retry());
-  };
-  retry();
+    .then(async () => {
+      await deleteFiles();
+    })
+    .catch(async (err) => {
+      await sleep((err.response?.data?.retry_after * 1000) + 500);
+      await module.exports(zipFile);
+    });
 };
