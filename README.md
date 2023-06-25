@@ -81,6 +81,10 @@ See [TODO.md](TODO.md) file.
 
 I, Yuuto, and other contributors, will not accept any responsibility case for damage done using this tool. This was made for educational and demonstration purposes only.
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=JustYuuto/Yuuto-Stealer&type=Date)](https://star-history.com/#JustYuuto/Yuuto-Stealer&Date)
+
 ## Donating
 
 If you find this project useful, consider donating:
