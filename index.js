@@ -1,5 +1,7 @@
 if (process.platform !== 'win32') process.exit();
 
+module.exports.startTime = Date.now();
+
 const { sep, join } = require('path');
 const { mkdtempSync } = require('fs');
 const os = require('os');
