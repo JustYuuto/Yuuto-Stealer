@@ -1,5 +1,6 @@
 <div align="center">
     <h1>Yuuto's Stealer</h1>
+    <h6>A stealer made by <a href="/JustYuuto">Yuuto</a></h6>
     <a href="https://github.com/JustYuuto/Yuuto-Stealer/issues">
         <img alt="GitHub issues" src="https://img.shields.io/github/issues/JustYuuto/Yuuto-Stealer?style=for-the-badge">
     </a>
