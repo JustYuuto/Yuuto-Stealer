@@ -93,7 +93,7 @@ const handleTokens = (tokens, resolve) => {
         json.source = source;
         let info = JSON.parse(readFileSync(jsonFile).toString());
         if (!info.accounts) info.accounts = [];
-        if (!info.accounts.find(account => account.token === token)) {
+        if (!info.accounts.find(account => account.id === json.id)) {
           info.accounts.push(json);
           writeFileSync(jsonFile, JSON.stringify(info));
         }
