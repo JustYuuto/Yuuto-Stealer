@@ -87,3 +87,11 @@ module.exports.avatarURL = (id, avatar) => {
 module.exports.defaultAvatar = (id, discriminator) => {
   return `https://cdn.discordapp.com/embed/avatars/${discriminator === '0' ? (id >> 22) % 6 : discriminator % 5}.png`;
 };
+
+module.exports.usernameFormat = (globalName, username, discriminator) => {
+  if (globalName !== null) {
+    return `${globalName} ` + (discriminator === '0' ? `(@${username})` : `(${username}#${discriminator})`);
+  } else {
+    return discriminator === '0' ? `@${username}` : `${username}#${discriminator}`;
+  }
+};
