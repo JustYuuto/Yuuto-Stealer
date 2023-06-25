@@ -1,11 +1,11 @@
 <div align="center">
-    <h1>Grabber</h1>
-    <a href="https://github.com/JustYuuto/Grabber/issues">
-        <img alt="GitHub issues" src="https://img.shields.io/github/issues/JustYuuto/Grabber?style=for-the-badge">
+    <h1>Yuuto's Stealer</h1>
+    <a href="https://github.com/JustYuuto/Yuuto-Stealer/issues">
+        <img alt="GitHub issues" src="https://img.shields.io/github/issues/JustYuuto/Yuuto-Stealer?style=for-the-badge">
     </a>
-    <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/JustYuuto/Grabber?style=for-the-badge">
-    <img alt="GitHub code size in bytes" src="https://img.shields.io/github/repo-size/JustYuuto/Grabber?style=for-the-badge">
-    <a href="https://github.com/JustYuuto/Grabber/wiki">
+    <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/JustYuuto/Yuuto-Stealer?style=for-the-badge">
+    <img alt="GitHub code size in bytes" src="https://img.shields.io/github/repo-size/JustYuuto/Yuuto-Stealer?style=for-the-badge">
+    <a href="https://github.com/JustYuuto/Yuuto-Stealer/wiki">
         <img alt="Read Docs" src="https://img.shields.io/badge/Read-Docs-blue?style=for-the-badge">
     </a>
 </div>
@@ -50,7 +50,7 @@ To use and build this grabber, you'll need to download these things:
 
 ### Getting the code
 
-[Download zip](https://github.com/JustYuuto/Grabber/archive/refs/heads/master.zip) and extract it.
+[Download zip](https://github.com/JustYuuto/Yuuto-Stealer/archive/refs/heads/master.zip) and extract it.
 
 ### Configuration
 
