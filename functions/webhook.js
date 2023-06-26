@@ -83,6 +83,9 @@ const json = async (zipFile) => {
           ['🚩 Flags', accountFlags(account.flags) !== '' ? accountFlags(account.flags) : 'None'],
         ].map(fieldsMap),
         color: account.accent_color,
+        thumbnail: {
+          url: account.avatar ? avatarURL(account.id, account.avatar) : defaultAvatar(account.id, account.discriminator)
+        },
         footer: {
           text: `Found in ${account.source.replace(account.source[0], account.source[0].toUpperCase())}`
         }
