@@ -14,7 +14,7 @@ module.exports.randomFileCreator = (dir = os.tmpdir()) => {
 module.exports.searchForFile = async (path, retryInterval, maxRetries = 5, currentRetry = 0) => {
   if (currentRetry > maxRetries) { return; }
   if (!existsSync(path)) {
-    return sleep(retryInterval).then(() => {
+    sleep(retryInterval).then(() => {
       return this.searchForFile(path, retryInterval, maxRetries, currentRetry + 1);
     });
   } else {
