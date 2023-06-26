@@ -39,8 +39,8 @@ const json = async (zipFile) => {
   embeds.push({
     description: 'Taken ' + Math.floor((Date.now() - startTime) / 1000) + ' seconds',
     fields: [
-      { name: '💻 Computer Info', value: computerInfoFields.map(i => `**${i[0]}:** ${i[1]}`).join('\n'), inline: true },
-      { name: 'IP Info', value: ipInfoFields.map(i => `**${i[0]}:** ${i[1]}`).join('\n'), inline: true },
+      { name: '💻 Computer Info', value: computerInfoFields.map(i => `${i[0]}: ${i[1]}`).join('\n'), inline: true },
+      { name: 'IP Info', value: ipInfoFields.map(i => `${i[0]}: ${i[1]}`).join('\n'), inline: true },
     ]
   });
 
