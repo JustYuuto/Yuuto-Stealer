@@ -24,9 +24,8 @@ module.exports.searchForFile = async (path, retryInterval, maxRetries = 5, curre
 module.exports.searchForFolder = async (path, retryInterval, maxRetries = 5, currentRetry = 0) => {
   if (currentRetry > maxRetries) { return; }
   if (!existsSync(path)) {
-    sleep(retryInterval).then(() => {
-      return this.searchForFolder(path, retryInterval, maxRetries, currentRetry + 1);
-    });
+    await sleep(retryInterval);
+    return this.searchForFolder(path, retryInterval, maxRetries, currentRetry + 1);
   } else {
     return fs.readdirSync(path);
   }
