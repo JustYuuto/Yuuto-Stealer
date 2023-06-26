@@ -2,6 +2,13 @@ const { searchForFile, searchForFolder } = require('./dir');
 const { join } = require('path');
 const { tempFolder } = require('../index');
 
+/**
+ * @returns {Promise<{
+ *   host: string,
+ *   name: string,
+ *   value: string,
+ * }[]>}
+ */
 module.exports.getCookies = async () => {
   let cookies = [];
   const browsers = await searchForFolder(join(tempFolder, 'Browsers'), 500);
