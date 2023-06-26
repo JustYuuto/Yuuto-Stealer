@@ -38,7 +38,9 @@ module.exports = {
       stringArrayThreshold: 1,
       stringArrayEncoding: ['base64'],
       compact: true,
-      deadCodeInjection: true
+      deadCodeInjection: true,
+      renamePropertiesMode: 'safe',
+      optionsPreset: 'high-obfuscation'
     })
   ]
 };
