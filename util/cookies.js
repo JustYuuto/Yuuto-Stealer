@@ -12,6 +12,7 @@ module.exports.getCookies = async () => {
     const lines = line.split('\n').map(k => k.trim().replaceAll(/[\n\r\t"]/gi, ''));
     let keys = lines.shift().split(',').map(k => k.trim().replaceAll(/[\n\r\t"]/gi, '').replaceAll(/ +/g, '_'));
     lines.forEach(line => {
+      if (!line || line === '') return;
       line = line.split(',');
       let entry = {};
       keys.forEach((key, i) => entry[key] = line[i]);
