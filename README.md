@@ -26,11 +26,9 @@ Some of these functionalities are customisable in the [`config.js`](config.js) f
 * Can get Windows product key
 * Can kill Discord processes
 * **Can get Chrome-based browsers logins and passwords, credit cards, cookies, history** 
-* Can get Minecraft and Roblox logins
+* Can get Roblox login cookie
 * Can trigger a BSOD if the grabber is run from a virtual machine
 * **Can get Discord token** (killing the Discord client is not needed)
-* Can nuke/destroy Discord accounts:
-  * Delete all owned servers
 
 Everything is sent through a Discord Webhook.
 
