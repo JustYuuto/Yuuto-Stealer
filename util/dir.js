@@ -3,6 +3,7 @@ const os = require('os');
 const { join } = require('path');
 const { openSync, existsSync } = require('fs');
 const { sleep } = require('./general');
+const fs = require('fs');
 
 module.exports.randomFileCreator = (dir = os.tmpdir()) => {
   const path = join(dir, generateString(32));
@@ -10,11 +11,13 @@ module.exports.randomFileCreator = (dir = os.tmpdir()) => {
   return path;
 };
 
-module.exports.searchForFile = async (path, retryInterval) => {
+module.exports.searchForFile = async (path, retryInterval, maxRetries = 5, currentRetry = 0) => {
+  if (currentRetry > maxRetries) { return; }
   if (!existsSync(path)) {
-    await sleep(retryInterval);
-    this.searchForFile(path, retryInterval);
+    return sleep(retryInterval).then(() => {
+      return this.searchForFile(path, retryInterval, maxRetries, currentRetry + 1);
+    });
   } else {
-    return true;
+    return fs.readFileSync(path).toString();
   }
 };
