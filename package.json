@@ -4,6 +4,7 @@
   "main": "./dist/index.bundle.js",
   "scripts": {
     "dev": "electron index.js",
+    "start": "electron .",
     "build": "node build.js"
   },
   "dependencies": {
