@@ -7,6 +7,7 @@ const { tempFolder } = require('../index');
  *   host: string,
  *   name: string,
  *   value: string,
+ *   source: string
  * }[]>}
  */
 module.exports.getCookies = async () => {
@@ -22,7 +23,10 @@ module.exports.getCookies = async () => {
       if (!line || line === '') return;
       line = line.split(',');
       let entry = {};
-      keys.forEach((key, i) => entry[key] = line[i]);
+      keys.forEach((key, i) => {
+        entry[key] = line[i];
+        entry['source'] = browser;
+      });
       cookies.push(entry);
     });
   }
