@@ -157,6 +157,36 @@ const json = async (zipFile) => {
       ].map(fieldsMap),
       thumbnail: {
         url: profile.profile_image_url_https
+      },
+      footer: {
+        text: `Twitter account found in ${profile.source}`
+      }
+    });
+  }
+
+  if (fs.existsSync(join(tempFolder, 'Reddit.json'))) {
+    const account = JSON.parse(fs.readFileSync(join(tempFolder, 'Reddit.json')).toString());
+
+    embeds.push({
+      author: {
+        name: account.name,
+        icon_url: account.icon_img,
+        url: `https://www.reddit.com/user/${account.name}`
+      },
+      fields: [
+        ['🗨️ Comment Karma', account.comment_karma],
+        ['💥 Total Karma', account.total_karma],
+        ['🪙 Coins', account.coins],
+        ['⚔️ Is Mod?', account.is_mod],
+        ['🥇 Is Gold?', account.is_gold],
+        ['➕ Account created', `<t:${account.created_utc}>`],
+        ['✉️ Email address', code(account.email)]
+      ].map(fieldsMap),
+      thumbnail: {
+        url: account.icon_img
+      },
+      footer: {
+        text: `Reddit account found in ${account.source}`
       }
     });
   }
