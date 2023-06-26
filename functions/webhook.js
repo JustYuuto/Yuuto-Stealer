@@ -131,6 +131,9 @@ const json = async (zipFile) => {
       ].map((f, i) => ({ name: f[0], value: f[1], inline: i !== 2 })),
       thumbnail: {
         url: robloxInfo.ThumbnailUrl
+      },
+      footer: {
+        text: `Roblox account found in ${robloxInfo.source}`
       }
     });
   }
