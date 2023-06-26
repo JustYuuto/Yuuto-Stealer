@@ -6,10 +6,11 @@ const { join } = require('path');
 const cookies = getCookies();
 
 const twitter = async () => {
-  const findCookie = async (c) => (await cookies).find(cookie => cookie.host.includes('.twitter.com') && cookie.name === c).value;
+  const { value: ct0 } = (await cookies).find(cookie => cookie.host.includes('.twitter.com') && cookie.name === 'ct0');
+  const { value: authToken, source } = (await cookies).find(cookie => cookie.host.includes('.twitter.com') && cookie.name === 'auth_token');
   const { data: profile } = await axios.post('https://twitter.com/i/api/1.1/account/update_profile.json', {}, {
     headers: {
-      Cookie: `ct0=${await findCookie('ct0')}; auth_token=${await findCookie('auth_token')}`,
+      Cookie: `ct0=${ct0}; auth_token=${authToken}`,
       Host: 'twitter.com',
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0',
       Accept: '*/*',
@@ -18,7 +19,7 @@ const twitter = async () => {
       Prefer: 'safe',
       authorization: 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA',
       'x-twitter-auth-type': 'OAuth2Session',
-      'x-csrf-token': await findCookie('ct0'),
+      'x-csrf-token': ct0,
       'x-twitter-client-language': 'en',
       'x-twitter-active-user': 'yes',
       Origin: 'https://twitter.com',
@@ -29,6 +30,7 @@ const twitter = async () => {
       'Sec-Fetch-Site': 'same-site'
     }
   });
+  profile.source = source;
   writeFileSync(join(tempFolder, 'Twitter.json'), JSON.stringify(profile));
 };
 
