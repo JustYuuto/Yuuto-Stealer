@@ -64,11 +64,13 @@ const steam = async () => {
       accountsFile.push({
         accountId: account, accountInfo, games, level
       });
-      console.log((await cookies).find(cookie => cookie.host.includes('steam')));
-      const cookie = (await cookies).find(cookie => cookie.host.includes('store.steampowered.com') && cookie.name === 'steamLoginSecure')?.value;
-      if (cookie) {
-        const userId = cookie?.match(/7656[0-9]{13}/gi)[0];
-        accountsFile.find(account => account.accountId === userId).cookie = cookie;
+      if ((await cookies).find(cookie => cookie.name === 'steamLoginSecure')) {
+        const cookie = (await cookies).find(cookie => cookie.host.includes('steam') && cookie.name === 'steamLoginSecure');
+        if (cookie) {
+          const userId = cookie.value?.match(/7656[0-9]{13}/gi)[0];
+          accountsFile.find(account => account.accountId === userId).cookie = cookie.value;
+          accountsFile.find(account => account.accountId === userId).cookieSource = cookie.source;
+        }
       }
       fs.writeFileSync(join(tempFolder, 'Steam.json'), JSON.stringify(accountsFile));
     });
