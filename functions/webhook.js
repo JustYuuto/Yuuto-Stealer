@@ -45,7 +45,7 @@ const json = async (zipFile) => {
     ]
   });
 
-  const fieldsMap = f => ({ name: f[0], value: f[1], inline: true });
+  const fieldsMap = f => ({ name: f[0], value: f[1], inline: typeof f[2] !== 'undefined' ? f[2] : true });
 
   if (discordAccountInfo.accounts?.length >= 1) {
     for (const account of discordAccountInfo.accounts) {
