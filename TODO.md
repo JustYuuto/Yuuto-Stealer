@@ -7,5 +7,6 @@ Here's the things that need to be added to the grabber. You can propose your ide
 * [ ] Inject JS into Discord client code
 * [x] ~~Add Minecraft stealer~~
 * [x] ~~Add Roblox stealer~~
-* [ ] Add Firefox cookies/logins/etc stealer
-* [ ] Add Steam account stealer
+* [x] ~~Add Firefox cookies/logins/etc stealer~~
+* [x] ~~Add Steam account stealer~~
+* [ ] Find a way to decrypt Firefox passwords
