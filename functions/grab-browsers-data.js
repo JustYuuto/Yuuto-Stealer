@@ -73,8 +73,8 @@ const chrome = {
   history: (name, path, profile) => {
     return _(name, path, 'History', 'History', (dbFile, csvFile) => exec(
       [
-        toolPath, `--path "${path}"`, `--db-file "${dbFile}"`, '--sql "SELECT url, title, visit_count, typed_count FROM urls"',
-        `--csv-file "${csvFile}"`, '--rows "url,title,visit count,typed count"'
+        toolPath, `--path "${path}"`, `--db-file "${dbFile}"`, '--sql "SELECT url, title FROM urls"',
+        `--csv-file "${csvFile}"`, '--rows "url,title"'
       ].join(' ')
     ), profile);
   },
