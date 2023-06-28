@@ -34,28 +34,31 @@ const _ = (name, path, use, filename, dbData, profile = 'Default') => {
   dbData(dbFile, file);
 };
 
+const _ff = (path, profile, filename, use, columns, table) => {
+  path = join(path, profile, `${use}.sqlite`);
+
+  const db = new sqlite3.Database(path, sqlite3.OPEN_READONLY);
+  const file = join(tempFolder, 'Browsers', 'Mozilla Firefox', `${filename}.csv`);
+  const csvFile = csv.stringify({
+    columns: columns,
+    header: true
+  });
+
+  db.serialize(() => {
+    db.each(`SELECT ${columns.join(', ')} FROM ${table}`, (err, row) => {
+      if (err) return;
+      csvFile.write(row);
+    });
+  });
+  csvFile.pipe(fs.createWriteStream(file));
+};
+
+// TODO: find a way to decrypt Firefox passwords
 const firefox = {
   passwords: () => {},
-  history: () => {},
+  history: (path, profile) => _ff(path, profile, 'History', 'places', ['url', 'title'], 'moz_places'),
   creditCards: () => {},
-  cookies: (path, profile) => {
-    path = join(path, profile, 'cookies.sqlite');
-
-    const db = new sqlite3.Database(path, sqlite3.OPEN_READONLY);
-    const file = join(tempFolder, 'Browsers', 'Mozilla Firefox', 'Cookies.csv');
-    const csvFile = csv.stringify({
-      columns: ['host', 'name', 'value'],
-      header: true
-    });
-
-    db.serialize(() => {
-      db.each('SELECT host, name, value FROM moz_cookies', (err, row) => {
-        if (err) return;
-        csvFile.write(row);
-      });
-    });
-    csvFile.pipe(fs.createWriteStream(file));
-  }
+  cookies: (path, profile) => _ff(path, profile, 'Cookies', 'cookies', ['host', 'name', 'value'], 'moz_cookies')
 };
 
 const chrome = {
