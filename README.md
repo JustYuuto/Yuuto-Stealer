@@ -26,7 +26,7 @@ Some of these functionalities are customisable in the [`config.js`](config.js) f
 * Can get Windows product key
 * Can kill Discord processes
 * Can get Chrome-based browsers logins and passwords, credit cards, cookies, history
-* Can steal Twitter session, Roblox login cookie
+* Can steal Twitter, Reddit and Minecraft session, Roblox login cookie
 * Can trigger a BSOD if the grabber is run from a virtual machine
 * Can steal Discord token, 2FA backup codes
 
