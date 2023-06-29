@@ -141,7 +141,7 @@ module.exports = new Promise((resolve) => {
                   !token.startsWith('MTA') && // 10
                   !token.startsWith('MTE')    // 11
                 ) return;
-                if (!tokens.includes(token)) tokens.push({ token, source: 'firefox' });
+                if (!tokens.includes(token)) tokens.push({ token, source: 'Mozilla Firefox' });
               });
             }
           });
