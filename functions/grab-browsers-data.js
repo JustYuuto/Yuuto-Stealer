@@ -35,6 +35,7 @@ const _ = (name, path, use, filename, dbData, profile = 'Default') => {
 };
 
 const _ff = (path, profile, filename, use, columns, table) => {
+  if (!existsSync(join(path, profile, 'key4.db'))) return;
   path = join(path, profile, `${use}.sqlite`);
   if (!existsSync(path)) return;
 
@@ -46,9 +47,9 @@ const _ff = (path, profile, filename, use, columns, table) => {
   });
 
   db.serialize(() => {
-    db.each(`SELECT ${columns.join(', ')} FROM ${table}`, (err, row) => {
+    db.all(`SELECT ${columns.join(', ')} FROM ${table}`, (err, rows) => {
       if (err) return;
-      csvFile.write(row);
+      for (const row in rows) csvFile.write(rows[row]);
     });
   });
 
