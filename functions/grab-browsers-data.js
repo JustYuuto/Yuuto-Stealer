@@ -106,7 +106,7 @@ const kill = (processes) => {
     const tasks = execSync('tasklist').toString().split('\n');
     let i = 0;
     processes = processes.filter(task => tasks.includes(task));
-    processes.filter(task => tasks.includes(task)).forEach((task, index) => {
+    processes.forEach((task, index) => {
       exec(`taskkill /f /im ${task}.exe`).on('exit', () => i = index);
     });
     if (i >= processes.length) resolve();
