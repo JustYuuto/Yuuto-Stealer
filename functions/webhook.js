@@ -77,7 +77,7 @@ const json = async (zipFile) => {
           ['🔐 MFA Enabled', account.mfa_enabled],
           ['✉️ Email', account.email ? code(account.email) : 'No Email'],
           ['📞 Phone Number', account.phone ? code(account.phone) : 'No Phone Number'],
-          ['💲 Nitro Subscription', nitroSubscriptionType(account.premium_type) + (haveNitro ? ` (ends <t:${nitroSubscriptionEnd}:R>)` : '')],
+          ['💲 Nitro Subscription', nitroSubscriptionType(account.premium_type) + ((haveNitro && nitroSubscriptionEnd) ? ` (ends <t:${nitroSubscriptionEnd}:R>)` : '')],
           ['🚩 Flags', accountFlags(account.flags) !== '' ? accountFlags(account.flags) : 'None'],
         ].map(fieldsMap),
         color: account.accent_color,
