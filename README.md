@@ -60,6 +60,7 @@ Some things need to be configured (in the [`config.js`](config.js) file) before 
 After configuring the grabber, we can finally build its executable! Run the following command in the project folder:
 
 ```bash
+npm install # To install modules
 node build.js
 ```
 
