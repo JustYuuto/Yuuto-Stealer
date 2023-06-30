@@ -1,8 +1,8 @@
 const { join, sep } = require('path');
-const { tempFolder } = require('../index');
 const { existsSync, readFileSync, writeFileSync } = require('fs');
+const { getTempFolder } = require('../util/init');
 
-const jsonFile = join(tempFolder, 'Minecraft Accounts.json');
+const jsonFile = join(getTempFolder(), 'Minecraft Accounts.json');
 const paths = [
   join(process.env.APPDATA, '.minecraft', 'launcher_accounts.json'),
   join(process.env.APPDATA, '.minecraft', 'launcher_accounts_microsoft_store.json'),
