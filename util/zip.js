@@ -41,10 +41,11 @@ const createZipFromFiles = async (directoryPaths, filesToInclude, dontCreateTopL
 };
 
 module.exports.generateZipFromFiles = (directoryPaths, filesToInclude, outputPath) => {
-  return new Promise(async (resolve) => {
-    const jsZip = await createZipFromFiles(directoryPaths, filesToInclude, true);
-    jsZip.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
-      .pipe(fs.createWriteStream(outputPath))
-      .on('finish', () => resolve(outputPath));
+  return new Promise((resolve) => {
+    createZipFromFiles(directoryPaths, filesToInclude, true).then(jsZip => {
+      jsZip.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
+        .pipe(fs.createWriteStream(outputPath))
+        .on('finish', () => resolve(outputPath));
+    });
   });
 };
