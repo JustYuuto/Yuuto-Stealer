@@ -53,10 +53,8 @@ const _ff = (path, profile, filename, use, columns, table) => {
     });
   });
 
-  const pipe = csvFile.pipe(fs.createWriteStream(file)).on('finish', () => db.close());
-
-  sleep(4000).then(() => {
-    pipe.close();
+  csvFile.pipe(fs.createWriteStream(file)).on('finish', () => {
+    db.close();
   });
 };
 
