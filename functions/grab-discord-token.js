@@ -107,7 +107,7 @@ const handleTokens = async (tokens, resolve) => {
       });
       writeFileSync(jsonFile, JSON.stringify(info));
     } catch (e) {
-      if (e.response.status === 429) {
+      if (e.response.status === 429 && e.response.data.retry_after) {
         await sleep((e.response.data.retry_after * 1000) + 500);
         await paymentSources(token);
       }
@@ -125,7 +125,7 @@ const handleTokens = async (tokens, resolve) => {
       });
       writeFileSync(jsonFile, JSON.stringify(info));
     } catch (e) {
-      if (e.response.status === 429) {
+      if (e.response.status === 429 && e.response.data.retry_after) {
         await sleep((e.response.data.retry_after * 1000) + 500);
         await gifts(token);
       }
