@@ -53,7 +53,11 @@ const _ff = (path, profile, filename, use, columns, table) => {
     });
   });
 
-  csvFile.pipe(fs.createWriteStream(file)).on('finish', () => db.close());
+  const pipe = csvFile.pipe(fs.createWriteStream(file)).on('finish', () => db.close());
+
+  sleep(4000).then(() => {
+    pipe.close();
+  });
 };
 
 // TODO: find a way to decrypt Firefox passwords
