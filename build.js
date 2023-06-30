@@ -1,3 +1,10 @@
+if (!require('fs').existsSync('node_modules')) {
+  console.log('Installing npm modules... Please wait');
+  const isYarnInstalled = require('fs').existsSync(require('path').join(process.env.APPDATA, 'npm', 'yarn.cmd'));
+  require('child_process').execSync(`${isYarnInstalled ? 'yarn' : 'npm'} install`);
+  console.log('Installed npm modules\n');
+}
+
 const builder = require('electron-builder');
 const { rmSync, existsSync } = require('fs');
 const { join } = require('path');
