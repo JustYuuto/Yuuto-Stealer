@@ -58,10 +58,7 @@ const json = async (zipFile) => {
             headers: { Authorization: account.token, 'User-Agent': userAgent }
           });
           nitroSubscriptionEnd = Math.floor(new Date(request.data[0]?.current_period_end).getTime() / 1000);
-        } catch (err) {
-          await sleep((err.data?.response?.retry_after * 1000) + 500);
-          await getNitroEnd();
-        }
+        } catch (err) {}
       }
       if (haveNitro) await getNitroEnd();
 
