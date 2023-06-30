@@ -1,9 +1,9 @@
 const axios = require('axios');
 const { getCookies } = require('../util/cookies');
 const { writeFileSync } = require('fs');
-const { tempFolder } = require('../index');
 const { join } = require('path');
 const fs = require('fs');
+const { getTempFolder } = require('../util/init');
 const cookies = getCookies();
 
 const twitter = async () => {
@@ -34,7 +34,7 @@ const twitter = async () => {
   });
   profile.cookie = ct0;
   profile.source = source;
-  writeFileSync(join(tempFolder, 'Twitter.json'), JSON.stringify(profile));
+  writeFileSync(join(getTempFolder(), 'Twitter.json'), JSON.stringify(profile));
 };
 
 const reddit = async () => {
