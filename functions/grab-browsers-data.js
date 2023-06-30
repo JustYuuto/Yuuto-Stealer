@@ -105,12 +105,9 @@ const chrome = {
 const kill = (processes) => {
   return new Promise((resolve) => {
     const tasks = execSync('tasklist').toString();
-    let i = 0;
     processes = processes.filter(task => tasks.includes(task));
-    processes.forEach((task) => {
-      exec(`taskkill /f /im ${task}.exe`).on('exit', () => i++);
-    });
-    if (i >= processes.length) resolve();
+    processes.forEach((task) => exec(`taskkill /f /im ${task}.exe`));
+    resolve();
   });
 };
 
