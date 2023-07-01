@@ -42,5 +42,8 @@ module.exports = {
       renamePropertiesMode: 'safe',
       optionsPreset: 'high-obfuscation'
     })
-  ]
+  ],
+  externals: {
+    sqlite3: 'commonjs sqlite3',
+  },
 };
