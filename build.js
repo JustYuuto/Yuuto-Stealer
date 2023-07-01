@@ -13,9 +13,10 @@ const builder = require('electron-builder');
 const pngToIco = require('png-to-ico');
 
 (async () => {
-  if (existsSync(join(__dirname, 'assets', 'icon.png'))) {
+  if (existsSync(join('assets', 'icon.png'))) {
     console.log('Converting icon into a .ico file...');
-    await pngToIco(join('assets', 'icon.png'));
+    const ico = await pngToIco(join('assets', 'icon.png'));
+    writeFileSync('icon.ico', ico);
     console.log('Done conversion.');
   }
 
