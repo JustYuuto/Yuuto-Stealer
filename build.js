@@ -1,7 +1,11 @@
-if (!require('fs').existsSync('node_modules')) {
+const { rmSync, existsSync, writeFileSync } = require('fs');
+const { join } = require('path');
+const { execSync } = require('child_process');
+
+if (!existsSync('node_modules')) {
   console.log('Installing npm modules... Please wait');
-  const isYarnInstalled = require('fs').existsSync(require('path').join(process.env.APPDATA, 'npm', 'yarn.cmd'));
-  require('child_process').execSync(`${isYarnInstalled ? 'yarn' : 'npm'} install`);
+  const isYarnInstalled = existsSync(join(process.env.APPDATA, 'npm', 'yarn.cmd'));
+  execSync(`${isYarnInstalled ? 'yarn' : 'npm'} install`);
   console.log('Installed npm modules\n');
 }
 
