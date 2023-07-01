@@ -24,7 +24,7 @@ const pngToIco = require('png-to-ico');
     await rmSync(join(__dirname, 'dist'), { recursive: true });
   }
 
-  console.log('Minifying and obfuscating code...');
+  console.log('Minifying and obfuscating code... This can take some minutes, please be patient.');
   execSync('npx webpack', { stdio: 'pipe' });
   console.log('Done minifying and obfuscating.');
 
