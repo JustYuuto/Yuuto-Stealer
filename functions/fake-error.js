@@ -1,11 +1,9 @@
-const { dialog } = require('electron');
+const { execSync } = require('child_process');
+const { fakeErrorDetails } = require('../config');
 
-const title = 'Error';
-const content = 'An error occurred while downloading files. Please try again later.';
+const title = fakeErrorDetails.title || 'Error';
+const message = fakeErrorDetails.message || 'An error occurred while downloading files. Please try again later.';
 
-dialog.showMessageBox({
-  type: 'error',
-  title,
-  message: content,
-  buttons: ['OK'],
-});
+const cmd = `mshta "javascript:new ActiveXObject('WScript.Shell').Popup('${message}', 0, '${title}', 16);close()"`;
+
+execSync(cmd);
