@@ -10,9 +10,6 @@ if (!existsSync('node_modules')) {
 }
 
 const builder = require('electron-builder');
-const { rmSync, existsSync } = require('fs');
-const { join } = require('path');
-const { execSync } = require('child_process');
 const pngToIco = require('png-to-ico');
 
 (async () => {
