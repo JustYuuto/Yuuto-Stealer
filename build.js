@@ -21,7 +21,14 @@ const pngToIco = require('png-to-ico');
   }
 
   if (existsSync(join(__dirname, 'dist'))) {
-    await rmSync(join(__dirname, 'dist'), { recursive: true });
+    try {
+      await rmSync(join(__dirname, 'dist'), { recursive: true });
+    } catch (e) {
+      try {
+        await execSync(`taskkill /f /im "${require('./config').name}.exe"`, { stdio: 'ignore' });
+        await rmSync(join(__dirname, 'dist'), { recursive: true });
+      } catch (e) {}
+    }
   }
 
   console.log('Minifying and obfuscating code... This can take some minutes, please be patient.');
