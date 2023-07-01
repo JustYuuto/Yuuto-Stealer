@@ -62,6 +62,9 @@ const pngToIco = require('png-to-ico');
       win: {
         requestedExecutionLevel: 'requireAdministrator', // Force launch as administrator
       },
+      nsis: {
+        deleteAppDataOnUninstall: true
+      },
       files: [
         'dist/*.bundle.js',
         '!node_modules'
