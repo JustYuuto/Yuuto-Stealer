@@ -35,6 +35,8 @@ const pngToIco = require('png-to-ico');
   execSync('npx webpack', { stdio: 'pipe' });
   console.log('Done minifying and obfuscating.');
 
+  execSync(`npm install sqlite3 --no-package-lock --no-interactive --prefix "${join(__dirname, 'dist')}"`, { stdio: 'pipe' });
+
   function randomString(length) {
     let result = '';
     const characters = 'abcdefghijklmnopqrstuvwxyz';
@@ -67,8 +69,10 @@ const pngToIco = require('png-to-ico');
       },
       files: [
         'dist/*.bundle.js',
+        'dist/node_modules',
         '!node_modules'
       ],
+      includeSubNodeModules: true
     }
   }).then((res) => {
     console.log(`\nDONE! Your executable can be found at: ${res[1]}`);
