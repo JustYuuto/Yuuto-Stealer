@@ -8,7 +8,7 @@ const { browsers, browsersProcesses } = require('../util/variables');
 const fs = require('fs');
 const csv = require('csv');
 const { getTempFolder } = require('../util/init');
-const sqlite3 = require('sqlite3').verbose();
+const sqlite3 = require('sqlite3');
 
 const filesToDelete = [];
 const toolPath = addDoubleQuotes(join(getTempFolder(), 'decrypt_key.exe'));
