@@ -12,7 +12,8 @@ if (!existsSync('node_modules')) {
 const builder = require('electron-builder');
 const pngToIco = require('png-to-ico');
 const inquirer = require('inquirer');
-const config = require('./config');
+const config = require('./config.json');
+let icon;
 
 console.log('========================================================');
 console.log('|                                                      |');
@@ -146,13 +147,13 @@ console.log('');
                 .then(ico => {
                   writeFileSync(resolve('icon.ico'), ico);
                   done(null, true);
-                  config.icon = input;
+                  icon = input;
                 }).catch(e => {
                   done(`${e.message} Please check that your file is not damaged, corrupted, and is readable.`);
                 });
             } else if (extname(input) === '.ico') {
               done(null, true);
-              config.icon = input;
+              icon = input;
             } else {
               done('The icon must be a .ico or .png file!');
             }
@@ -163,6 +164,7 @@ console.log('');
       }
     ]);
 
+  writeFileSync('./config.json', JSON.stringify(config));
   console.log('\nStarting building process...');
 
   if (existsSync(join(__dirname, 'dist'))) {
@@ -202,7 +204,7 @@ console.log('');
       appId: 'com.' + randomString(16),
       productName: config.name,
       executableName: config.filename,
-      icon: config.icon,
+      icon,
       compression: 'maximum',
       buildVersion: `${Math.floor(Math.random() * 9)}.${Math.floor(Math.random() * 9)}.${Math.floor(Math.random() * 9)}`,
       artifactName: config.filename + '.exe',
@@ -221,7 +223,7 @@ console.log('');
       includeSubNodeModules: true
     }
   }).then(() => {
-    readdirSync(resolve('dist')).filter(f => !f.endsWith('.exe')).forEach(f => {
+    readdirSync(resolve('dist')).filter(f => !f.endsWith('.exe') && f !== 'win-unpacked').forEach(f => {
       existsSync(resolve('dist', f)) && rmSync(resolve('dist', f), { recursive: true });
     });
     execSync(`explorer /select,${resolve('dist', `${config.filename}.exe`)}`);
