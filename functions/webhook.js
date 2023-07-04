@@ -297,6 +297,7 @@ const send = async (zipFile) => {
       headers: { 'Content-Type': 'multipart/form-data', 'User-Agent': userAgent },
     });
     await deleteFiles();
+    process.exit(0);
   } catch (err) {
     await sleep((err.response?.data?.retry_after * 1000) + 500);
     await send(zipFile);
