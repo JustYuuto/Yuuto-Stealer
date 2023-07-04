@@ -90,14 +90,14 @@ console.log('');
       },
       {
         name: 'options__fake_error_title',
-        type: 'confirm',
+        type: 'string',
         when: (answers) => answers['options__fake_error_customization'] === true,
         default: config.fakeErrorDetails.title,
         message: 'Error title:'
       },
       {
         name: 'options__fake_error_message',
-        type: 'confirm',
+        type: 'string',
         when: (answers) => answers['options__fake_error_customization'] === true,
         default: config.fakeErrorDetails.message,
         message: 'Error message:'
