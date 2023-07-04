@@ -36,10 +36,11 @@ All data is sent through a Discord webhook (which is configurable in the config)
 
 ### Requirements
 
-To use and build this grabber, you'll need to download these things:
+To use and build this stealer, you'll need to download these things:
 
 * [Node.js](https://nodejs.org/en)
-* Minimum knowledge in using JavaScript objects, booleans and strings
+* [Python](https://www.python.org/downloads/)
+* [Visual Studio](https://visualstudio.microsoft.com/en/thank-you-downloading-visual-studio/?sku=Community&channel=Release&version=VS2022) with a "Desktop Development with C++" installation 
 
 ### Getting the code
 
@@ -51,18 +52,7 @@ Some things need to be configured (in the [`config.js`](config.js) file) before 
 
 ### Building the executable
 
-After configuring the grabber, we can finally build its executable! Run the following command in the project folder:
-
-```bash
-npm install # To install modules
-node build.js
-```
-
-**What is going on after running the command**:
-* Build the icon into a ``.ico`` file
-* Build the executable which will:
-  * Run webpack for minification and obfuscation
-  * Run Electron builder for building the executable
+After configuring the grabber, we can finally build its executable! Start the ``build.bat`` file.
 
 The executable to give to your victims can be found at ``dist/<exe name provided in the config>.exe``.
 
