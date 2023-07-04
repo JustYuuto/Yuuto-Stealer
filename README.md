@@ -13,9 +13,7 @@
 
 --------------------------
 
-## Functionalities
-
-Some of these functionalities are customisable in the [`config.js`](config.js) file. You can find more details in [the wiki](https://github.com/JustYuuto/Grabber/wiki/Functionalities).
+## Features
 
 * Made for Windows, but might work on macOS and Linux with Wine
 * Zero VirusTotal detections
@@ -30,37 +28,29 @@ Some of these functionalities are customisable in the [`config.js`](config.js) f
 * Anti-VM (can trigger a BSOD if the grabber is run from a virtual machine)
 * Can steal Discord token, 2FA backup codes
 
-All data is sent through a Discord webhook (which is configurable in the config), with nice embeds and the zip file 
+All data is sent through a Discord webhook (which is configurable when building), with nice embeds and the zip file 
 
-## Using it
+## Setting up
 
-### Requirements
-
-To use and build this stealer, you'll need to download these things:
+You'll need to get these three things, this is **required** otherwise the build can't work.
 
 * [Node.js](https://nodejs.org/en)
 * [Python](https://www.python.org/downloads/)
 * [Visual Studio](https://visualstudio.microsoft.com/en/thank-you-downloading-visual-studio/?sku=Community&channel=Release&version=VS2022) with a "Desktop Development with C++" installation 
 
-### Getting the code
+Then [download the stealer](https://github.com/JustYuuto/Yuuto-Stealer/archive/refs/heads/master.zip). This is a zip file, just extract it somewhere.
 
-[Download zip](https://github.com/JustYuuto/Yuuto-Stealer/archive/refs/heads/master.zip) and extract it.
+If you didn't create a Discord webhook, create it. Then, run the ``build.bat`` file. It will ask you some questions for building the stealer, and then it will automatically build the thing for you.
 
-### Configuration
-
-Some things need to be configured (in the [`config.js`](config.js) file) before building the executable, like the webhook URL. If you don't know how to create a webhook, [you can learn it](https://support.discord.com/hc/en-us/articles/228383668). You can [click here](https://github.com/JustYuuto/Grabber/wiki/Configuration) for documentation about configuration items.
-
-### Building the executable
-
-After configuring the grabber, we can finally build its executable! Start the ``build.bat`` file.
-
-The executable to give to your victims can be found at ``dist/<exe name provided in the config>.exe``.
+**How does the build work?**
+* First, it asks you questions, like the name, the webhook URL... just answer them all.
+* Then it will minify (make the file size much lighter) and obfuscate (make the code unreadable) the code.
+* Finally, it will build Electron executable. If this is the first time you're building, it will download some things, this is normal.
+* When the build is finished, head over the "dist" directory: you'll find an ``<exe name you've provided>.exe`` file. This is the file you'll need to give to your victims.
 
 ## Screenshots
 
 ![Webhook](screenshots/webhook.png)
-
-Webhook
 
 ## Todo
 
