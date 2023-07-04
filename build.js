@@ -1,5 +1,5 @@
 const { rmSync, existsSync, writeFileSync } = require('fs');
-const { join, extname } = require('path');
+const { join, extname, resolve } = require('path');
 const { execSync } = require('child_process');
 
 if (!existsSync('node_modules')) {
@@ -129,7 +129,7 @@ console.log('');
             if (extname(input) === '.png') {
               pngToIco(input)
                 .then(ico => {
-                  writeFileSync(input, ico);
+                  writeFileSync(resolve('icon.ico'), ico);
                   done(null, true);
                   config.icon = input;
                 }).catch(e => {
