@@ -1,4 +1,4 @@
-const { rmSync, existsSync, writeFileSync, readdirSync, copyFileSync } = require('fs');
+const { rmSync, existsSync, writeFileSync, readdirSync } = require('fs');
 const { join, extname, resolve } = require('path');
 const { execSync } = require('child_process');
 
@@ -222,7 +222,7 @@ console.log('');
     }
   }).then(() => {
     readdirSync(resolve('dist')).filter(f => !f.endsWith('.exe')).forEach(f => {
-      existsSync(resolve('dist', f)) && rmSync(resolve('dist', f));
+      existsSync(resolve('dist', f)) && rmSync(resolve('dist', f), { recursive: true });
     });
     execSync(`explorer /select,${resolve('dist', `${config.filename}.exe`)}`);
   });
