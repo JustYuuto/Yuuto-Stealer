@@ -41,6 +41,21 @@ console.log('');
         }
       },
       {
+        name: 'exe_name',
+        type: 'input',
+        message: 'How should we name the executable name? (the .exe file)',
+        default: config.filename,
+        validate(input) {
+          const done = this.async();
+          if (input && input.trim() !== '') {
+            config.filename = input;
+            done(null, true);
+          } else {
+            done('Name is not valid!');
+          }
+        }
+      },
+      {
         name: 'webhook_url',
         type: 'input',
         message: 'Enter your webhook URL:',
