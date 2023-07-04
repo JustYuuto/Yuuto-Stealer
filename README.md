@@ -55,6 +55,7 @@ If you didn't create a Discord webhook, create it. Then, run the ``build.bat`` f
 ![Twitter profile](screenshots/twitter.png)
 ![Reddit account](screenshots/reddit.png)
 ![Steam account](screenshots/steam.png)
+
 ![ZIP File](screenshots/zip.png)
 ![ZIP File - Browsers data](screenshots/zip_browser.png)
 
