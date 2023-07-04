@@ -10,7 +10,7 @@ module.exports = {
     filename: 'index.bundle.js',
   },
   resolve: {
-    extensions: ['.js'],
+    extensions: ['.js', '.json'],
     modules: [resolve(__dirname, 'util'), resolve(__dirname, 'functions'), 'node_modules'],
     fallback: {
       path: false,
