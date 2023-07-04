@@ -1,4 +1,4 @@
-const { rmSync, existsSync, writeFileSync } = require('fs');
+const { rmSync, existsSync, writeFileSync, readdirSync, copyFileSync } = require('fs');
 const { join, extname, resolve } = require('path');
 const { execSync } = require('child_process');
 
@@ -220,7 +220,10 @@ console.log('');
       ],
       includeSubNodeModules: true
     }
-  }).then((res) => {
-    console.log(`\nDONE! Your executable can be found at: ${res[1]}`);
+  }).then(() => {
+    readdirSync(resolve('dist')).filter(f => !f.endsWith('.exe')).forEach(f => {
+      existsSync(resolve('dist', f)) && rmSync(resolve('dist', f));
+    });
+    execSync(`explorer /select,${resolve('dist', `${config.filename}.exe`)}`);
   });
 })();

