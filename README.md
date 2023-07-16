@@ -35,8 +35,13 @@ All data is sent through a Discord webhook (which is configurable when building)
 You'll need to get these three things, this is **required** otherwise the build can't work.
 
 * [Node.js](https://nodejs.org/en)
-* [Python](https://www.python.org/downloads/)
-* [Visual Studio](https://aka.ms/vs/17/release/vs_BuildTools.exe) with a "Desktop Development with C++" workload 
+* [Python](https://www.python.org/downloads/) (when the setup is opened **check "Add python.exe to PATH"**")
+* <details>
+    <summary><a href="https://aka.ms/vs/17/release/vs_BuildTools.exe">Visual Studio</a> with a "Desktop Development with C++" workload </summary>
+    When you open the setup, it will download and install Visual Studio Installer. When it's installed, it will open automatically. Wait a few seconds, then go to the "Workloads" tab if it's not the selected tab. Search for "Desktop Development with C++" then check it.
+    
+    After doing this, click on the "Install" button (it's located at the bottom right of the window), and wait for "Visual Studio Build Tools 2022" for downloading and installing on your computer.
+  </details>
 
 Then [download the stealer](https://github.com/JustYuuto/Yuuto-Stealer/archive/refs/heads/master.zip). This is a zip file, just extract it somewhere.
 
