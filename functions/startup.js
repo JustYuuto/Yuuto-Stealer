@@ -1,12 +1,10 @@
-const { startupPrograms } = require('../util/variables');
-const { copyFile, existsSync } = require('fs');
-const { resolve, sep } = require('path');
+const { app } = require('electron');
+const path = require('path');
+const exeName = path.basename(process.execPath);
 
-const file = process.argv0;
-const fileName = file.split(sep).pop();
-
-// If not already in startup programs, put it in those
-if (!existsSync(resolve(startupPrograms, fileName))) {
-  // Copy itself to startup programs
-  copyFile(file, resolve(startupPrograms, fileName), () => {});
-}
+app.setLoginItemSettings({
+  openAtLogin: true,
+  openAsHidden: true,
+  enabled: true,
+  path: exeName,
+});
