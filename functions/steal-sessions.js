@@ -81,6 +81,5 @@ const steam = async () => {
 };
 
 module.exports = {
-  twitter, reddit, steam, roblox: await require('../functions/grab-roblox'),
-  minecraft: () => require('../functions/grab-mc')
+  twitter, reddit, steam, minecraft: () => require('../functions/grab-mc')
 };
