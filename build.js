@@ -5,7 +5,7 @@ const { execSync } = require('child_process');
 if (!existsSync('node_modules')) {
   console.log('Installing npm modules... Please wait');
   const isYarnInstalled = existsSync(join(process.env.APPDATA, 'npm', 'yarn.cmd'));
-  execSync(`${isYarnInstalled ? 'yarn' : 'npm'} install`);
+  execSync(`${isYarnInstalled ? 'yarn' : 'npm'} install`, { stdio: 'inherit' });
   console.log('Installed npm modules\n');
 }
 
