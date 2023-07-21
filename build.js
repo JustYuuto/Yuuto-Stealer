@@ -220,10 +220,13 @@ console.log('');
       artifactName: config.filename + '.exe',
       win: {
         requestedExecutionLevel: 'requireAdministrator', // Force launch as administrator
+        target: [{
+          target: 'portable',
+          arch: 'x64'
+        }]
       },
-      nsis: {
-        deleteAppDataOnUninstall: true,
-        createDesktopShortcut: false
+      portable: {
+        warningsAsErrors: false
       },
       files: [
         'dist/*.bundle.js',
