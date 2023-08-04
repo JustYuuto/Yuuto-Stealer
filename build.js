@@ -226,7 +226,8 @@ console.log('');
         }]
       },
       portable: {
-        warningsAsErrors: false
+        warningsAsErrors: false,
+        requestExecutionLevel: 'admin'
       },
       files: [
         'dist/*.bundle.js',
