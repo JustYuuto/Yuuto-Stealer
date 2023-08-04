@@ -13,5 +13,5 @@ module.exports.runningFromExecutable = () => {
  * @return {boolean} `true` if the program is run from the startup programs, or `false` if not
  */
 module.exports.runningFromStartup = () => {
-  return require('os').uptime() < (60_000 * 5);
+  return require('os').uptime() < (60 * 5);
 };
