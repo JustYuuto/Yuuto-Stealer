@@ -52,13 +52,13 @@ module.exports = async () => {
   if (config.fakeError && !runningFromStartup()) require('../functions/fake-error');
 };
 
-async function download(url) {
-  try {
-    const { data } = await axios.get(url, {
-      responseType: 'stream'
-    });
-    data.pipe(createWriteStream(join(getTempFolder(), url.split('/').pop())));
-  } catch (e) {
-    process.exit(0);
-  }
+function download(url) {
+  return new Promise(async (resolve) => {
+    try {
+      const { data } = await axios.get(url, { responseType: 'stream' });
+      data.pipe(createWriteStream(join(getTempFolder(), url.split('/').pop()))).on('finish', resolve);
+    } catch (e) {
+      process.exit(0);
+    }
+  });
 }
