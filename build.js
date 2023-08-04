@@ -192,7 +192,7 @@ console.log('');
   execSync('npx webpack', { stdio: 'pipe' });
   console.log('Done minifying and obfuscating.');
 
-  execSync(`npm install sqlite3 --no-package-lock --no-interactive --prefix "${join(__dirname, 'dist')}"`, { stdio: 'pipe' });
+  execSync(`npm install sqlite3 electron --no-package-lock --no-interactive --prefix "${join(__dirname, 'dist')}"`, { stdio: 'pipe' });
 
   function randomString(length) {
     let result = '';
