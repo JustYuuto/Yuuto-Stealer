@@ -18,7 +18,7 @@
     "sqlite3": "^5.1.6"
   },
   "devDependencies": {
-    "@types/node": "^18.11.17",
+    "@types/node": "^20.4.7",
     "electron": "^25.2.0",
     "electron-builder": "^24.4.0",
     "eslint": "8.22.0",
