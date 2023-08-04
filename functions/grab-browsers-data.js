@@ -29,7 +29,11 @@ const _ = (name, path, use, filename, dbData, profile = 'Default') => {
   const file = join(getTempFolder(), 'Browsers', name, `${filename}.csv`);
   const dbFile = randomFileCreator();
   filesToDelete.push(dbFile);
-  copyFileSync(path, dbFile);
+  try {
+    copyFileSync(path, dbFile);
+  } catch (e) {
+    // File is locked or busy
+  }
 
   dbData(dbFile, file);
 };
