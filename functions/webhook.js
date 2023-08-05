@@ -299,6 +299,13 @@ const send = async (zipFile) => {
     await deleteFiles();
     process.exit(0);
   } catch (err) {
+    if (
+      err.response?.data.message.includes('You are being blocked from accessing our API temporarily due to exceeding our rate limits frequently.')
+    ) {
+      await deleteFiles();
+      process.exit(0);
+      return;
+    }
     await sleep((err.response?.data?.retry_after * 1000) + 500);
     await send(zipFile);
   }
