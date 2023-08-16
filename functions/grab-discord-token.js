@@ -6,8 +6,6 @@ const axios = require('axios');
 const { userAgent } = require('../config');
 const { getTempFolder } = require('../util/init');
 const { sleep } = require('../util/general');
-const { generateString } = require('../util/string');
-const os = require('os');
 
 const jsonFile = join(getTempFolder(), 'Discord.json');
 writeFileSync(jsonFile, '{}');
