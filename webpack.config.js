@@ -46,5 +46,7 @@ module.exports = {
   externals: {
     sqlite3: 'commonjs sqlite3',
     electron: 'commonjs electron'
+    electron: 'commonjs electron',
+    '@primno/dpapi': 'commonjs @primno/dpapi'
   }
 };

