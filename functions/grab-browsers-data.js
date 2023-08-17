@@ -45,10 +45,7 @@ const _ff = (path, profile, filename, use, columns, table) => {
 
   const db = new sqlite3.Database(path);
   const file = join(getTempFolder(), 'Browsers', 'Mozilla Firefox', `${filename}.csv`);
-  const csvFile = csv.stringify({
-    columns: columns,
-    header: true
-  });
+  const csvFile = csv.stringify({ columns, header: true });
 
   db.serialize(() => {
     db.all(`SELECT ${columns.join(', ')} FROM ${table}`, (err, rows) => {
@@ -59,6 +56,7 @@ const _ff = (path, profile, filename, use, columns, table) => {
 
   csvFile.pipe(fs.createWriteStream(file)).on('finish', () => {
     db.close();
+    csvFile.destroy();
   });
 };
 
