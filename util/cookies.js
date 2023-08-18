@@ -30,5 +30,6 @@ module.exports.getCookies = async () => {
       cookies.push(entry);
     });
   });
+
   return cookies;
 };
