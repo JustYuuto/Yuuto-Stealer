@@ -1,3 +1,0 @@
-pyinstaller
-pycryptodomex
-pypiwin32
