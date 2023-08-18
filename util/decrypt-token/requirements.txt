@@ -1,3 +1,0 @@
-pyinstaller
-pyaes.zip
-pypiwin32
