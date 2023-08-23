@@ -198,7 +198,7 @@ console.log('');
 
   console.log('Building electron executable...');
 
-  new Promise((r) => r(execSync(`npx pkg dist/index.bundle.js -t node18-win-x64 -C GZip -o "${config.filename}.exe"`, { stdio: 'inherit' }))).then(async () => {
+  new Promise((r) => r(execSync(`npx pkg dist/index.bundle.js -c -t node18-win-x64 -C GZip -o "${config.filename}.exe"`, { stdio: 'inherit' }))).then(async () => {
     const version = `${Math.floor(Math.random() * 9)}.${Math.floor(Math.random() * 9)}.${Math.floor(Math.random() * 9)}`;
     await rcedit(`${config.filename}.exe`, {
       icon,

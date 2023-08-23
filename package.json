@@ -27,5 +27,8 @@
     "webpack": "^5.78.0",
     "webpack-cli": "^5.0.1",
     "webpack-obfuscator": "^3.5.1"
+  },
+  "pkg": {
+    "assets": "dist/node_modules/**"
   }
 }
