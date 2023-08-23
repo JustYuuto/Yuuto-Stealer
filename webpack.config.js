@@ -12,17 +12,6 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.json'],
     modules: [resolve(__dirname, 'util'), resolve(__dirname, 'functions'), 'node_modules'],
-    fallback: {
-      path: false,
-      os: false,
-      child_process: false,
-      fs: false,
-      util: false,
-      assert: false,
-      constants: false,
-      crypto: false,
-      readline: false
-    }
   },
   plugins: [
     new WebpackObfuscator({
@@ -43,9 +32,7 @@ module.exports = {
       optionsPreset: 'high-obfuscation'
     })
   ],
-  externals: {
-    sqlite3: 'commonjs sqlite3',
-    electron: 'commonjs electron',
-    '@primno/dpapi': 'commonjs @primno/dpapi'
-  }
+  externals: [
+    'sqlite3'
+  ]
 };
