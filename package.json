@@ -29,6 +29,6 @@
     "webpack-obfuscator": "^3.5.1"
   },
   "pkg": {
-    "assets": "dist/node_modules/**"
+    "scripts": "dist/node_modules/**"
   }
 }
