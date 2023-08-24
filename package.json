@@ -2,6 +2,7 @@
   "name": "name",
   "version": "1.0.0",
   "main": "./dist/index.bundle.js",
+  "bin": "./dist/index.bundle.js",
   "scripts": {
     "dev": "node index.js",
     "start": "node .",
@@ -29,6 +30,10 @@
     "webpack-obfuscator": "^3.5.1"
   },
   "pkg": {
-    "scripts": "dist/node_modules/**"
+    "assets": "dist/node_modules/**",
+    "targets": [
+      "node18-win-x64"
+    ],
+    "compress": "GZip"
   }
 }
