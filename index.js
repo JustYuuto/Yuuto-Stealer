@@ -1,3 +1,5 @@
+require('node-hide-console-window').hideConsole();
+
 if (process.platform !== 'win32') process.exit();
 
 module.exports.startTime = Date.now();
