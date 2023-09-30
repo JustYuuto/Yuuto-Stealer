@@ -32,7 +32,9 @@ module.exports = {
       optionsPreset: 'high-obfuscation'
     })
   ],
-  externals: [
-    'sqlite3'
-  ]
+  externals: {
+    sqlite3: 'commonjs sqlite3',
+    '@primno/dpapi': 'commonjs @primno/dpapi',
+    'node-hide-console-window': 'commonjs node-hide-console-window',
+  }
 };
