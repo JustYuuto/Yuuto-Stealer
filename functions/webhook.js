@@ -291,7 +291,7 @@ const send = async (zipFile) => {
 
   const deleteFiles = async () => {
     try {
-      await rmSync(getTempFolder(), { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+      await rmSync(getTempFolder(), { recursive: true, force: true });
     } catch (e) {
       await deleteFiles();
     }
