@@ -1,8 +1,7 @@
-const { existsSync, copyFileSync, mkdirSync, rmSync } = require('fs');
+const { existsSync, copyFileSync, mkdirSync } = require('fs');
 const { join, sep } = require('path');
 const { randomFileCreator } = require('../util/dir');
 const { execSync, exec } = require('child_process');
-const { sleep } = require('../util/general');
 const { browsers, browsersProcesses } = require('../util/variables');
 const fs = require('fs');
 const csv = require('csv');
@@ -154,8 +153,4 @@ module.exports = new Promise((resolve) => {
     });
     resolve();
   });
-});
-
-process.on('exit', () => {
-  sleep(1000).then(() => filesToDelete.forEach(file => existsSync(file) && rmSync(file)));
 });
