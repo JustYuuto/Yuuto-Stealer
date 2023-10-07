@@ -15,21 +15,21 @@ module.exports = {
   },
   plugins: [
     new WebpackObfuscator({
-      rotateStringArray: true,
-      simplify: true,
-      target: 'node',
-      log: false,
-      debugProtection: true,
-      disableConsoleOutput: true,
-      identifierNamesGenerator: 'mangled',
-      splitStrings: true,
-      stringArray: true,
-      stringArrayThreshold: 1,
-      stringArrayEncoding: ['base64'],
       compact: true,
       deadCodeInjection: true,
+      debugProtection: true,
+      disableConsoleOutput: false,
+      identifierNamesGenerator: 'mangled-shuffled',
+      log: false,
+      optionsPreset: 'high-obfuscation',
       renamePropertiesMode: 'safe',
-      optionsPreset: 'high-obfuscation'
+      selfDefending: true,
+      simplify: true,
+      splitStrings: true,
+      stringArray: true,
+      stringArrayEncoding: ['base64'],
+      stringArrayThreshold: 0.8,
+      target: 'node',
     })
   ],
   externals: {
