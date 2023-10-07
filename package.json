@@ -32,9 +32,6 @@
   },
   "pkg": {
     "assets": "dist/node_modules/**",
-    "targets": [
-      "node18-win-x64"
-    ],
-    "compress": "GZip"
+    "targets": ["node18-win-x64"]
   }
 }
