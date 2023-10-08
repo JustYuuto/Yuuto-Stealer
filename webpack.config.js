@@ -17,17 +17,14 @@ module.exports = {
     new WebpackObfuscator({
       compact: true,
       deadCodeInjection: true,
-      debugProtection: true,
-      disableConsoleOutput: false,
+      disableConsoleOutput: true,
       identifierNamesGenerator: 'mangled-shuffled',
       log: false,
       optionsPreset: 'high-obfuscation',
       renamePropertiesMode: 'safe',
-      selfDefending: true,
       simplify: true,
       splitStrings: true,
       stringArray: true,
-      stringArrayEncoding: ['base64'],
       stringArrayThreshold: 0.8,
       target: 'node',
     })
