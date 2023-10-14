@@ -1,5 +1,4 @@
 const { resolve } = require('path');
-const WebpackObfuscator = require('webpack-obfuscator');
 
 module.exports = {
   mode: 'production',
@@ -11,24 +10,8 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.json'],
-    modules: [resolve(__dirname, 'util'), resolve(__dirname, 'functions'), 'node_modules'],
+    modules: [resolve(__dirname, 'util'), resolve(__dirname, 'functions'), 'node_modules']
   },
-  plugins: [
-    new WebpackObfuscator({
-      compact: true,
-      deadCodeInjection: true,
-      disableConsoleOutput: true,
-      identifierNamesGenerator: 'mangled-shuffled',
-      log: false,
-      optionsPreset: 'high-obfuscation',
-      renamePropertiesMode: 'safe',
-      simplify: true,
-      splitStrings: true,
-      stringArray: true,
-      stringArrayThreshold: 0.8,
-      target: 'node',
-    })
-  ],
   externals: {
     sqlite3: 'commonjs sqlite3',
     '@primno/dpapi': 'commonjs @primno/dpapi',

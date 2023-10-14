@@ -22,16 +22,16 @@
     "@types/node": "^20.4.7",
     "eslint": "8.22.0",
     "inquirer": "^8.0.0",
-    "javascript-obfuscator": "^4.0.2",
     "pkg": "^5.8.1",
     "png-to-ico": "^2.1.8",
     "rcedit": "^3.1.0",
     "webpack": "^5.78.0",
-    "webpack-cli": "^5.0.1",
-    "webpack-obfuscator": "^3.5.1"
+    "webpack-cli": "^5.0.1"
   },
   "pkg": {
     "assets": "dist/node_modules/**",
-    "targets": ["node18-win-x64"]
+    "targets": [
+      "node18-win-x64"
+    ]
   }
 }
