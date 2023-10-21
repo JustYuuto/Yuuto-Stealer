@@ -1,4 +1,4 @@
-const { rmSync, existsSync, writeFileSync, unlinkSync } = require('fs');
+const { rmSync, existsSync, writeFileSync, unlinkSync, readFileSync } = require('fs');
 const { join, extname, resolve } = require('path');
 const { execSync } = require('child_process');
 
@@ -12,7 +12,8 @@ if (!existsSync('node_modules')) {
 const pngToIco = require('png-to-ico');
 const inquirer = require('inquirer');
 const config = require('./config.json');
-const rcedit = require('rcedit');
+const { load: loadRE } = require('resedit/cjs');
+const { load: loadPE } = require('pe-library/cjs');
 let icon;
 
 console.log('========================================================');
@@ -193,22 +194,35 @@ console.log('');
 
   console.log('Building executable...');
 
-  new Promise((r) => r(execSync(`npx pkg . -C GZip -o "${config.filename}.exe"`, { stdio: 'inherit' }))).then(async () => {
-    const version = `${Math.floor(Math.random() * 9)}.${Math.floor(Math.random() * 9)}.${Math.floor(Math.random() * 9)}`;
-    await rcedit(`${config.filename}.exe`, {
-      icon,
-      'requested-execution-level': 'requireAdministrator',
-      'file-version': version,
-      'product-version': version,
-      'version-string': {
-        OriginalFilename: '',
-        ProductName: `${config.name}`,
-        LegalCopyright: `Copyright © ${new Date().getFullYear()} ${config.name}`,
-        InternalFilename: `${config.filename}`,
-        CompanyName: `${config.name}`,
-        FileDescription: ''
-      }
+  new Promise((r) => r(execSync(`npx pkg . -C Brotli -o "${config.filename}.exe"`, { stdio: 'inherit' }))).then(async () => {
+    const file = readFileSync(`${config.filename}.exe`);
+    const PE = await loadPE();
+    const RE = await loadRE();
+    const exe = PE.NtExecutable.from(file);
+    const res = PE.NtExecutableResource.from(exe);
+
+    const rsrc = exe.getAllSections().find(section => section.info.name === '.rsrc').data;
+    const enc = new TextDecoder('utf-8');
+    const patched = enc.decode(rsrc).replace('level="asInvoker"', 'level="requireAdministrator"');
+    exe.getAllSections().find(section => section.info.name === '.rsrc').data = patched;
+
+    const versionInfo = RE.Resource.VersionInfo.fromEntries(res.entries)[0];
+
+    versionInfo.setProductVersion(Math.floor(Math.random() * 9), Math.floor(Math.random() * 9), Math.floor(Math.random() * 9), 0, 1033);
+    versionInfo.setFileVersion(Math.floor(Math.random() * 9), Math.floor(Math.random() * 9), Math.floor(Math.random() * 9), 0, 1033);
+    versionInfo.setStringValues({ lang: 1033, codepage: 1200 }, {
+      OriginalFilename: '',
+      ProductName: `${config.name}`,
+      LegalCopyright: `Copyright © ${new Date().getFullYear()} ${config.name}`,
+      InternalFilename: `${config.filename}`,
+      CompanyName: `${config.name}`,
+      FileDescription: '',
     });
+    versionInfo.removeStringValue({ lang: 1033, codepage: 1200 }, 'InternalName');
+    versionInfo.outputToResourceEntries(res.entries);
+
+    res.outputResource(exe);
+    writeFileSync(`${config.filename}.exe`, Buffer.from(exe.generate()));
 
     rmSync(resolve('dist'), { recursive: true, force: true });
 
