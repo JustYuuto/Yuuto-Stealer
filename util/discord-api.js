@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { sleep } = require('./general');
+const { webhook } = require('../config');
 
 module.exports = class DiscordAPI {
 
@@ -42,6 +43,14 @@ module.exports = class DiscordAPI {
   async gifts() {
     const res = await axios.get('https://discord.com/api/v10/users/@me/outbound-promotions/codes', {
       headers: this.headers
+    });
+    await this.handleRateLimits(res);
+    return res.data;
+  }
+
+  async sendToWebhook(data) {
+    const res = await axios.post(webhook.url, data, {
+      headers: { 'Content-Type': 'multipart/form-data' }
     });
     await this.handleRateLimits(res);
     return res.data;
